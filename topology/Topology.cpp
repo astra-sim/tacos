@@ -36,7 +36,9 @@ std::vector<NpuId> Topology::incomingNpus(const NpuId dest) const noexcept {
     return incomingNpus;
 }
 
-void Topology::connect(const NpuId src, const NpuId dest, const LinkAlphaBeta linkAlphaBeta,
+void Topology::connect(const NpuId src,
+                       const NpuId dest,
+                       const LinkAlphaBeta linkAlphaBeta,
                        const bool bidirectional) noexcept {
     assert(0 <= src && src < npusCount);
     assert(0 <= dest && dest < npusCount);

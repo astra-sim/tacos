@@ -12,10 +12,13 @@ LICENSE file in the root directory of this source tree.
 
 using namespace Tacos;
 
-TacosGreedy::TacosGreedy(const std::shared_ptr<Topology> topology, const std::shared_ptr<Collective> collective,
+TacosGreedy::TacosGreedy(const std::shared_ptr<Topology> topology,
+                         const std::shared_ptr<Collective> collective,
                          std::shared_ptr<AlgorithmStatMonitor> algorithmStatMonitor,
                          std::shared_ptr<LinkUsageTracker> linkUsageTracker) noexcept
-    : topology(topology), collective(collective), algorithmStatMonitor(algorithmStatMonitor),
+    : topology(topology),
+      collective(collective),
+      algorithmStatMonitor(algorithmStatMonitor),
       linkUsageTracker(linkUsageTracker) {
     // set values
     npusCount = topology->getNpusCount();
@@ -115,8 +118,8 @@ Time TacosGreedy::solve() noexcept {
     return collectiveTime;
 }
 
-std::shared_ptr<TacosGreedy::RequestSet>
-TacosGreedy::initializeRequests(const std::shared_ptr<Contains> contains) noexcept {
+std::shared_ptr<TacosGreedy::RequestSet> TacosGreedy::initializeRequests(
+    const std::shared_ptr<Contains> contains) noexcept {
     auto requests = std::make_shared<RequestSet>();
 
     for (const auto [chunk, dest] : collective->getPostcondition()) {
@@ -134,7 +137,8 @@ TacosGreedy::initializeRequests(const std::shared_ptr<Contains> contains) noexce
     return requests;
 }
 
-bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests, const Time currentTime,
+bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
+                                      const Time currentTime,
                                       std::shared_ptr<Contains> contains) noexcept {
     auto totalArrival = 0;
     auto arrivalsCount = 0;

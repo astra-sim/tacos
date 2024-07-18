@@ -8,16 +8,16 @@ LICENSE file in the root directory of this source tree.
 #include <utility>
 
 namespace Tacos {
-    // Time
-    using Time = double;
+// Time
+using Time = double;
 
-    // Topology
-    using NpuId = int;
-    using LinkId = std::pair<NpuId, NpuId>;
-    using LinkWeight = Time;
-    using LinkAlphaBeta = std::pair<LinkWeight, LinkWeight>;
+// Topology
+using NpuId = int;
+using LinkId = std::pair<NpuId, NpuId>;
+using LinkWeight = Time;
+using LinkAlphaBeta = std::pair<LinkWeight, LinkWeight>;
 
-    // Collective
-    using ChunkId = int;
-    using ChunkSize = double;
+// Collective
+using ChunkId = int;
+using ChunkSize = double;
 }  // namespace Tacos

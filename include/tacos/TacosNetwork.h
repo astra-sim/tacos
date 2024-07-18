@@ -12,39 +12,39 @@ LICENSE file in the root directory of this source tree.
 #include <vector>
 
 namespace Tacos {
-    class TacosNetwork {
-    public:
-        TacosNetwork(std::shared_ptr<Topology> topology, ChunkSize chunkSize) noexcept;
+class TacosNetwork {
+  public:
+    TacosNetwork(std::shared_ptr<Topology> topology, ChunkSize chunkSize) noexcept;
 
-        std::vector<NpuId> incomingNpus(NpuId dest, bool shuffle = true) noexcept;
+    std::vector<NpuId> incomingNpus(NpuId dest, bool shuffle = true) noexcept;
 
-        std::vector<NpuId> outgoingNpus(NpuId src, bool shuffle = true) noexcept;
+    std::vector<NpuId> outgoingNpus(NpuId src, bool shuffle = true) noexcept;
 
-        void removeLink(LinkId link) noexcept;
+    void removeLink(LinkId link) noexcept;
 
-        void reset() noexcept;
+    void reset() noexcept;
 
-        Time linkTime(LinkId link) const noexcept;
+    Time linkTime(LinkId link) const noexcept;
 
-        void setLinkTime(LinkId link, Time time) noexcept;
+    void setLinkTime(LinkId link, Time time) noexcept;
 
-        ChunkId processingChunk(LinkId link) const noexcept;
+    ChunkId processingChunk(LinkId link) const noexcept;
 
-        void setProcessingChunk(LinkId link, ChunkId chunk) noexcept;
+    void setProcessingChunk(LinkId link, ChunkId chunk) noexcept;
 
-    private:
-        std::shared_ptr<Topology> topology;
+  private:
+    std::shared_ptr<Topology> topology;
 
-        std::vector<std::vector<Time>> linkTimes;
-        std::vector<std::vector<ChunkId>> processingChunks;
-        std::vector<std::vector<bool>> backtrackingTopology;
-        size_t topologyBytesCount;
+    std::vector<std::vector<Time>> linkTimes;
+    std::vector<std::vector<ChunkId>> processingChunks;
+    std::vector<std::vector<bool>> backtrackingTopology;
+    size_t topologyBytesCount;
 
-        ChunkSize chunksSize;
+    ChunkSize chunksSize;
 
-        int npusCount;
+    int npusCount;
 
-        std::random_device randomDevice;
-        std::default_random_engine randomEngine {randomDevice()};
-    };
+    std::random_device randomDevice;
+    std::default_random_engine randomEngine{randomDevice()};
+};
 }  // namespace Tacos

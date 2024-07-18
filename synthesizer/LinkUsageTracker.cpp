@@ -4,9 +4,9 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include "LinkUsageTracker.h"
-#include <iostream>
 #include <cassert>
 #include <fstream>
+#include <iostream>
 
 using namespace Tacos;
 
@@ -37,7 +37,9 @@ void LinkUsageTracker::incrementLinkUnused(const double time) noexcept {
     linkUnused.emplace(time, 1);
 }
 
-void LinkUsageTracker::saveLinkUsage(const std::string& filename, const int linksCount, const double finishTime) const noexcept {
+void LinkUsageTracker::saveLinkUsage(const std::string& filename,
+                                     const int linksCount,
+                                     const double finishTime) const noexcept {
     // open new csv file
     auto csv_file = std::ofstream(filename);
     csv_file << "Time,FinishTime,Used,Unused,Total" << std::endl;

@@ -37,7 +37,8 @@ void AlgorithmStatMonitor::incrementProcessedChunkSize(const LinkId link, const 
     chunkSizeProcessedPerLink[src][dest] += chunkSize;
 }
 
-void AlgorithmStatMonitor::saveProcessedChunkSize(const std::string& filename, double artime,
+void AlgorithmStatMonitor::saveProcessedChunkSize(const std::string& filename,
+                                                  double artime,
                                                   std::shared_ptr<Topology> topology) const noexcept {
     // YAML node to save link loads
     YAML::Node link_loads;

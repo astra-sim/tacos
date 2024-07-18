@@ -13,21 +13,22 @@ LICENSE file in the root directory of this source tree.
 
 namespace Tacos {
 
-    class AlgorithmStatMonitor {
-    public:
-        explicit AlgorithmStatMonitor(std::shared_ptr<Topology> topology) noexcept;
+class AlgorithmStatMonitor {
+  public:
+    explicit AlgorithmStatMonitor(std::shared_ptr<Topology> topology) noexcept;
 
-        void incrementProcessedChunkSize(LinkId link, ChunkSize chunkSize) noexcept;
+    void incrementProcessedChunkSize(LinkId link, ChunkSize chunkSize) noexcept;
 
-        void saveProcessedChunkSize(const std::string& filename, double artime,
-                                    std::shared_ptr<Topology> topology) const noexcept;
+    void saveProcessedChunkSize(const std::string& filename,
+                                double artime,
+                                std::shared_ptr<Topology> topology) const noexcept;
 
-    private:
-        int npusCount;
+  private:
+    int npusCount;
 
-        std::vector<std::vector<ChunkSize>> chunkSizeProcessedPerLink;
+    std::vector<std::vector<ChunkSize>> chunkSizeProcessedPerLink;
 
-        std::shared_ptr<Topology> topology;
-    };
+    std::shared_ptr<Topology> topology;
+};
 
 }  // namespace Tacos

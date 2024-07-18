@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 #include "Collective.h"
 
 namespace Tacos {
-    class AllGather final : public Collective {
-    public:
-        explicit AllGather(int npusCount, ChunkSize chunkSize = 1, int collectivesCount = 1) noexcept;
-    };
+class AllGather final : public Collective {
+  public:
+    explicit AllGather(int npusCount, ChunkSize chunkSize = 1, int collectivesCount = 1) noexcept;
+};
 }  // namespace Tacos

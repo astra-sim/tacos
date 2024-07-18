@@ -10,7 +10,8 @@ LICENSE file in the root directory of this source tree.
 using namespace Tacos;
 
 TacosNetwork::TacosNetwork(const std::shared_ptr<Topology> topology, const ChunkSize chunkSize) noexcept
-    : topology(topology), chunksSize(chunkSize) {
+    : topology(topology),
+      chunksSize(chunkSize) {
     assert(chunkSize > 0);
 
     npusCount = topology->getNpusCount();

@@ -12,19 +12,19 @@ LICENSE file in the root directory of this source tree.
 #include <vector>
 
 namespace Tacos {
-    class EventQueue {
-    public:
-        EventQueue() noexcept;
+class EventQueue {
+  public:
+    EventQueue() noexcept;
 
-        void schedule(Time nextTime) noexcept;
+    void schedule(Time nextTime) noexcept;
 
-        Time pop() noexcept;
+    Time pop() noexcept;
 
-        [[nodiscard]] bool empty() noexcept;
+    [[nodiscard]] bool empty() noexcept;
 
-    private:
-        Time currentTime;
-        std::set<Time> events;
-        std::priority_queue<Time, std::vector<Time>, std::greater<>> event_queue;
-    };
+  private:
+    Time currentTime;
+    std::set<Time> events;
+    std::priority_queue<Time, std::vector<Time>, std::greater<>> event_queue;
+};
 }  // namespace Tacos
