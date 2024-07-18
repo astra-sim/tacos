@@ -1,5 +1,5 @@
 # Check CMake version
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.25)
 
 # Create Project
 project(TACOS)
@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Set build type
-#set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE Release)
 
 # Debug option
@@ -33,14 +32,6 @@ add_executable(TACOS ${srcs})
 target_sources(TACOS PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/runner/main.cpp)
 target_link_libraries(TACOS PUBLIC yaml-cpp)
 set_target_properties(TACOS PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
-
-add_executable(Themis ${srcs})
-target_sources(Themis PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/runner/RunThemis.cpp)
-target_link_libraries(Themis PUBLIC yaml-cpp)
-set_target_properties(Themis PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
