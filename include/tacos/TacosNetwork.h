@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 #include "Topology.h"
 #include "Typing.h"
 #include <algorithm>
+#include <memory>
 #include <random>
 #include <vector>
 
