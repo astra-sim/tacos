@@ -10,8 +10,8 @@
 ## Project Status
 | branch | macOS | Ubuntu | Format | Coverage |
 |:---:|:---:|:---:|:---:|:---:|
-| **main** | TBA | TBA | TBA | TBA |
-| **develop** | TBA | TBA | TBA | TBA |
+| **main** | TBA | TBA | [![format](https://github.com/astra-sim/tacos/actions/workflows/check-clang-format.yml/badge.svg?branch=main)](https://github.com/astra-sim/tacos/actions/workflows/check-clang-format.yml) | TBA |
+| **develop** | TBA | TBA | [![format](https://github.com/astra-sim/tacos/actions/workflows/check-clang-format.yml/badge.svg?branch=develop)](https://github.com/astra-sim/tacos/actions/workflows/check-clang-format.yml) | TBA |
 
 ## Overview
 TACOS receives an arbitrary point-to-point network topology and autonomously synthesizes the topology-aware All-Reduce (Reduce-Scatter and All-Gather) collective communication algorithm. TACOS is powered by the Time-expanded Network (TEN) representation and Utilization Maximizing Link-Chunk Matching algorithm, thereby resulting in greater scalability to large networks.
