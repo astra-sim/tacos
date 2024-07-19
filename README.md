@@ -35,6 +35,20 @@ git clone --recurse-submodules git@github.com:astra-sim/tacos.git
 
 If you'd like to analyze the codebase, `runner/main.cpp` is the main entry point.
 
+### Docker Execution Environment
+To assist the execution environment setup, you may also consider building a Docker image.
+```sh
+docker built -t tacos .
+```
+
+You can start the Docker container as a sandboxed execution environment.
+```sh
+docker run -it -v /path/to/your/tacos/repository:/app/tacos tacos
+
+# once Docker container starts running
+cd /app/tacos
+./tacos.sh
+```
 
 ## Contact Us
 For any questions about TACOS, please contact [Will Won](mailto:william.won@gatech.edu)
