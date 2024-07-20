@@ -15,7 +15,7 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 # Compile external libraries
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/yaml-cpp yaml-cpp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/yaml-cpp yaml-cpp)
 
 # Create tacos binary target
 add_executable(tacos)
