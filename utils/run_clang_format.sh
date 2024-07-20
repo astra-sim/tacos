@@ -8,19 +8,14 @@ set -e
 
 # find the absolute path to this script
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
-TARGET_DIR="$SCRIPT_DIR/.."
-
-# folders to run clang-format
-folders=("collective" "helper" "include" "runner" "synthesizer" "topology")
+TARGET_DIR="$SCRIPT_DIR/../src"
 
 # start:
-echo "Formatting TACOS Codebase:"
+echo "Formatting TACOS Codebase..."
 
-for folder in "${folders[@]}"; do
-    printf "\tFormatting $folder:\n"
-    find "$TARGET_DIR/$folder" \( -name "*.cpp" -o -name "*.h" \) -exec \
-        clang-format -style=file -i {} \;
-done
+# format everything inside `src` directory
+find "$TARGET_DIR" \( -name "*.cpp" -o -name "*.h" \) -exec \
+    clang-format -style=file -i {} \;
 
-# run clang-format for `co# # finalize
+# finalize
 echo "Formatting Done."

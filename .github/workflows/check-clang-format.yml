@@ -24,30 +24,29 @@ jobs:
 
     - name: Check format of `collective` directory
       run: |
-        find collective -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
+        find src/collective -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
           xargs -0L1 clang-format -style=file --dry-run -Werror
 
     - name: Check format of `helper` directory
       run: |
-        find helper -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
+        find src/helper -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
           xargs -0L1 clang-format -style=file --dry-run -Werror
 
     - name: Check format of `include` directory
       run: |
-        find include -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
-          xargs -0L1 clang-format -style=file --dry-run -Werror
-
-    - name: Check format of `runner` directory
-      run: |
-        find runner -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
+        find src/include -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
           xargs -0L1 clang-format -style=file --dry-run -Werror
 
     - name: Check format of `synthesizer` directory
       run: |
-        find synthesizer -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
+        find src/synthesizer -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
           xargs -0L1 clang-format -style=file --dry-run -Werror
 
     - name: Check format of `topology` directory
       run: |
-        find topology -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
+        find src/topology -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
           xargs -0L1 clang-format -style=file --dry-run -Werror
+
+    - name: Check format of `tacos.cpp`
+      run: |
+        clang-format -style=file --dry-run -Werror src/tacos.cpp
