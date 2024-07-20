@@ -35,7 +35,7 @@ set_target_properties(tacos PROPERTIES
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
 # Path to header files
-target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/include/tacos)
+target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Link to external libraries
 target_link_libraries(tacos PUBLIC yaml-cpp)

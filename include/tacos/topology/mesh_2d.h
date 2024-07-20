@@ -5,11 +5,11 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include "Topology.h"
+#include <tacos/topology/topology.h>
 
 namespace Tacos {
-class Torus2D final : public Topology {
+class Mesh2D final : public Topology {
   public:
-    Torus2D(int width, int height, LinkAlphaBeta linkAlphaBeta) noexcept;
+    Mesh2D(int width, int height, LinkAlphaBeta linkAlphaBeta) noexcept;
 };
 }  // namespace Tacos

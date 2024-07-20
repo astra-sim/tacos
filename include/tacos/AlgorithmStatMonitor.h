@@ -5,8 +5,8 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include "Topology.h"
-#include "Typing.h"
+#include <tacos/topology/topology.h>
+#include <tacos/Typing.h>
 #include <memory>
 #include <string>
 #include <vector>

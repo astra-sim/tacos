@@ -3,16 +3,16 @@ This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
-#include "AlgorithmStatMonitor.h"
-#include "AllGather.h"
-#include "Hypercube3D.h"
-#include "LinkUsageTracker.h"
-#include "Mesh2D.h"
-#include "TacosGreedy.h"
-#include "Timer.h"
-#include "Torus2D.h"
-#include "Torus3D.h"
 #include <iostream>
+#include <tacos/AlgorithmStatMonitor.h>
+#include <tacos/AllGather.h>
+#include <tacos/LinkUsageTracker.h>
+#include <tacos/TacosGreedy.h>
+#include <tacos/Timer.h>
+#include <tacos/topology/hypercube_3d.h>
+#include <tacos/topology/mesh_2d.h>
+#include <tacos/topology/torus_2d.h>
+#include <tacos/topology/torus_3d.h>
 
 using namespace Tacos;
 

@@ -5,11 +5,11 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include "Collective.h"
+#include <tacos/topology/topology.h>
 
 namespace Tacos {
-class AllGather final : public Collective {
+class Hypercube3D final : public Topology {
   public:
-    explicit AllGather(int npusCount, ChunkSize chunkSize = 1, int collectivesCount = 1) noexcept;
+    Hypercube3D(int size_x, int size_y, int size_z, LinkAlphaBeta linkAlphaBeta) noexcept;
 };
 }  // namespace Tacos

@@ -5,12 +5,12 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include "AlgorithmStatMonitor.h"
-#include "Collective.h"
-#include "EventQueue.h"
-#include "LinkUsageTracker.h"
-#include "TacosNetwork.h"
-#include "Topology.h"
+#include <tacos/AlgorithmStatMonitor.h>
+#include <tacos/Collective.h>
+#include <tacos/EventQueue.h>
+#include <tacos/LinkUsageTracker.h>
+#include <tacos/TacosNetwork.h>
+#include <tacos/topology/topology.h>
 #include <array>
 #include <memory>
 

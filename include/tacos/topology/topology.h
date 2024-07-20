@@ -5,7 +5,7 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include "Typing.h"
+#include <tacos/Typing.h>
 #include <vector>
 
 namespace Tacos {

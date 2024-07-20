@@ -5,7 +5,7 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include "Topology.h"
+#include <tacos/topology/topology.h>
 
 namespace Tacos {
 class Torus3D final : public Topology {
