@@ -8,14 +8,19 @@ set -e
 
 # find the absolute path to this script
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
-TARGET_DIR="$SCRIPT_DIR/../src"
+PROJECT_DIR="$SCRIPT_DIR/.."
 
 # start:
 echo "Formatting TACOS Codebase..."
 
 # format everything inside `src` directory
-find "$TARGET_DIR" \( -name "*.cpp" -o -name "*.h" \) -exec \
+printf "\tFormatting src directory...\n"
+find "$PROJECT_DIR"/src \( -name "*.cpp" -o -name "*.h" \) -exec \
     clang-format -style=file -i {} \;
+
+  printf "\tFormatting include directory...\n"
+  find "$PROJECT_DIR"/include \( -name "*.cpp" -o -name "*.h" \) -exec \
+      clang-format -style=file -i {} \;
 
 # finalize
 echo "Formatting Done."

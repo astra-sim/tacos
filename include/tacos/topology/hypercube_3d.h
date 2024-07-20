@@ -12,4 +12,4 @@ class Hypercube3D final : public Topology {
   public:
     Hypercube3D(int size_x, int size_y, int size_z, Bandwidth bandwidth, Latency latency) noexcept;
 };
-}  // namespace Tacos
+}  // namespace tacos

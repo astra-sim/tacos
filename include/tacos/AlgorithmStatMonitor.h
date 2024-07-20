@@ -5,10 +5,10 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include <tacos/topology/topology.h>
-#include <tacos/types.h>
 #include <memory>
 #include <string>
+#include <tacos/topology/topology.h>
+#include <tacos/types.h>
 #include <vector>
 
 namespace tacos {
@@ -31,4 +31,4 @@ class AlgorithmStatMonitor {
     std::shared_ptr<Topology> topology;
 };
 
-}  // namespace Tacos
+}  // namespace tacos

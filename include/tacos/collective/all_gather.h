@@ -5,11 +5,11 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include <tacos/Collective.h>
+#include <tacos/collective/collective.h>
 
 namespace tacos {
 class AllGather final : public Collective {
   public:
     explicit AllGather(int npus_count, ChunkSize chunkSize = 1, int collectivesCount = 1) noexcept;
 };
-}  // namespace Tacos
+}  // namespace tacos

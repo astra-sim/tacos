@@ -5,16 +5,18 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include <tacos/topology/topology.h>
-#include <tacos/types.h>
 #include <algorithm>
 #include <memory>
 #include <random>
+#include <tacos/topology/topology.h>
+#include <tacos/types.h>
 #include <vector>
 
 namespace tacos {
 class TacosNetwork {
   public:
+    using NpuId = Topology::NpuId;
+
     TacosNetwork(std::shared_ptr<Topology> topology, ChunkSize chunkSize) noexcept;
 
     std::vector<NpuId> backtrack_source_npus(NpuId dest, bool shuffle = true) noexcept;
@@ -25,9 +27,9 @@ class TacosNetwork {
 
     void reset() noexcept;
 
-    Time transmission_time(LinkId link) const noexcept;
+    EventQueue::Time transmission_time(LinkId link) const noexcept;
 
-    void setLinkTime(LinkId link, Time time) noexcept;
+    void setLinkTime(LinkId link, EventQueue::Time time) noexcept;
 
     ChunkId processingChunk(LinkId link) const noexcept;
 
@@ -36,7 +38,7 @@ class TacosNetwork {
   private:
     std::shared_ptr<Topology> topology;
 
-    std::vector<std::vector<Time>> linkTimes;
+    std::vector<std::vector<EventQueue::Time>> linkTimes;
     std::vector<std::vector<ChunkId>> processingChunks;
     std::vector<std::vector<bool>> backtrackingTopology;
     size_t topologyBytesCount;
@@ -48,4 +50,4 @@ class TacosNetwork {
     std::random_device randomDevice;
     std::default_random_engine randomEngine{randomDevice()};
 };
-}  // namespace Tacos
+}  // namespace tacos

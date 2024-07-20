@@ -5,12 +5,19 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include <tacos/types.h>
 #include <set>
+#include <tacos/topology/topology.h>
+#include <tacos/types.h>
 
 namespace tacos {
+
 class Collective {
   public:
+    /// types
+    using NpuId = Topology::NpuId;
+
+    /// New types
+
     using CollectiveSet = std::set<std::pair<ChunkId, NpuId>>;
 
     explicit Collective(ChunkSize chunkSize) noexcept;
@@ -35,4 +42,4 @@ class Collective {
     CollectiveSet precondition;
     CollectiveSet postcondition;
 };
-}  // namespace Tacos
+}  // namespace tacos

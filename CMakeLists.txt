@@ -42,10 +42,10 @@ target_link_libraries(tacos PUBLIC yaml-cpp)
 
 # List all source files to be compiled
 file(GLOB tacos_srcs
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/helper/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/topology/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/collective/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/event_queue/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/synthesizer/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/topology/*.cpp
 )
 target_sources(tacos PRIVATE ${tacos_srcs})
 target_sources(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/tacos.cpp)

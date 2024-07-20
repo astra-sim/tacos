@@ -22,31 +22,12 @@ jobs:
     - name: Clone repository
       uses: actions/checkout@v4
 
-    - name: Check format of `collective` directory
+    - name: Check format of `src` directory
       run: |
-        find src/collective -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
-          xargs -0L1 clang-format -style=file --dry-run -Werror
-
-    - name: Check format of `helper` directory
-      run: |
-        find src/helper -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
+        find src -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
           xargs -0L1 clang-format -style=file --dry-run -Werror
 
     - name: Check format of `include` directory
       run: |
-        find src/include -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
+        find include -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
           xargs -0L1 clang-format -style=file --dry-run -Werror
-
-    - name: Check format of `synthesizer` directory
-      run: |
-        find src/synthesizer -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
-          xargs -0L1 clang-format -style=file --dry-run -Werror
-
-    - name: Check format of `topology` directory
-      run: |
-        find src/topology -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
-          xargs -0L1 clang-format -style=file --dry-run -Werror
-
-    - name: Check format of `tacos.cpp`
-      run: |
-        clang-format -style=file --dry-run -Werror src/tacos.cpp

@@ -5,6 +5,7 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
+#include <tacos/event_queue/event_queue.h>
 #include <tacos/types.h>
 #include <vector>
 
@@ -12,6 +13,14 @@ namespace tacos {
 
 class Topology {
   public:
+    /// NPU id = 0, 1, 2, ...
+    using NpuId = int;
+
+    /// Topology representation
+    using Latency = double;    // us
+    using Bandwidth = double;  // GB/s
+    using Beta = double;       // us/MB
+
     /**
      * Create new base topology without any NPU or link connectivity.
      */
@@ -35,7 +44,7 @@ class Topology {
      *
      * @return transmission time of chunk_size from src -> dest (in us)
      */
-    [[nodiscard]] Time transmission_time(NpuId src, NpuId dest, ChunkSize chunk_size) const noexcept;
+    [[nodiscard]] EventQueue::Time transmission_time(NpuId src, NpuId dest, ChunkSize chunk_size) const noexcept;
 
     /**
      * Check if src -> dest link exists.
@@ -76,7 +85,7 @@ class Topology {
   protected:
     /// number of NPUs in the topology
     int _npus_count = -1;
-    
+
     /**
      * Set npus_count to a specific value,
      * and initialize topology, latency, and bandwidth vectors
@@ -116,12 +125,12 @@ class Topology {
     std::vector<std::vector<bool>> _connected;
 
     /// link latency (in us)
-    std::vector<std::vector<LinkWeight>> _latencies;
+    std::vector<std::vector<Latency>> _latencies;
 
     /// link bandwidth (in GB/s)
-    std::vector<std::vector<LinkWeight>> _bandwidths;
+    std::vector<std::vector<Bandwidth>> _bandwidths;
 
     /// link beta (reciprocal of bandwidth), i.e., MB/us
-    std::vector<std::vector<LinkWeight>> _betas;
+    std::vector<std::vector<Beta>> _betas;
 };
-}  // namespace Tacos
+}  // namespace tacos

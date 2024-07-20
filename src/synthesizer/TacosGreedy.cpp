@@ -29,7 +29,7 @@ TacosGreedy::TacosGreedy(const std::shared_ptr<Topology> topology,
     network = std::make_unique<TacosNetwork>(topology, chunkSize);
 }
 
-Time TacosGreedy::solve() noexcept {
+EventQueue::Time TacosGreedy::solve() noexcept {
     // allocate memory for contains
     auto contains = std::make_shared<Contains>(chunksCount, std::vector<bool>(npus_count, false));
 
@@ -39,11 +39,8 @@ Time TacosGreedy::solve() noexcept {
     }
 
     // mark current time
-    Time currentTime = 0;
-    Time collectiveTime = 0;
-
-    // initialize event queue
-    eventQueue.schedule(0);
+    EventQueue::Time currentTime = 0;
+    EventQueue::Time collectiveTime = 0;
 
     while (!eventQueue.empty()) {
         // get current time
@@ -77,7 +74,7 @@ Time TacosGreedy::solve() noexcept {
 
         for (auto [chunk, dest] : *requests) {
             const auto incomingNpus = network->backtrack_source_npus(dest);
-            auto candidateLinks = std::set<std::pair<LinkId, Time>>();
+            auto candidateLinks = std::set<std::pair<LinkId, EventQueue::Time>>();
 
             // choose candidate links by iterating over incoming NPUs
             for (auto src : incomingNpus) {
@@ -138,7 +135,7 @@ std::shared_ptr<TacosGreedy::RequestSet> TacosGreedy::initializeRequests(
 }
 
 bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
-                                      const Time currentTime,
+                                      const EventQueue::Time currentTime,
                                       std::shared_ptr<Contains> contains) noexcept {
     auto totalArrival = 0;
     auto arrivalsCount = 0;
@@ -237,7 +234,7 @@ bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
     return (arrivalsCount > 0) || (replacedCount > 0);  // true if any arrival or replacement happens
 }
 
-std::pair<LinkId, Time> TacosGreedy::selectBestLink(const CandidateLinkSet& candidateLinks) noexcept {
+std::pair<LinkId, EventQueue::Time> TacosGreedy::selectBestLink(const CandidateLinkSet& candidateLinks) noexcept {
     auto minLinkTime = std::numeric_limits<double>::max();
     LinkId selectedLink;
 

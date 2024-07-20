@@ -5,10 +5,10 @@ LICENSE file in the root directory of this source tree.
 
 #include <iostream>
 #include <tacos/AlgorithmStatMonitor.h>
-#include <tacos/AllGather.h>
 #include <tacos/LinkUsageTracker.h>
 #include <tacos/TacosGreedy.h>
-#include <tacos/Timer.h>
+#include <tacos/event_queue/timer.h>
+#include <tacos/collective/all_gather.h>
 #include <tacos/topology/mesh_2d.h>
 
 using namespace tacos;
@@ -40,7 +40,7 @@ int main() {
     auto linkUsageTracker = std::make_shared<LinkUsageTracker>();
 
     // create timer
-    auto solverTimer = Timer("PathSolver");
+    auto solverTimer = Timer();
 
     // create solver and solve
     solverTimer.start();
@@ -49,7 +49,7 @@ int main() {
     solverTimer.stop();
 
     // print result
-    auto time = solverTimer.getTime("ms");
+    auto time = solverTimer.elapsed_time();
     std::cout << std::endl;
     std::cout << "Time to solve: " << time << " ms" << std::endl;
     std::cout << "All-Gather Time: " << collectiveTime << std::endl;

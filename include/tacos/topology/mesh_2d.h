@@ -12,4 +12,4 @@ class Mesh2D final : public Topology {
   public:
     Mesh2D(int width, int height, Bandwidth bandwidth, Latency latency) noexcept;
 };
-}  // namespace Tacos
+}  // namespace tacos

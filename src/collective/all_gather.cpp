@@ -4,7 +4,7 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include <cassert>
-#include <tacos/AllGather.h>
+#include <tacos/collective/all_gather.h>
 
 using namespace tacos;
 

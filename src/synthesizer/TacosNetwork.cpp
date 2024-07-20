@@ -17,7 +17,7 @@ TacosNetwork::TacosNetwork(const std::shared_ptr<Topology> topology, const Chunk
     npus_count = topology->npus_count();
 
     // initialize 2D vectors
-    linkTimes = decltype(linkTimes)(npus_count, std::vector<Time>(npus_count, -1));
+    linkTimes = decltype(linkTimes)(npus_count, std::vector<EventQueue::Time>(npus_count, -1));
     processingChunks = decltype(processingChunks)(npus_count, std::vector<ChunkId>(npus_count, -1));
     backtrackingTopology = decltype(backtrackingTopology)(npus_count, std::vector<bool>(npus_count, false));
 
@@ -25,7 +25,7 @@ TacosNetwork::TacosNetwork(const std::shared_ptr<Topology> topology, const Chunk
     reset();
 }
 
-std::vector<NpuId> TacosNetwork::backtrack_source_npus(const NpuId dest, const bool shuffle) noexcept {
+std::vector<Topology::NpuId> TacosNetwork::backtrack_source_npus(const NpuId dest, const bool shuffle) noexcept {
     assert(0 <= dest < npus_count);
 
     auto incomingNpus = std::vector<NpuId>();
@@ -44,7 +44,7 @@ std::vector<NpuId> TacosNetwork::backtrack_source_npus(const NpuId dest, const b
     return incomingNpus;
 }
 
-std::vector<NpuId> TacosNetwork::outgoingNpus(const NpuId src, const bool shuffle) noexcept {
+std::vector<Topology::NpuId> TacosNetwork::outgoingNpus(const NpuId src, const bool shuffle) noexcept {
     assert(0 <= src < npus_count);
 
     auto outgoingNpus = std::vector<NpuId>();
@@ -79,7 +79,7 @@ void TacosNetwork::reset() noexcept {
     }
 }
 
-Time TacosNetwork::transmission_time(const LinkId link) const noexcept {
+EventQueue::Time TacosNetwork::transmission_time(const LinkId link) const noexcept {
     auto [src, dest] = link;
 
     assert(0 <= src && src < npus_count);
@@ -88,7 +88,7 @@ Time TacosNetwork::transmission_time(const LinkId link) const noexcept {
     return linkTimes[src][dest];
 }
 
-void TacosNetwork::setLinkTime(const LinkId link, const Time time) noexcept {
+void TacosNetwork::setLinkTime(const LinkId link, const EventQueue::Time time) noexcept {
     const auto [src, dest] = link;
 
     assert(0 <= src && src < npus_count);
