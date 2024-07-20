@@ -38,7 +38,7 @@ void LinkUsageTracker::incrementLinkUnused(const double time) noexcept {
 }
 
 void LinkUsageTracker::saveLinkUsage(const std::string& filename,
-                                     const int linksCount,
+                                     const int links_count,
                                      const double finishTime) const noexcept {
     // open new csv file
     auto csv_file = std::ofstream(filename);
@@ -64,10 +64,10 @@ void LinkUsageTracker::saveLinkUsage(const std::string& filename,
 
         // check validity
         const auto total = usage + unused;
-        assert(total == linksCount);
+        assert(total == links_count);
 
         // save
-        csv_file << time << "," << finishTime << "," << usage << "," << linksCount << std::endl;
+        csv_file << time << "," << finishTime << "," << usage << "," << links_count << std::endl;
     }
 
     for (auto it = std::next(linkUsage.begin()); it != linkUsage.end(); it++) {
@@ -80,10 +80,10 @@ void LinkUsageTracker::saveLinkUsage(const std::string& filename,
 
         // check validity
         const auto total = usage + unused;
-        assert(total == linksCount);
+        assert(total == links_count);
 
         // save
-        csv_file << time + finishTime << "," << finishTime << "," << usage << "," << linksCount << std::endl;
+        csv_file << time + finishTime << "," << finishTime << "," << usage << "," << links_count << std::endl;
     }
 
     csv_file.close();

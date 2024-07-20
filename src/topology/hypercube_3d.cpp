@@ -8,15 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-Hypercube3D::Hypercube3D(int size_x, int size_y, int size_z, LinkAlphaBeta linkAlphaBeta) noexcept : Topology() {
+Hypercube3D::Hypercube3D(int size_x, int size_y, int size_z, const Bandwidth bandwidth, const Latency latency) noexcept
+    : Topology() {
     assert(size_x > 0);
     assert(size_y > 0);
     assert(size_z > 0);
-    assert(linkAlphaBeta.first >= 0);
-    assert(linkAlphaBeta.second >= 0);
+    assert(bandwidth > 0);
+    assert(latency > 0);
 
     // compute NPUs count
-    setNpusCount(size_x * size_y * size_z);
+    set_npus_count(size_x * size_y * size_z);
 
     // connect x_wise
     for (auto z = 0; z < size_z; z++) {
@@ -26,7 +27,7 @@ Hypercube3D::Hypercube3D(int size_x, int size_y, int size_z, LinkAlphaBeta linkA
                 const auto src = (z * size_x * size_y) + (y * size_x) + x;
                 const auto dest = (z * size_x * size_y) + (y * size_x) + dest_x;
 
-                connect(src, dest, linkAlphaBeta, true);
+                connect(src, dest, bandwidth, latency, true);
             }
         }
     }
@@ -39,7 +40,7 @@ Hypercube3D::Hypercube3D(int size_x, int size_y, int size_z, LinkAlphaBeta linkA
                 const auto src = (z * size_x * size_y) + (y * size_x) + x;
                 const auto dest = (z * size_x * size_y) + (dest_y * size_x) + x;
 
-                connect(src, dest, linkAlphaBeta, true);
+                connect(src, dest, bandwidth, latency, true);
             }
         }
     }
@@ -52,7 +53,7 @@ Hypercube3D::Hypercube3D(int size_x, int size_y, int size_z, LinkAlphaBeta linkA
                 const auto src = (z * size_x * size_y) + (y * size_x) + x;
                 const auto dest = (dest_z * size_x * size_y) + (y * size_x) + x;
 
-                connect(src, dest, linkAlphaBeta, true);
+                connect(src, dest, bandwidth, latency, true);
             }
         }
     }

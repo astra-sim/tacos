@@ -8,17 +8,17 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-AllGather::AllGather(const int npusCount, const ChunkSize chunkSize, const int collectivesCount) noexcept
+AllGather::AllGather(const int npus_count, const ChunkSize chunkSize, const int collectivesCount) noexcept
     : Collective(chunkSize) {
-    assert(npusCount > 0);
+    assert(npus_count > 0);
     assert(chunkSize > 0);
     assert(collectivesCount > 0);
 
     auto chunkId = 0;
 
     for (int i = 0; i < collectivesCount; i++) {
-        for (int src = 0; src < npusCount; src++) {
-            for (int dest = 0; dest < npusCount; dest++) {
+        for (int src = 0; src < npus_count; src++) {
+            for (int dest = 0; dest < npus_count; dest++) {
                 // for every src, make one chunk
                 // and distribute this chunk to every dests
                 add(chunkId, src, dest);

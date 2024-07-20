@@ -6,7 +6,7 @@ LICENSE file in the root directory of this source tree.
 #pragma once
 
 #include <tacos/topology/topology.h>
-#include <tacos/Typing.h>
+#include <tacos/types.h>
 #include <algorithm>
 #include <memory>
 #include <random>
@@ -17,7 +17,7 @@ class TacosNetwork {
   public:
     TacosNetwork(std::shared_ptr<Topology> topology, ChunkSize chunkSize) noexcept;
 
-    std::vector<NpuId> incomingNpus(NpuId dest, bool shuffle = true) noexcept;
+    std::vector<NpuId> backtrack_source_npus(NpuId dest, bool shuffle = true) noexcept;
 
     std::vector<NpuId> outgoingNpus(NpuId src, bool shuffle = true) noexcept;
 
@@ -25,7 +25,7 @@ class TacosNetwork {
 
     void reset() noexcept;
 
-    Time linkTime(LinkId link) const noexcept;
+    Time transmission_time(LinkId link) const noexcept;
 
     void setLinkTime(LinkId link, Time time) noexcept;
 
@@ -43,7 +43,7 @@ class TacosNetwork {
 
     ChunkSize chunksSize;
 
-    int npusCount;
+    int npus_count;
 
     std::random_device randomDevice;
     std::default_random_engine randomEngine{randomDevice()};

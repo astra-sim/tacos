@@ -10,6 +10,6 @@ LICENSE file in the root directory of this source tree.
 namespace tacos {
 class AllGather final : public Collective {
   public:
-    explicit AllGather(int npusCount, ChunkSize chunkSize = 1, int collectivesCount = 1) noexcept;
+    explicit AllGather(int npus_count, ChunkSize chunkSize = 1, int collectivesCount = 1) noexcept;
 };
 }  // namespace Tacos

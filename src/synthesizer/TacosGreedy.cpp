@@ -21,7 +21,7 @@ TacosGreedy::TacosGreedy(const std::shared_ptr<Topology> topology,
       algorithmStatMonitor(algorithmStatMonitor),
       linkUsageTracker(linkUsageTracker) {
     // set values
-    npusCount = topology->getNpusCount();
+    npus_count = topology->npus_count();
     chunksCount = collective->getChunksCount();
     chunkSize = collective->getChunkSize();
 
@@ -31,7 +31,7 @@ TacosGreedy::TacosGreedy(const std::shared_ptr<Topology> topology,
 
 Time TacosGreedy::solve() noexcept {
     // allocate memory for contains
-    auto contains = std::make_shared<Contains>(chunksCount, std::vector<bool>(npusCount, false));
+    auto contains = std::make_shared<Contains>(chunksCount, std::vector<bool>(npus_count, false));
 
     // mark preconditions as true
     for (auto [chunk, npu] : collective->getPrecondition()) {
@@ -76,14 +76,14 @@ Time TacosGreedy::solve() noexcept {
         auto successfulMatchingCount = 0;
 
         for (auto [chunk, dest] : *requests) {
-            const auto incomingNpus = network->incomingNpus(dest);
+            const auto incomingNpus = network->backtrack_source_npus(dest);
             auto candidateLinks = std::set<std::pair<LinkId, Time>>();
 
             // choose candidate links by iterating over incoming NPUs
             for (auto src : incomingNpus) {
                 if ((*contains)[chunk][src]) {
                     const auto selectedLink = std::make_pair(src, dest);
-                    const auto linkWeight = topology->linkTime(selectedLink, chunkSize);
+                    const auto linkWeight = topology->transmission_time(src, dest, chunkSize);
                     const auto linkTime = currentTime + linkWeight;
                     candidateLinks.emplace(selectedLink, linkTime);
                 }
@@ -124,7 +124,7 @@ std::shared_ptr<TacosGreedy::RequestSet> TacosGreedy::initializeRequests(
 
     for (const auto [chunk, dest] : collective->getPostcondition()) {
         assert(chunk >= 0);
-        assert(0 <= dest && dest < npusCount);
+        assert(0 <= dest && dest < npus_count);
 
         if (!(*contains)[chunk][dest]) {
             // mark chunks that hasn't arrived dest yet
@@ -145,8 +145,8 @@ bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
     auto discardedCount = 0;
     auto replacedCount = 0;
 
-    for (auto src = 0; src < npusCount; src++) {
-        for (auto dest = 0; dest < npusCount; dest++) {
+    for (auto src = 0; src < npus_count; src++) {
+        for (auto dest = 0; dest < npus_count; dest++) {
             // iterate over all existing links
             if (!topology->connected(src, dest)) {
                 continue;
@@ -154,7 +154,7 @@ bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
 
             // check link time
             const auto link = std::make_pair(src, dest);
-            const auto linkTime = network->linkTime(link);
+            const auto linkTime = network->transmission_time(link);
 
             if (linkTime <= 0) {
                 // nothing is happening on this link: just skip

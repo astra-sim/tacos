@@ -5,40 +5,123 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include <tacos/Typing.h>
+#include <tacos/types.h>
 #include <vector>
 
 namespace tacos {
+
 class Topology {
   public:
+    /**
+     * Create new base topology without any NPU or link connectivity.
+     */
     Topology() noexcept;
 
-    [[nodiscard]] std::vector<NpuId> incomingNpus(NpuId dest) const noexcept;
+    /**
+     * Get the number of NPUs in the topology.
+     *
+     * @return number of NPUs
+     */
+    [[nodiscard]] int npus_count() const noexcept;
 
-    [[nodiscard]] int getNpusCount() const noexcept;
+    /**
+     * For an existing link src -> dest,
+     * calculate the time to send a chunk of chunk_size in us
+     * = latency + (beta * chunk_size)
+     *
+     * @param src src NPU id
+     * @param dest dest NPU id
+     * @param chunk_size
+     *
+     * @return transmission time of chunk_size from src -> dest (in us)
+     */
+    [[nodiscard]] Time transmission_time(NpuId src, NpuId dest, ChunkSize chunk_size) const noexcept;
 
+    /**
+     * Check if src -> dest link exists.
+     *
+     * @param src src NPU id
+     * @param dest dest NPU id
+     *
+     * @return true if link src -> dest exists, false if not.
+     */
     [[nodiscard]] bool connected(NpuId src, NpuId dest) const noexcept;
 
-    [[nodiscard]] Time linkTime(LinkId link, ChunkSize chunkSize) const noexcept;
+    /**
+     * Get bandwidth of an existing link.
+     *
+     * @param src src NPU id
+     * @param dest dest NPU id
+     *
+     * @return link bandwidth in GB/s
+     */
+    [[nodiscard]] double link_bandwidth(NpuId src, NpuId dest) const noexcept;
 
-    [[nodiscard]] bool getTopologyValue(LinkId link) const noexcept;
+    /**
+     * Get number of links in the topology.
+     *
+     * @return links_count
+     */
+    [[nodiscard]] int links_count() const noexcept;
 
-    [[nodiscard]] double getBW(NpuId src, NpuId dest);
-
-    [[nodiscard]] int getLinksCount() const noexcept;
+    /**
+     * Backtrack all NPUs that can send data to dest.
+     *
+     * @param dest dest NPU id
+     *
+     * @return list of source NPUs that can send data to dest
+     */
+    [[nodiscard]] std::vector<NpuId> backtrack_source_npus(NpuId dest) const noexcept;
 
   protected:
-    int npusCount;
+    /// number of NPUs in the topology
+    int _npus_count = -1;
+    
+    /**
+     * Set npus_count to a specific value,
+     * and initialize topology, latency, and bandwidth vectors
+     *
+     * This should be invoked before connect() or other methods or called.
+     *
+     * @param npus_count new npus_count of the topology
+     */
+    void set_npus_count(int npus_count) noexcept;
 
-    void setNpusCount(int newNpusCount) noexcept;
-
-    void connect(NpuId src, NpuId dest, LinkAlphaBeta linkAlphaBeta, bool bidirectional = false) noexcept;
+    /**
+     * Create a link from src -> dest, with bandwidth and latency.
+     * If bidirectional = true, also create dest -> src link.
+     *
+     * @param src src NPU id
+     * @param dest dest NPU id
+     * @param bandwidth bandwidth in GB/s
+     * @param latency latency in us
+     * @param bidirectional true to also establish dest -> src link, false otherwise
+     */
+    void connect(NpuId src, NpuId dest, Bandwidth bandwidth, Latency latency, bool bidirectional = false) noexcept;
 
   private:
-    std::vector<std::vector<bool>> topology;
-    std::vector<std::vector<LinkWeight>> alpha;
-    std::vector<std::vector<LinkWeight>> beta;
+    /**
+     * Convert bandwidth (GB/s) into beta (us/MB).
+     *
+     * @param bandwidth bandwidth in GB/s
+     *
+     * @return beta in us/MB
+     */
+    static Beta bandwidth_to_beta(Bandwidth bandwidth) noexcept;
 
-    int linksCount;
+    /// number of (unidirectional) links in the topology
+    int _links_count = 0;
+
+    /// whether a link (src -> dest) exists or not
+    std::vector<std::vector<bool>> _connected;
+
+    /// link latency (in us)
+    std::vector<std::vector<LinkWeight>> _latencies;
+
+    /// link bandwidth (in GB/s)
+    std::vector<std::vector<LinkWeight>> _bandwidths;
+
+    /// link beta (reciprocal of bandwidth), i.e., MB/us
+    std::vector<std::vector<LinkWeight>> _betas;
 };
 }  // namespace Tacos

@@ -14,24 +14,24 @@ TacosNetwork::TacosNetwork(const std::shared_ptr<Topology> topology, const Chunk
       chunksSize(chunkSize) {
     assert(chunkSize > 0);
 
-    npusCount = topology->getNpusCount();
+    npus_count = topology->npus_count();
 
     // initialize 2D vectors
-    linkTimes = decltype(linkTimes)(npusCount, std::vector<Time>(npusCount, -1));
-    processingChunks = decltype(processingChunks)(npusCount, std::vector<ChunkId>(npusCount, -1));
-    backtrackingTopology = decltype(backtrackingTopology)(npusCount, std::vector<bool>(npusCount, false));
+    linkTimes = decltype(linkTimes)(npus_count, std::vector<Time>(npus_count, -1));
+    processingChunks = decltype(processingChunks)(npus_count, std::vector<ChunkId>(npus_count, -1));
+    backtrackingTopology = decltype(backtrackingTopology)(npus_count, std::vector<bool>(npus_count, false));
 
     // initialize 2D backtracking topology
     reset();
 }
 
-std::vector<NpuId> TacosNetwork::incomingNpus(const NpuId dest, const bool shuffle) noexcept {
-    assert(0 <= dest < npusCount);
+std::vector<NpuId> TacosNetwork::backtrack_source_npus(const NpuId dest, const bool shuffle) noexcept {
+    assert(0 <= dest < npus_count);
 
     auto incomingNpus = std::vector<NpuId>();
 
     // check all incoming NPUs
-    for (auto src = 0; src < npusCount; src++) {
+    for (auto src = 0; src < npus_count; src++) {
         if (backtrackingTopology[src][dest]) {
             incomingNpus.push_back(src);
         }
@@ -45,12 +45,12 @@ std::vector<NpuId> TacosNetwork::incomingNpus(const NpuId dest, const bool shuff
 }
 
 std::vector<NpuId> TacosNetwork::outgoingNpus(const NpuId src, const bool shuffle) noexcept {
-    assert(0 <= src < npusCount);
+    assert(0 <= src < npus_count);
 
     auto outgoingNpus = std::vector<NpuId>();
 
     // check all outgoing NPUs
-    for (auto dest = 0; dest < npusCount; dest++) {
+    for (auto dest = 0; dest < npus_count; dest++) {
         if (backtrackingTopology[src][dest]) {
             outgoingNpus.push_back(dest);
         }
@@ -65,26 +65,25 @@ std::vector<NpuId> TacosNetwork::outgoingNpus(const NpuId src, const bool shuffl
 
 void TacosNetwork::removeLink(const LinkId link) noexcept {
     const auto [src, dest] = link;
-    assert(0 <= src && src < npusCount);
-    assert(0 <= dest && dest < npusCount);
+    assert(0 <= src && src < npus_count);
+    assert(0 <= dest && dest < npus_count);
 
     backtrackingTopology[src][dest] = false;
 }
 
 void TacosNetwork::reset() noexcept {
-    for (auto src = 0; src < npusCount; src++) {
-        for (auto dest = 0; dest < npusCount; dest++) {
-            const auto link = LinkId(src, dest);
-            backtrackingTopology[src][dest] = topology->getTopologyValue(link);
+    for (auto src = 0; src < npus_count; src++) {
+        for (auto dest = 0; dest < npus_count; dest++) {
+            backtrackingTopology[src][dest] = topology->connected(src, dest);
         }
     }
 }
 
-Time TacosNetwork::linkTime(const LinkId link) const noexcept {
+Time TacosNetwork::transmission_time(const LinkId link) const noexcept {
     auto [src, dest] = link;
 
-    assert(0 <= src && src < npusCount);
-    assert(0 <= dest && dest < npusCount);
+    assert(0 <= src && src < npus_count);
+    assert(0 <= dest && dest < npus_count);
 
     return linkTimes[src][dest];
 }
@@ -92,8 +91,8 @@ Time TacosNetwork::linkTime(const LinkId link) const noexcept {
 void TacosNetwork::setLinkTime(const LinkId link, const Time time) noexcept {
     const auto [src, dest] = link;
 
-    assert(0 <= src && src < npusCount);
-    assert(0 <= dest && dest < npusCount);
+    assert(0 <= src && src < npus_count);
+    assert(0 <= dest && dest < npus_count);
 
     linkTimes[src][dest] = time;
 }
@@ -101,8 +100,8 @@ void TacosNetwork::setLinkTime(const LinkId link, const Time time) noexcept {
 ChunkId TacosNetwork::processingChunk(const LinkId link) const noexcept {
     const auto [src, dest] = link;
 
-    assert(0 <= src && src < npusCount);
-    assert(0 <= dest && dest < npusCount);
+    assert(0 <= src && src < npus_count);
+    assert(0 <= dest && dest < npus_count);
 
     return processingChunks[src][dest];
 }
@@ -110,8 +109,8 @@ ChunkId TacosNetwork::processingChunk(const LinkId link) const noexcept {
 void TacosNetwork::setProcessingChunk(const LinkId link, const ChunkId chunk) noexcept {
     const auto [src, dest] = link;
 
-    assert(0 <= src && src < npusCount);
-    assert(0 <= dest && dest < npusCount);
+    assert(0 <= src && src < npus_count);
+    assert(0 <= dest && dest < npus_count);
 
     processingChunks[src][dest] = chunk;
 }

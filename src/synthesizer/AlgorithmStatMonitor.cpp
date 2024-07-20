@@ -11,14 +11,14 @@ LICENSE file in the root directory of this source tree.
 using namespace tacos;
 
 AlgorithmStatMonitor::AlgorithmStatMonitor(const std::shared_ptr<Topology> topology) noexcept : topology(topology) {
-    npusCount = topology->getNpusCount();
+    npus_count = topology->npus_count();
 
     // reset 2D vector
-    chunkSizeProcessedPerLink = decltype(chunkSizeProcessedPerLink)(npusCount, std::vector<ChunkSize>(npusCount, -1));
+    chunkSizeProcessedPerLink = decltype(chunkSizeProcessedPerLink)(npus_count, std::vector<ChunkSize>(npus_count, -1));
 
     // for existing links, set the value to 0
-    for (auto src = 0; src < npusCount; src++) {
-        for (auto dest = 0; dest < npusCount; dest++) {
+    for (auto src = 0; src < npus_count; src++) {
+        for (auto dest = 0; dest < npus_count; dest++) {
             if (topology->connected(src, dest)) {
                 chunkSizeProcessedPerLink[src][dest] = 0;
             }
@@ -30,8 +30,8 @@ void AlgorithmStatMonitor::incrementProcessedChunkSize(const LinkId link, const 
     const auto [src, dest] = link;
 
     // assert validity
-    assert(0 <= src && src < npusCount);
-    assert(0 <= dest && dest < npusCount);
+    assert(0 <= src && src < npus_count);
+    assert(0 <= dest && dest < npus_count);
 
     // increment processed chunk size
     chunkSizeProcessedPerLink[src][dest] += chunkSize;
@@ -44,7 +44,7 @@ void AlgorithmStatMonitor::saveProcessedChunkSize(const std::string& filename,
     YAML::Node link_loads;
 
     // FIXME: assuming devicesCount = npus_count
-    const auto devicesCount = npusCount;
+    const auto devicesCount = npus_count;
 
     link_loads["runtime"] = artime;
     link_loads["devices-count"] = devicesCount;
@@ -70,7 +70,7 @@ void AlgorithmStatMonitor::saveProcessedChunkSize(const std::string& filename,
             YAML::Node link_load;
             link_load["link"]["src"] = src;
             link_load["link"]["dest"] = dest;
-            link_load["link"]["bw"] = topology->getBW(src, dest);
+            link_load["link"]["bw"] = topology->link_bandwidth(src, dest);
             link_load["load"] = -1;
             link_load["chunk_size"] = chunkSizeMB * 2;  // FIXME: assuming All-Reduce (synthesized from All-Gather)
 

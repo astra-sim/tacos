@@ -37,7 +37,7 @@ class TacosGreedy {
     std::shared_ptr<AlgorithmStatMonitor> algorithmStatMonitor;
     std::shared_ptr<LinkUsageTracker> linkUsageTracker;
 
-    int npusCount;
+    int npus_count;
     int chunksCount;
     ChunkSize chunkSize;
 

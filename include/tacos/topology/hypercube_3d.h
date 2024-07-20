@@ -10,6 +10,6 @@ LICENSE file in the root directory of this source tree.
 namespace tacos {
 class Hypercube3D final : public Topology {
   public:
-    Hypercube3D(int size_x, int size_y, int size_z, LinkAlphaBeta linkAlphaBeta) noexcept;
+    Hypercube3D(int size_x, int size_y, int size_z, Bandwidth bandwidth, Latency latency) noexcept;
 };
 }  // namespace Tacos

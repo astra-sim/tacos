@@ -9,10 +9,7 @@ LICENSE file in the root directory of this source tree.
 #include <tacos/LinkUsageTracker.h>
 #include <tacos/TacosGreedy.h>
 #include <tacos/Timer.h>
-#include <tacos/topology/hypercube_3d.h>
 #include <tacos/topology/mesh_2d.h>
-#include <tacos/topology/torus_2d.h>
-#include <tacos/topology/torus_3d.h>
 
 using namespace tacos;
 
@@ -22,45 +19,19 @@ int main() {
     std::cout.precision(2);
 
     // construct a topology
-    //    const auto x = 8;
-    const auto x = 5;
-    const auto y = x;
-    const auto z = y;
+    const auto width = 5;
+    const auto height = 5;
+    const auto latency = 0.5;
+    const auto bandwidth = 50;
 
-    const auto bw = 50;
-    const auto bw_beta = 1'000'000 / (bw * 1024.0);
-    std::cout << bw_beta << std::endl;
-
-    //    const auto linkAlphaBeta = std::make_pair(0, 1);
-    const auto linkAlphaBeta = std::make_pair(0.5, bw_beta);
-
-    //    const auto topology = std::make_shared<Mesh2D>(x, y, linkAlphaBeta);
-    //    const auto filename = "../../Mesh2D_" + std::to_string(x) + "_" + std::to_string(y) + ".csv";
-
-    //    const auto topology = std::make_shared<Torus2D>(x, y, linkAlphaBeta);
-    //    const auto filename = "../../Torus2D_" + std::to_string(x) + "_" + std::to_string(y) + ".csv";
-
-    const auto topology = std::make_shared<Hypercube3D>(x, y, z, linkAlphaBeta);
-    const auto filename =
-        "../../Hypercube3D_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z) + ".csv";
-
-    //    const auto topology = std::make_shared<Torus3D>(x, y, z, linkAlphaBeta);
-    //    const auto filename = "../../Torus3D_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z)
-    //    + ".csv"; const auto filename = "../../Torus3D_" + std::to_string(x) + "_" + std::to_string(y) + "_" +
-    //    std::to_string(z) + ".csv";
-
-    const auto npusCount = topology->getNpusCount();
-    std::cout << "NPUs count: " << npusCount << std::endl;
+    const auto topology = std::make_shared<Mesh2D>(width, height, bandwidth, latency);
+    const auto npus_count = topology->npus_count();
+    std::cout << "NPUs count: " << npus_count << std::endl;
 
     // create collective
     const auto collectivesCount = 1;
-    const auto chunkSize = 1024.0 / (npusCount * collectivesCount);
-    //    const auto chunkSize = 0.25;
-    //    const auto chunkSize = 1;
-    //    const auto chunkSize = 1024 / npusCount;
-    //    const auto chunkSize = 8;
-    //    const auto collectivesCount = 2;
-    const auto collective = std::make_shared<AllGather>(npusCount, chunkSize, collectivesCount);
+    const auto chunkSize = 1024.0 / (npus_count * collectivesCount);
+    const auto collective = std::make_shared<AllGather>(npus_count, chunkSize, collectivesCount);
     const auto chunksCount = collective->getChunksCount();
     std::cout << "Chunks count: " << chunksCount << std::endl;
 
@@ -84,11 +55,8 @@ int main() {
     std::cout << "All-Gather Time: " << collectiveTime << std::endl;
     std::cout << "All-Reduce Time: " << collectiveTime * 2 << std::endl;
 
-    const auto linksCount = topology->getLinksCount();
-    std::cout << "Links: " << linksCount << std::endl;
-
-    // save link usage
-    linkUsageTracker->saveLinkUsage(filename, linksCount, collectiveTime);
+    const auto links_count = topology->links_count();
+    std::cout << "Links: " << links_count << std::endl;
 
     // terminate
     return 0;

@@ -10,6 +10,6 @@ LICENSE file in the root directory of this source tree.
 namespace tacos {
 class Mesh2D final : public Topology {
   public:
-    Mesh2D(int width, int height, LinkAlphaBeta linkAlphaBeta) noexcept;
+    Mesh2D(int width, int height, Bandwidth bandwidth, Latency latency) noexcept;
 };
 }  // namespace Tacos

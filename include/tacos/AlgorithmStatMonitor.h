@@ -6,7 +6,7 @@ LICENSE file in the root directory of this source tree.
 #pragma once
 
 #include <tacos/topology/topology.h>
-#include <tacos/Typing.h>
+#include <tacos/types.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -24,7 +24,7 @@ class AlgorithmStatMonitor {
                                 std::shared_ptr<Topology> topology) const noexcept;
 
   private:
-    int npusCount;
+    int npus_count;
 
     std::vector<std::vector<ChunkSize>> chunkSizeProcessedPerLink;
 

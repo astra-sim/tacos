@@ -5,7 +5,7 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include <tacos/Typing.h>
+#include <tacos/types.h>
 #include <functional>
 #include <queue>
 #include <set>

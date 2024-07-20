@@ -11,6 +11,10 @@ namespace tacos {
 // Time
 using Time = double;
 
+using Latency = double;  // us
+using Bandwidth = double;  // GB/s
+using Beta = double;  // us/MB
+
 // Topology
 using NpuId = int;
 using LinkId = std::pair<NpuId, NpuId>;
