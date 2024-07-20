@@ -12,15 +12,15 @@ LICENSE file in the root directory of this source tree.
 
 namespace tacos {
 
+/// Time = us;
+using Time = double;
+
 class EventQueue {
     /**
      * EventQueue used in TACOS project manages the time of the events,
      * not the events themselves.
      */
   public:
-    /// Time = us;
-    using Time = double;
-
     /***
      * Create a new event queue
      * with one event scheduled at t = 0.
@@ -52,11 +52,11 @@ class EventQueue {
   private:
     /// current time of the event queue
     Time _current_time = 0;
-    
+
     /// set of scheduled event times, unsorted
     /// Used for fast lookup of the event times already scheduled
     std::set<Time> _event_times;
-    
+
     /// scheduled event times, sorted
     /// Used for fast retrieval of the next event time
     std::priority_queue<Time, std::vector<Time>, std::greater<>> _event_times_sorted;

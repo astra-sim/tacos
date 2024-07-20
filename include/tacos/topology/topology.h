@@ -6,21 +6,24 @@ LICENSE file in the root directory of this source tree.
 #pragma once
 
 #include <tacos/event_queue/event_queue.h>
-#include <tacos/types.h>
+
 #include <vector>
 
 namespace tacos {
 
+/// NPU id = 0, 1, 2, ...
+using NpuId = int;
+
+/// Topology representation
+using Latency = double;    // us
+using Bandwidth = double;  // GB/s
+using Beta = double;       // us/MB
+
+/// Chunk Size = MB
+using ChunkSize = double;
+
 class Topology {
   public:
-    /// NPU id = 0, 1, 2, ...
-    using NpuId = int;
-
-    /// Topology representation
-    using Latency = double;    // us
-    using Bandwidth = double;  // GB/s
-    using Beta = double;       // us/MB
-
     /**
      * Create new base topology without any NPU or link connectivity.
      */
@@ -44,7 +47,7 @@ class Topology {
      *
      * @return transmission time of chunk_size from src -> dest (in us)
      */
-    [[nodiscard]] EventQueue::Time transmission_time(NpuId src, NpuId dest, ChunkSize chunk_size) const noexcept;
+    [[nodiscard]] Time transmission_time(NpuId src, NpuId dest, ChunkSize chunk_size) const noexcept;
 
     /**
      * Check if src -> dest link exists.

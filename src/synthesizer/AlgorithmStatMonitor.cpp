@@ -26,9 +26,9 @@ AlgorithmStatMonitor::AlgorithmStatMonitor(const std::shared_ptr<Topology> topol
     }
 }
 
-void AlgorithmStatMonitor::incrementProcessedChunkSize(const LinkId link, const ChunkSize chunkSize) noexcept {
-    const auto [src, dest] = link;
-
+void AlgorithmStatMonitor::incrementProcessedChunkSize(const NpuId src,
+                                                       const NpuId dest,
+                                                       const ChunkSize chunkSize) noexcept {
     // assert validity
     assert(0 <= src && src < npus_count);
     assert(0 <= dest && dest < npus_count);

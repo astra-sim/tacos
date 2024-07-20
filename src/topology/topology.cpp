@@ -10,7 +10,7 @@ using namespace tacos;
 
 Topology::Topology() noexcept = default;
 
-Topology::Beta Topology::bandwidth_to_beta(const Bandwidth bandwidth) noexcept {
+Beta Topology::bandwidth_to_beta(const Bandwidth bandwidth) noexcept {
     assert(bandwidth > 0);
 
     return 1'000'000 / (bandwidth * 1024);  // GB/s to us/MB
@@ -66,9 +66,7 @@ void Topology::connect(const NpuId src,
     }
 }
 
-EventQueue::Time Topology::transmission_time(const NpuId src,
-                                             const NpuId dest,
-                                             const ChunkSize chunk_size) const noexcept {
+Time Topology::transmission_time(const NpuId src, const NpuId dest, const ChunkSize chunk_size) const noexcept {
     assert(_npus_count > 0);
     assert(0 <= src && src < _npus_count);
     assert(0 <= dest && dest < _npus_count);
@@ -102,7 +100,7 @@ int Topology::links_count() const noexcept {
     return _links_count;
 }
 
-std::vector<Topology::NpuId> Topology::backtrack_source_npus(const NpuId dest) const noexcept {
+std::vector<NpuId> Topology::backtrack_source_npus(const NpuId dest) const noexcept {
     assert(_npus_count > 0);
     assert(0 <= dest && dest < _npus_count);
 

@@ -7,8 +7,8 @@ LICENSE file in the root directory of this source tree.
 #include <tacos/AlgorithmStatMonitor.h>
 #include <tacos/LinkUsageTracker.h>
 #include <tacos/TacosGreedy.h>
-#include <tacos/event_queue/timer.h>
 #include <tacos/collective/all_gather.h>
+#include <tacos/event_queue/timer.h>
 #include <tacos/topology/mesh_2d.h>
 
 using namespace tacos;

@@ -29,7 +29,7 @@ TacosGreedy::TacosGreedy(const std::shared_ptr<Topology> topology,
     network = std::make_unique<TacosNetwork>(topology, chunkSize);
 }
 
-EventQueue::Time TacosGreedy::solve() noexcept {
+Time TacosGreedy::solve() noexcept {
     // allocate memory for contains
     auto contains = std::make_shared<Contains>(chunksCount, std::vector<bool>(npus_count, false));
 
@@ -39,8 +39,8 @@ EventQueue::Time TacosGreedy::solve() noexcept {
     }
 
     // mark current time
-    EventQueue::Time currentTime = 0;
-    EventQueue::Time collectiveTime = 0;
+    Time currentTime = 0;
+    Time collectiveTime = 0;
 
     while (!eventQueue.empty()) {
         // get current time
@@ -74,7 +74,7 @@ EventQueue::Time TacosGreedy::solve() noexcept {
 
         for (auto [chunk, dest] : *requests) {
             const auto incomingNpus = network->backtrack_source_npus(dest);
-            auto candidateLinks = std::set<std::pair<LinkId, EventQueue::Time>>();
+            auto candidateLinks = std::set<std::pair<LinkId, Time>>();
 
             // choose candidate links by iterating over incoming NPUs
             for (auto src : incomingNpus) {
@@ -93,15 +93,16 @@ EventQueue::Time TacosGreedy::solve() noexcept {
 
             // select shortest link -- matching made
             const auto [selectedLink, linkTime] = selectBestLink(candidateLinks);
+            const auto [link_src, link_dest] = selectedLink;
 
             // update chunk and link time
             successfulMatchingCount++;
-            network->setProcessingChunk(selectedLink, chunk);
-            network->setLinkTime(selectedLink, linkTime);
+            network->setProcessingChunk(link_src, link_dest, chunk);
+            network->setLinkTime(link_src, link_dest, linkTime);
             eventQueue.schedule(linkTime);
 
             // remove this link from matching -- prevent congestion
-            network->removeLink(selectedLink);
+            network->removeLink(link_src, link_dest);
         }
 
         DebugLog(std::cout << "Scheduled: " << successfulMatchingCount << " / " << totalChunksCount << std::endl);
@@ -135,7 +136,7 @@ std::shared_ptr<TacosGreedy::RequestSet> TacosGreedy::initializeRequests(
 }
 
 bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
-                                      const EventQueue::Time currentTime,
+                                      const Time currentTime,
                                       std::shared_ptr<Contains> contains) noexcept {
     auto totalArrival = 0;
     auto arrivalsCount = 0;
@@ -151,7 +152,7 @@ bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
 
             // check link time
             const auto link = std::make_pair(src, dest);
-            const auto linkTime = network->transmission_time(link);
+            const auto linkTime = network->transmission_time(src, dest);
 
             if (linkTime <= 0) {
                 // nothing is happening on this link: just skip
@@ -161,7 +162,7 @@ bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
 
             if (currentTime < linkTime) {
                 // transfer in progress: cannot use this link at this point
-                network->removeLink(link);
+                network->removeLink(src, dest);
                 linkUsageTracker->incrementLinkUsage(currentTime);
                 continue;
             }
@@ -171,7 +172,7 @@ bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
             totalArrival++;
 
             // check this chunk should be replaced
-            auto chunk = network->processingChunk(link);
+            auto chunk = network->processingChunk(src, dest);
 
             if ((*contains)[chunk][dest]) {
                 // already contains this chunk
@@ -194,7 +195,7 @@ bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
                     // this src -> dest has already been finished
                     // nothing to send
                     discardedCount++;
-                    network->removeLink(link);  // disable this link (for optimization)
+                    network->removeLink(src, dest);  // disable this link (for optimization)
                     continue;
                 }
 
@@ -212,11 +213,11 @@ bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
             (*contains)[chunk][dest] = true;  // chunk arrived at dest
 
             // increment processed chunk size
-            algorithmStatMonitor->incrementProcessedChunkSize(link, chunkSize);
+            algorithmStatMonitor->incrementProcessedChunkSize(src, dest, chunkSize);
 
             // reset chunk and link time
-            network->setProcessingChunk(link, -1);
-            network->setLinkTime(link, -1);
+            network->setProcessingChunk(src, dest, -1);
+            network->setLinkTime(src, dest, -1);
 
             // remove this (chunk, dest) from the request pool
             auto idx = std::find(requests->begin(), requests->end(), std::make_pair(chunk, dest));
@@ -234,7 +235,7 @@ bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
     return (arrivalsCount > 0) || (replacedCount > 0);  // true if any arrival or replacement happens
 }
 
-std::pair<LinkId, EventQueue::Time> TacosGreedy::selectBestLink(const CandidateLinkSet& candidateLinks) noexcept {
+std::pair<TacosGreedy::LinkId, Time> TacosGreedy::selectBestLink(const CandidateLinkSet& candidateLinks) noexcept {
     auto minLinkTime = std::numeric_limits<double>::max();
     LinkId selectedLink;
 

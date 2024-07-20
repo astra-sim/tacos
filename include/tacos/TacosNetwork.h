@@ -9,13 +9,14 @@ LICENSE file in the root directory of this source tree.
 #include <memory>
 #include <random>
 #include <tacos/topology/topology.h>
-#include <tacos/types.h>
+
+#include <tacos/collective/collective.h>
 #include <vector>
 
 namespace tacos {
 class TacosNetwork {
   public:
-    using NpuId = Topology::NpuId;
+    using NpuId = NpuId;
 
     TacosNetwork(std::shared_ptr<Topology> topology, ChunkSize chunkSize) noexcept;
 
@@ -23,22 +24,22 @@ class TacosNetwork {
 
     std::vector<NpuId> outgoingNpus(NpuId src, bool shuffle = true) noexcept;
 
-    void removeLink(LinkId link) noexcept;
+    void removeLink(NpuId src, NpuId dest) noexcept;
 
     void reset() noexcept;
 
-    EventQueue::Time transmission_time(LinkId link) const noexcept;
+    Time transmission_time(NpuId src, NpuId dest) const noexcept;
 
-    void setLinkTime(LinkId link, EventQueue::Time time) noexcept;
+    void setLinkTime(NpuId src, NpuId dest, Time time) noexcept;
 
-    ChunkId processingChunk(LinkId link) const noexcept;
+    ChunkId processingChunk(NpuId src, NpuId dest) const noexcept;
 
-    void setProcessingChunk(LinkId link, ChunkId chunk) noexcept;
+    void setProcessingChunk(NpuId src, NpuId dest, ChunkId chunk) noexcept;
 
   private:
     std::shared_ptr<Topology> topology;
 
-    std::vector<std::vector<EventQueue::Time>> linkTimes;
+    std::vector<std::vector<Time>> linkTimes;
     std::vector<std::vector<ChunkId>> processingChunks;
     std::vector<std::vector<bool>> backtrackingTopology;
     size_t topologyBytesCount;

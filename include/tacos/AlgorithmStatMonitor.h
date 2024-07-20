@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 #include <memory>
 #include <string>
 #include <tacos/topology/topology.h>
-#include <tacos/types.h>
+
 #include <vector>
 
 namespace tacos {
@@ -17,7 +17,7 @@ class AlgorithmStatMonitor {
   public:
     explicit AlgorithmStatMonitor(std::shared_ptr<Topology> topology) noexcept;
 
-    void incrementProcessedChunkSize(LinkId link, ChunkSize chunkSize) noexcept;
+    void incrementProcessedChunkSize(NpuId src, NpuId dest, ChunkSize chunkSize) noexcept;
 
     void saveProcessedChunkSize(const std::string& filename,
                                 double artime,

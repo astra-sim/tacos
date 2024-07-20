@@ -8,27 +8,27 @@ LICENSE file in the root directory of this source tree.
 #include <array>
 #include <memory>
 #include <tacos/AlgorithmStatMonitor.h>
-#include <tacos/event_queue/event_queue.h>
 #include <tacos/LinkUsageTracker.h>
 #include <tacos/TacosNetwork.h>
 #include <tacos/collective/collective.h>
+#include <tacos/event_queue/event_queue.h>
 #include <tacos/topology/topology.h>
 
 namespace tacos {
 class TacosGreedy {
   public:
-    using NpuId = Topology::NpuId;
+    using LinkId = std::pair<NpuId, NpuId>;
 
     TacosGreedy(std::shared_ptr<Topology> topology,
                 std::shared_ptr<Collective> collective,
                 std::shared_ptr<AlgorithmStatMonitor> algStatMonitor,
                 std::shared_ptr<LinkUsageTracker> linkUsageTracker) noexcept;
 
-    [[nodiscard]] EventQueue::Time solve() noexcept;
+    [[nodiscard]] Time solve() noexcept;
 
   private:
     using RequestSet = std::vector<std::pair<ChunkId, NpuId>>;
-    using CandidateLinkSet = std::set<std::pair<LinkId, EventQueue::Time>>;
+    using CandidateLinkSet = std::set<std::pair<LinkId, Time>>;
     using Contains = std::vector<std::vector<bool>>;
 
     std::unique_ptr<TacosNetwork> network;
@@ -49,9 +49,9 @@ class TacosGreedy {
     std::shared_ptr<TacosGreedy::RequestSet> initializeRequests(std::shared_ptr<Contains> contains) noexcept;
 
     bool prepareBacktracking(std::shared_ptr<RequestSet> requests,
-                             EventQueue::Time currentTime,
+                             Time currentTime,
                              std::shared_ptr<Contains> contains) noexcept;
 
-    static std::pair<LinkId, EventQueue::Time> selectBestLink(const CandidateLinkSet& candidateLinks) noexcept;
+    static std::pair<LinkId, Time> selectBestLink(const CandidateLinkSet& candidateLinks) noexcept;
 };
 }  // namespace tacos

@@ -7,17 +7,14 @@ LICENSE file in the root directory of this source tree.
 
 #include <set>
 #include <tacos/topology/topology.h>
-#include <tacos/types.h>
 
 namespace tacos {
 
+/// Chunk Id = 0, 1, 2, ...
+using ChunkId = int;
+
 class Collective {
   public:
-    /// types
-    using NpuId = Topology::NpuId;
-
-    /// New types
-
     using CollectiveSet = std::set<std::pair<ChunkId, NpuId>>;
 
     explicit Collective(ChunkSize chunkSize) noexcept;

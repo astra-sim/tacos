@@ -4,8 +4,8 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include <cassert>
-#include <tacos/event_queue/event_queue.h>
 #include <iostream>
+#include <tacos/event_queue/event_queue.h>
 
 using namespace tacos;
 
@@ -28,7 +28,7 @@ void EventQueue::schedule(const Time event_time) noexcept {
     _event_times_sorted.push(event_time);
 }
 
-EventQueue::Time EventQueue::pop() noexcept {
+Time EventQueue::pop() noexcept {
     assert(!_event_times.empty());
 
     // get next event time
