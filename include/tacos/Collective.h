@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 #include <tacos/Typing.h>
 #include <set>
 
-namespace Tacos {
+namespace tacos {
 class Collective {
   public:
     using CollectiveSet = std::set<std::pair<ChunkId, NpuId>>;

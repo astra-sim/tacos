@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 #include <set>
 #include <vector>
 
-namespace Tacos {
+namespace tacos {
 class EventQueue {
   public:
     EventQueue() noexcept;

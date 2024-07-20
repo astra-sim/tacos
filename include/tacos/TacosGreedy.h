@@ -14,7 +14,7 @@ LICENSE file in the root directory of this source tree.
 #include <array>
 #include <memory>
 
-namespace Tacos {
+namespace tacos {
 class TacosGreedy {
   public:
     TacosGreedy(std::shared_ptr<Topology> topology,

@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 #include <tacos/AlgorithmStatMonitor.h>
 #include <yaml-cpp/yaml.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 AlgorithmStatMonitor::AlgorithmStatMonitor(const std::shared_ptr<Topology> topology) noexcept : topology(topology) {
     npusCount = topology->getNpusCount();

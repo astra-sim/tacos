@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 #include <chrono>
 #include <string>
 
-namespace Tacos {
+namespace tacos {
 class Timer {
   public:
     explicit Timer(std::string name) noexcept;

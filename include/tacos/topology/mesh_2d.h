@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 
 #include <tacos/topology/topology.h>
 
-namespace Tacos {
+namespace tacos {
 class Mesh2D final : public Topology {
   public:
     Mesh2D(int width, int height, LinkAlphaBeta linkAlphaBeta) noexcept;

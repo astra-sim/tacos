@@ -6,7 +6,7 @@ LICENSE file in the root directory of this source tree.
 #include <cassert>
 #include <tacos/AllGather.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 AllGather::AllGather(const int npusCount, const ChunkSize chunkSize, const int collectivesCount) noexcept
     : Collective(chunkSize) {

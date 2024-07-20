@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 #include <memory>
 #include <tacos/TacosNetwork.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 TacosNetwork::TacosNetwork(const std::shared_ptr<Topology> topology, const ChunkSize chunkSize) noexcept
     : topology(topology),

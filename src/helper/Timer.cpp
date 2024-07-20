@@ -6,7 +6,7 @@ LICENSE file in the root directory of this source tree.
 #include <iostream>
 #include <tacos/Timer.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 Timer::Timer(std::string name) noexcept : name(std::move(name)) {}
 

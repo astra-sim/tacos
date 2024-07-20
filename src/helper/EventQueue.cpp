@@ -6,7 +6,7 @@ LICENSE file in the root directory of this source tree.
 #include <cassert>
 #include <tacos/EventQueue.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 EventQueue::EventQueue() noexcept : currentTime(0) {
     event_queue = {};

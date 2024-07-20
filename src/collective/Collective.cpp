@@ -6,7 +6,7 @@ LICENSE file in the root directory of this source tree.
 #include <cassert>
 #include <tacos/Collective.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 Collective::Collective(const ChunkSize chunkSize) noexcept : chunkSize(chunkSize) {
     assert(chunkSize > 0);

@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 
 #include <utility>
 
-namespace Tacos {
+namespace tacos {
 // Time
 using Time = double;
 

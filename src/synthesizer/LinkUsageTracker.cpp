@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 #include <iostream>
 #include <tacos/LinkUsageTracker.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 LinkUsageTracker::LinkUsageTracker() noexcept {
     linkUsage = {};

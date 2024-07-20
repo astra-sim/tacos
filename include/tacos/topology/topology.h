@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 #include <tacos/Typing.h>
 #include <vector>
 
-namespace Tacos {
+namespace tacos {
 class Topology {
   public:
     Topology() noexcept;

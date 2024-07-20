@@ -12,7 +12,7 @@ LICENSE file in the root directory of this source tree.
 #include <random>
 #include <vector>
 
-namespace Tacos {
+namespace tacos {
 class TacosNetwork {
   public:
     TacosNetwork(std::shared_ptr<Topology> topology, ChunkSize chunkSize) noexcept;

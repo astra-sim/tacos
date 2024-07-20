@@ -6,7 +6,7 @@ LICENSE file in the root directory of this source tree.
 #include <cassert>
 #include <tacos/topology/topology.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 Topology::Topology() noexcept : npusCount(0), linksCount(0) {}
 

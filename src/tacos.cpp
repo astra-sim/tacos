@@ -14,7 +14,7 @@ LICENSE file in the root directory of this source tree.
 #include <tacos/topology/torus_2d.h>
 #include <tacos/topology/torus_3d.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 int main() {
     // set print precision
