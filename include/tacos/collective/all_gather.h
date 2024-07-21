@@ -26,7 +26,7 @@ class AllGather final : public Collective {
 
   private:
     /// number of NPUs in the target topology
-    int npus_count;
+    int _npus_count;
 
     /**
      * Generate chunks for a single All-Gather,

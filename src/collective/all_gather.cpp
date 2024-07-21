@@ -15,9 +15,9 @@ AllGather::AllGather(std::shared_ptr<Topology> topology,
     assert(chunk_size > 0);
     assert(chunks_per_collective > 0);
 
-    // set npus_count
-    npus_count = _topology->npus_count();
-    assert(npus_count > 0);
+    // fetch number of NPUs of the topology
+    _npus_count = _topology->npus_count();
+    assert(_npus_count > 0);
 
     // repeat generating all-gather
     auto current_chunk_id = 0;
@@ -31,12 +31,15 @@ AllGather::AllGather(std::shared_ptr<Topology> topology,
 }
 
 int AllGather::generate_all_gather(const int start_chunk_id) noexcept {
+    assert(start_chunk_id >= 0);
+    assert(_npus_count > 0);
+
     auto chunk_id = start_chunk_id;
 
     // for every src, make one chunk
     // distribute this chunk to all other NPUs
-    for (auto src = 0; src < npus_count; src++) {
-        for (auto dest = 0; dest < npus_count; dest++) {
+    for (auto src = 0; src < _npus_count; src++) {
+        for (auto dest = 0; dest < _npus_count; dest++) {
             if (src == dest) {
                 continue;
             }

@@ -9,9 +9,9 @@ LICENSE file in the root directory of this source tree.
 #include <memory>
 #include <tacos/AlgorithmStatMonitor.h>
 #include <tacos/LinkUsageTracker.h>
-#include <tacos/TacosNetwork.h>
 #include <tacos/collective/collective.h>
 #include <tacos/event_queue/event_queue.h>
+#include <tacos/synthesizer/time_expanded_network.h>
 #include <tacos/topology/topology.h>
 
 namespace tacos {

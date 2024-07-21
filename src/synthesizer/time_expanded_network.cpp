@@ -5,7 +5,7 @@ LICENSE file in the root directory of this source tree.
 
 #include <cassert>
 #include <memory>
-#include <tacos/TacosNetwork.h>
+#include <tacos/synthesizer/time_expanded_network.h>
 
 using namespace tacos;
 
