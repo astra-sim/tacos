@@ -47,7 +47,7 @@ class Topology {
      *
      * @return transmission time of chunk_size from src -> dest (in us)
      */
-    [[nodiscard]] Time transmission_time(NpuId src, NpuId dest, ChunkSize chunk_size) const noexcept;
+    [[nodiscard]] Time link_busy_until(NpuId src, NpuId dest, ChunkSize chunk_size) const noexcept;
 
     /**
      * Check if src -> dest link exists.

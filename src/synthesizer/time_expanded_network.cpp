@@ -9,99 +9,161 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-TacosNetwork::TacosNetwork(const std::shared_ptr<Topology> topology, const ChunkSize chunkSize) noexcept
-    : topology(topology),
-      chunksSize(chunkSize) {
-    assert(chunkSize > 0);
+TimeExpandedNetwork::TimeExpandedNetwork(std::shared_ptr<Topology> topology) noexcept : _topology(std::move(topology)) {
+    assert(_topology != nullptr);
 
-    npus_count = topology->npus_count();
+    _npus_count = _topology->npus_count();
+    assert(_npus_count > 0);
 
-    // initialize 2D vectors
-    linkTimes = decltype(linkTimes)(npus_count, std::vector<Time>(npus_count, -1));
-    processingChunks = decltype(processingChunks)(npus_count, std::vector<ChunkId>(npus_count, -1));
-    backtrackingTopology = decltype(backtrackingTopology)(npus_count, std::vector<bool>(npus_count, false));
+    // allocate LinkData memory
+    _links = decltype(_links)(_npus_count, std::vector<LinkData>(_npus_count, LinkData()));
 
-    // initialize 2D backtracking topology
+    // initialize LinkData
+    _initialize_link_data();
+
+    // initialize 2D backtracking_topology
     reset();
 }
 
-std::vector<NpuId> TacosNetwork::backtrack_source_npus(const NpuId dest, const bool shuffle) noexcept {
-    assert(0 <= dest < npus_count);
+void TimeExpandedNetwork::reset() noexcept {
+    // reset all links to be free
+    // i.e., recover the original topology connectivity
+    for (auto src = 0; src < _npus_count; src++) {
+        for (auto dest = 0; dest < _npus_count; dest++) {
 
-    auto incomingNpus = std::vector<NpuId>();
+            auto& link = _links[src][dest];
+            link.busy = false;
+        }
+    }
+}
 
-    // check all incoming NPUs
-    for (auto src = 0; src < npus_count; src++) {
-        if (backtrackingTopology[src][dest]) {
-            incomingNpus.push_back(src);
+void TimeExpandedNetwork::set_link_busy(const NpuId src, const NpuId dest) noexcept {
+    assert(0 <= src && src < _npus_count);
+    assert(0 <= dest && dest < _npus_count);
+
+    auto& link = _links[src][dest];
+    assert(link.exist);
+    assert(!link.busy);
+
+    link.busy = true;
+}
+
+std::vector<NpuId> TimeExpandedNetwork::backtrack_source_npus(const NpuId dest, const bool shuffle) noexcept {
+    // FIXME: this should check the current_time, if backtracked, < 0
+    // FIXME: if so, remove from the potential source.
+
+    assert(0 <= dest < _npus_count);
+
+    auto source_npus = std::vector<NpuId>();
+
+    // check all source NPUs that can send a chunk to the dest NPU
+    // via a free TEN link
+    for (auto src = 0; src < _npus_count; src++) {
+        if (src == dest) {
+            continue;
+        }
+
+        const auto& link = _links[src][dest];
+        if (link.exist && !link.busy) {
+            source_npus.push_back(src);
         }
     }
 
     if (shuffle) {
-        std::shuffle(incomingNpus.begin(), incomingNpus.end(), randomEngine);
+        // shuffle source_npus if shuffling is enabled
+        std::shuffle(source_npus.begin(), source_npus.end(), _random_engine);
     }
 
-    return incomingNpus;
+    return source_npus;
 }
 
-std::vector<NpuId> TacosNetwork::outgoingNpus(const NpuId src, const bool shuffle) noexcept {
-    assert(0 <= src < npus_count);
+Time TimeExpandedNetwork::link_busy_until(const NpuId src, const NpuId dest) const noexcept {
+    assert(0 <= src && src < _npus_count);
+    assert(0 <= dest && dest < _npus_count);
 
-    auto outgoingNpus = std::vector<NpuId>();
+    const auto& link = _links[src][dest];
+    assert(link.exist);
 
-    // check all outgoing NPUs
-    for (auto dest = 0; dest < npus_count; dest++) {
-        if (backtrackingTopology[src][dest]) {
-            outgoingNpus.push_back(dest);
+    return link.busy_until;
+}
+
+void TimeExpandedNetwork::mark_link_busy_until(const NpuId src, const NpuId dest, const Time time) noexcept {
+    assert(0 <= src && src < _npus_count);
+    assert(0 <= dest && dest < _npus_count);
+
+    auto& link = _links[src][dest];
+    assert(link.exist);
+
+    link.busy_until = time;
+}
+
+ChunkId TimeExpandedNetwork::transmitting_chunk(const NpuId src, const NpuId dest) const noexcept {
+    assert(0 <= src && src < _npus_count);
+    assert(0 <= dest && dest < _npus_count);
+
+    const auto& link = _links[src][dest];
+    assert(link.exist);
+
+    return link.transmitting_chunk;
+}
+
+void TimeExpandedNetwork::transmit_chunk(const NpuId src, const NpuId dest, const ChunkId chunk) noexcept {
+    assert(0 <= src && src < _npus_count);
+    assert(0 <= dest && dest < _npus_count);
+
+    auto& link = _links[src][dest];
+    assert(link.exist);
+
+    link.transmitting_chunk = chunk;
+}
+
+void TimeExpandedNetwork::_initialize_link_data() noexcept {
+    // iterate over all links
+    for (auto src = 0; src < _npus_count; src++) {
+        for (auto dest = 0; dest < _npus_count; dest++) {
+            auto& link = _links[src][dest];
+
+            link.exist = _topology->connected(src, dest);
+            link.busy = false;
+            link.busy_until = -1;
+            link.transmitting_chunk = -1;
         }
     }
-
-    if (shuffle) {
-        std::shuffle(outgoingNpus.begin(), outgoingNpus.end(), randomEngine);
-    }
-
-    return outgoingNpus;
 }
 
-void TacosNetwork::removeLink(const NpuId src, const NpuId dest) noexcept {
-    assert(0 <= src && src < npus_count);
-    assert(0 <= dest && dest < npus_count);
+void TimeExpandedNetwork::expand_time(Time next_time) noexcept {
+    assert(next_time > _current_time);
 
-    backtrackingTopology[src][dest] = false;
-}
+    // update current time
+    _current_time = next_time;
 
-void TacosNetwork::reset() noexcept {
-    for (auto src = 0; src < npus_count; src++) {
-        for (auto dest = 0; dest < npus_count; dest++) {
-            backtrackingTopology[src][dest] = topology->connected(src, dest);
+    // iterate and expand all TEN links
+    for (auto src = 0; src < _npus_count; src++) {
+        for (auto dest = 0; dest < _npus_count; dest++) {
+            auto* link = &_links[src][dest];
+            _process_ten_link_expansion(link);
         }
     }
 }
 
-Time TacosNetwork::transmission_time(const NpuId src, const NpuId dest) const noexcept {
-    assert(0 <= src && src < npus_count);
-    assert(0 <= dest && dest < npus_count);
+void TimeExpandedNetwork::_process_ten_link_expansion(LinkData* link) const noexcept {
+    // Case 1: Link is free, do nothing
+    if (!link->busy) {
+        return;
+    }
 
-    return linkTimes[src][dest];
-}
+    // Case 2: Link is busy, still transmitting chunk, do nothing
+    if (_current_time < link->busy_until) {
+        return;
+    }
 
-void TacosNetwork::setLinkTime(const NpuId src, const NpuId dest, const Time time) noexcept {
-    assert(0 <= src && src < npus_count);
-    assert(0 <= dest && dest < npus_count);
+    // Case 3: Link is busy, but the transmission finished. For this case:
+    //   1. Print the transmission has finished
+    //   2. Reset the TEN link
+    // TODO: print the transmission has ended
 
-    linkTimes[src][dest] = time;
-}
-
-ChunkId TacosNetwork::processingChunk(const NpuId src, const NpuId dest) const noexcept {
-    assert(0 <= src && src < npus_count);
-    assert(0 <= dest && dest < npus_count);
-
-    return processingChunks[src][dest];
-}
-
-void TacosNetwork::setProcessingChunk(const NpuId src, const NpuId dest, const ChunkId chunk) noexcept {
-    assert(0 <= src && src < npus_count);
-    assert(0 <= dest && dest < npus_count);
-
-    processingChunks[src][dest] = chunk;
+    // reset the TEN link
+    link->busy = false;
+    link->busy_until = -1;
+    link->transmitting_chunk = -1;
 }

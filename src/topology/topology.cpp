@@ -66,7 +66,7 @@ void Topology::connect(const NpuId src,
     }
 }
 
-Time Topology::transmission_time(const NpuId src, const NpuId dest, const ChunkSize chunk_size) const noexcept {
+Time Topology::link_busy_until(const NpuId src, const NpuId dest, const ChunkSize chunk_size) const noexcept {
     assert(_npus_count > 0);
     assert(0 <= src && src < _npus_count);
     assert(0 <= dest && dest < _npus_count);

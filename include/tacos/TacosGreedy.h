@@ -31,7 +31,7 @@ class TacosGreedy {
     using CandidateLinkSet = std::set<std::pair<LinkId, Time>>;
     using Contains = std::vector<std::vector<bool>>;
 
-    std::unique_ptr<TacosNetwork> network;
+    std::unique_ptr<TimeExpandedNetwork> network;
     EventQueue eventQueue;
 
     std::shared_ptr<Topology> topology;
