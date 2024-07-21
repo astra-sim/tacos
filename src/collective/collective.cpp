@@ -8,40 +8,41 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-Collective::Collective(const ChunkSize chunkSize) noexcept : chunkSize(chunkSize) {
-    assert(chunkSize > 0);
-
-    chunks = {};
-    precondition = {};
-    postcondition = {};
+Collective::Collective(const std::shared_ptr<Topology> topology, const ChunkSize chunk_size) noexcept
+    : _topology(std::move(topology)),
+      _chunk_size(chunk_size) {
+    assert(chunk_size > 0);
+    assert(_topology != nullptr);
 }
 
-void Collective::add(const ChunkId chunkId, const NpuId src, const NpuId dest) noexcept {
-    assert(chunkId >= 0);
-    assert(src >= 0);
-    assert(dest >= 0);
+void Collective::add_chunk(const ChunkId chunk_id, const NpuId src, const NpuId dest) noexcept {
+    assert(chunk_id >= 0);
+    assert(0 <= src && src < _topology->npus_count());
+    assert(0 <= dest && dest < _topology->npus_count());
 
-    chunks.insert(chunkId);
-    precondition.emplace(chunkId, src);
-    postcondition.emplace(chunkId, dest);
+    // insert pre-/post-condition
+    _pre_conditions.emplace(chunk_id, src);
+    _post_conditions.emplace(chunk_id, dest);
+
+    // increase the number of chunk by 1, if this chunk is newly added
+    if (_chunks.find(chunk_id) == _chunks.end()) {
+        _chunks_count++;
+        _chunks.emplace(chunk_id);
+    }
 }
 
-const Collective::CollectiveSet& Collective::getPrecondition() const noexcept {
-    return precondition;
+ChunkSize Collective::chunk_size() const noexcept {
+    return _chunk_size;
 }
 
-const Collective::CollectiveSet& Collective::getPostcondition() const noexcept {
-    return postcondition;
+int Collective::chunks_count() const noexcept {
+    return _chunks_count;
 }
 
-ChunkSize Collective::getChunkSize() const noexcept {
-    return chunkSize;
+const std::set<Collective::CollectiveCondition>& Collective::pre_conditions() const noexcept {
+    return _pre_conditions;
 }
 
-int Collective::getChunksCount() const noexcept {
-    return chunksCount;
-}
-
-void Collective::updateChunksCount() noexcept {
-    chunksCount = static_cast<int>(chunks.size());
+const std::set<Collective::CollectiveCondition>& Collective::post_conditions() const noexcept {
+    return _post_conditions;
 }

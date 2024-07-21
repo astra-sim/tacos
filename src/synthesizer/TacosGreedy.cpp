@@ -22,8 +22,8 @@ TacosGreedy::TacosGreedy(const std::shared_ptr<Topology> topology,
       linkUsageTracker(linkUsageTracker) {
     // set values
     npus_count = topology->npus_count();
-    chunksCount = collective->getChunksCount();
-    chunkSize = collective->getChunkSize();
+    chunksCount = collective->chunks_count();
+    chunkSize = collective->chunk_size();
 
     // create TACOS network representation
     network = std::make_unique<TacosNetwork>(topology, chunkSize);
@@ -34,7 +34,7 @@ Time TacosGreedy::solve() noexcept {
     auto contains = std::make_shared<Contains>(chunksCount, std::vector<bool>(npus_count, false));
 
     // mark preconditions as true
-    for (auto [chunk, npu] : collective->getPrecondition()) {
+    for (auto [chunk, npu] : collective->pre_conditions()) {
         (*contains)[chunk][npu] = true;
     }
 
@@ -120,7 +120,7 @@ std::shared_ptr<TacosGreedy::RequestSet> TacosGreedy::initializeRequests(
     const std::shared_ptr<Contains> contains) noexcept {
     auto requests = std::make_shared<RequestSet>();
 
-    for (const auto [chunk, dest] : collective->getPostcondition()) {
+    for (const auto [chunk, dest] : collective->post_conditions()) {
         assert(chunk >= 0);
         assert(0 <= dest && dest < npus_count);
 

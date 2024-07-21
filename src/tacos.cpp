@@ -31,8 +31,8 @@ int main() {
     // create collective
     const auto collectivesCount = 1;
     const auto chunkSize = 1024.0 / (npus_count * collectivesCount);
-    const auto collective = std::make_shared<AllGather>(npus_count, chunkSize, collectivesCount);
-    const auto chunksCount = collective->getChunksCount();
+    const auto collective = std::make_shared<AllGather>(topology, chunkSize, collectivesCount);
+    const auto chunksCount = collective->chunks_count();
     std::cout << "Chunks count: " << chunksCount << std::endl;
 
     // create collective algorithm stat monitor

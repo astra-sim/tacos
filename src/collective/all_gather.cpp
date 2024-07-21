@@ -8,27 +8,46 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-AllGather::AllGather(const int npus_count, const ChunkSize chunkSize, const int collectivesCount) noexcept
-    : Collective(chunkSize) {
+AllGather::AllGather(std::shared_ptr<Topology> topology,
+                     const ChunkSize chunk_size,
+                     const int chunks_per_collective) noexcept
+    : Collective(std::move(topology), chunk_size) {
+    assert(chunk_size > 0);
+    assert(chunks_per_collective > 0);
+
+    // set npus_count
+    npus_count = _topology->npus_count();
     assert(npus_count > 0);
-    assert(chunkSize > 0);
-    assert(collectivesCount > 0);
 
-    auto chunkId = 0;
+    // repeat generating all-gather
+    auto current_chunk_id = 0;
+    for (auto c = 0; c < chunks_per_collective; c++) {
+        // generate one all-gather
+        const auto next_chunk_id = generate_all_gather(current_chunk_id);
 
-    for (int i = 0; i < collectivesCount; i++) {
-        for (int src = 0; src < npus_count; src++) {
-            for (int dest = 0; dest < npus_count; dest++) {
-                // for every src, make one chunk
-                // and distribute this chunk to every dests
-                add(chunkId, src, dest);
+        // repeat the process
+        current_chunk_id = next_chunk_id;
+    }
+}
+
+int AllGather::generate_all_gather(const int start_chunk_id) noexcept {
+    auto chunk_id = start_chunk_id;
+
+    // for every src, make one chunk
+    // distribute this chunk to all other NPUs
+    for (auto src = 0; src < npus_count; src++) {
+        for (auto dest = 0; dest < npus_count; dest++) {
+            if (src == dest) {
+                continue;
             }
 
-            // chunkId should be updated here (i.e., when src changes)
-            chunkId++;
+            add_chunk(chunk_id, src, dest);
         }
+
+        // src changes: chunk_id should be updated
+        chunk_id++;
     }
 
-    // reflect chunks count
-    updateChunksCount();
+    // chunk_id should be the next chunk id to be used
+    return chunk_id;
 }
