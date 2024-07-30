@@ -20,13 +20,13 @@ class AllGather final : public Collective {
      * @param chunk_size each chunk size in MB
      * @param chunks_per_collective how many initial chunks (per NPU) to generate.
      */
-    explicit AllGather(std::shared_ptr<Topology> topology,
+    explicit AllGather(std::shared_ptr<const Topology> topology,
                        ChunkSize chunk_size = 1,
                        int chunks_per_collective = 1) noexcept;
 
   private:
     /// number of NPUs in the target topology
-    int _npus_count;
+    const int _npus_count;
 
     /**
      * Generate chunks for a single All-Gather,

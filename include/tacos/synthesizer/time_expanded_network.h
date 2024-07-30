@@ -7,7 +7,6 @@ LICENSE file in the root directory of this source tree.
 
 #include <algorithm>
 #include <memory>
-#include <random>
 #include <tacos/collective/collective.h>
 #include <tacos/topology/topology.h>
 #include <vector>
@@ -15,68 +14,58 @@ LICENSE file in the root directory of this source tree.
 namespace tacos {
 class TimeExpandedNetwork {
   public:
-    TimeExpandedNetwork(std::shared_ptr<Topology> topology) noexcept;
+    TimeExpandedNetwork(std::shared_ptr<const Topology> topology,
+                        std::shared_ptr<const Collective> collective) noexcept;
+
+    [[nodiscard]] std::set<Time> distinct_link_times() const noexcept;
+
+    [[nodiscard]] bool chunk_arrived(NpuId npu, ChunkId chunk) const noexcept;
 
     void expand_time(Time next_time) noexcept;
 
-    /**
-     * Set a TEN link to be busy, i.e., occupied by a chunk.
-     *
-     * @param src src NPU id
-     * @param dest dest NPU id
-     */
-    void set_link_busy(NpuId src, NpuId dest) noexcept;
-
-    Time link_busy_until(NpuId src, NpuId dest) const noexcept;
-
-    void mark_link_busy_until(NpuId src, NpuId dest, Time time) noexcept;
-
-    /**
-     * Backtrack all source NPUs that can send a chunk to the dest NPU.
-     * i.e., return all potential src NPUs who has free TEN link to dest at the current time step
-     *
-     * If shuffle is true, the order of the NPUs will be shuffled.
-     *
-     * @param dest dest NPU id
-     * @param shuffle true if shuffle the resulting NPU vector order, false if not (i.e., ascending order)
-     *
-     * @return vector of source NPUs who has free TEN link to dest
-     */
-    [[nodiscard]] std::vector<NpuId> backtrack_source_npus(NpuId dest, bool shuffle = true) noexcept;
-
-    ChunkId transmitting_chunk(NpuId src, NpuId dest) const noexcept;
+    void reset() noexcept;
 
     void transmit_chunk(NpuId src, NpuId dest, ChunkId chunk) noexcept;
 
-    /**
-     * Expand the time-expanded network by one time unit.
-     * i.e., reset all links to be free.
-     */
-    void reset() noexcept;
+    void reflect_chunk_arrival_info() noexcept;
+
+    [[nodiscard]] std::vector<NpuId> backtrack_source_npus(NpuId dest) noexcept;
 
   private:
     struct LinkData {
       public:
         bool exist = false;
+        Time transmission_time = -1;
+
         bool busy = false;
-        Time busy_until = -1;
+        Time busy_until = 0;
         ChunkId transmitting_chunk = -1;
+
+        void reset_transmission_info() noexcept;
     };
 
     Time _current_time = 0;  // FIXME: to be used
 
-    std::shared_ptr<Topology> _topology;
+    const std::shared_ptr<const Topology> _topology;
 
-    int _npus_count;
+    const std::shared_ptr<const Collective> _collective;
+
+    std::vector<std::vector<bool>> _arrived;
+
+    std::vector<std::vector<bool>> _arrived_next;
+
+    const int _npus_count;
+
+    const ChunkSize _chunk_size;
+    const int _chunks_count;
 
     std::vector<std::vector<LinkData>> _links;
 
-    std::random_device _randomDevice = {};
-    std::default_random_engine _random_engine = decltype(_random_engine)(_randomDevice());
-
     void _initialize_link_data() noexcept;
 
-    void _process_ten_link_expansion(LinkData* link) const noexcept;
+    void _process_link_availability(LinkData* link) const noexcept;
+
+    void _initialize_arrived() noexcept;
 };
 
 }  // namespace tacos

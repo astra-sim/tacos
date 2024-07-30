@@ -13,11 +13,11 @@ namespace tacos {
 
 /// Chunk Id = 0, 1, 2, ...
 using ChunkId = int;
+using CollectiveCondition = std::pair<ChunkId, NpuId>;
 
 class Collective {
   public:
-    /// precondition = (chunk_id, src), postcondition = (chunk_id, dest)
-    using CollectiveCondition = std::pair<ChunkId, NpuId>;
+    /// pre-condition = (chunk_id, src), post-condition = (chunk_id, dest)
 
     /***
      * Construct an empty collective with chunk_size.
@@ -25,7 +25,7 @@ class Collective {
      * @param topology pointer to the underlying topology
      * @param chunk_size each chunk's size (in MB)
      */
-    Collective(std::shared_ptr<Topology> topology, ChunkSize chunk_size) noexcept;
+    Collective(std::shared_ptr<const Topology> topology, ChunkSize chunk_size) noexcept;
 
     /**
      * Get chunk size (in MB)
@@ -56,7 +56,7 @@ class Collective {
 
   protected:
     /// pointer to the underlying topology
-    std::shared_ptr<Topology> _topology;
+    const std::shared_ptr<const Topology> _topology;
 
     /**
      * Add (chunk_id, src) to pre-condition and (chunk_id, dest) to post-condition
@@ -73,7 +73,7 @@ class Collective {
     int _chunks_count = 0;
 
     /// size of each chunk (in MB)
-    ChunkSize _chunk_size;
+    const ChunkSize _chunk_size;
 
     /// set of all chunk IDs
     std::set<ChunkId> _chunks = {};

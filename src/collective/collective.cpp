@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-Collective::Collective(const std::shared_ptr<Topology> topology, const ChunkSize chunk_size) noexcept
+Collective::Collective(std::shared_ptr<const Topology> topology, const ChunkSize chunk_size) noexcept
     : _topology(std::move(topology)),
       _chunk_size(chunk_size) {
     assert(chunk_size > 0);
@@ -39,10 +39,10 @@ int Collective::chunks_count() const noexcept {
     return _chunks_count;
 }
 
-const std::set<Collective::CollectiveCondition>& Collective::pre_conditions() const noexcept {
+const std::set<CollectiveCondition>& Collective::pre_conditions() const noexcept {
     return _pre_conditions;
 }
 
-const std::set<Collective::CollectiveCondition>& Collective::post_conditions() const noexcept {
+const std::set<CollectiveCondition>& Collective::post_conditions() const noexcept {
     return _post_conditions;
 }

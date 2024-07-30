@@ -9,11 +9,7 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-EventQueue::EventQueue() noexcept {
-    // initialize event_queue with one event at t = 0.
-    _event_times.insert(0);
-    _event_times_sorted.push(0);
-}
+EventQueue::EventQueue() noexcept = default;
 
 void EventQueue::schedule(const Time event_time) noexcept {
     assert(event_time > _current_time);
@@ -45,4 +41,13 @@ Time EventQueue::pop() noexcept {
 
 bool EventQueue::empty() noexcept {
     return _event_times.empty();
+}
+
+void EventQueue::reset() noexcept {
+    // reset the current state
+    _current_time = 0;
+    _event_times.clear();
+    while (!_event_times_sorted.empty()) {
+        _event_times_sorted.pop();
+    }
 }

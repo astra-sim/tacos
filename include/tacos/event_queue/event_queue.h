@@ -22,8 +22,7 @@ class EventQueue {
      */
   public:
     /***
-     * Create a new event queue
-     * with one event scheduled at t = 0.
+     * Create a new empty event queue
      */
     EventQueue() noexcept;
 
@@ -49,17 +48,22 @@ class EventQueue {
      */
     [[nodiscard]] bool empty() noexcept;
 
+    /**
+     * Reset the event queue to the clean state.
+     */
+    void reset() noexcept;
+
   private:
     /// current time of the event queue
     Time _current_time = 0;
 
     /// set of scheduled event times, unsorted
     /// Used for fast lookup of the event times already scheduled
-    std::set<Time> _event_times;
+    std::set<Time> _event_times = {};
 
     /// scheduled event times, sorted
     /// Used for fast retrieval of the next event time
-    std::priority_queue<Time, std::vector<Time>, std::greater<>> _event_times_sorted;
+    std::priority_queue<Time, std::vector<Time>, std::greater<>> _event_times_sorted = {};
 };
 
 }  // namespace tacos

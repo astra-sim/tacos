@@ -8,15 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-AllGather::AllGather(std::shared_ptr<Topology> topology,
+AllGather::AllGather(std::shared_ptr<const Topology> topology,
                      const ChunkSize chunk_size,
                      const int chunks_per_collective) noexcept
-    : Collective(std::move(topology), chunk_size) {
+    : Collective(std::move(topology), chunk_size),
+      _npus_count(_topology->npus_count()) {
     assert(chunk_size > 0);
     assert(chunks_per_collective > 0);
-
-    // fetch number of NPUs of the topology
-    _npus_count = _topology->npus_count();
     assert(_npus_count > 0);
 
     // repeat generating all-gather

@@ -48,4 +48,4 @@ file(GLOB tacos_srcs
     ${CMAKE_CURRENT_SOURCE_DIR}/src/topology/*.cpp
 )
 target_sources(tacos PRIVATE ${tacos_srcs})
-target_sources(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/tacos.cpp)
+target_sources(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
