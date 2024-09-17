@@ -11,7 +11,7 @@ SCRIPT_DIR=$(dirname "$(realpath "$0")")
 TARGET_DIR="$SCRIPT_DIR/.."
 
 # folders to run clang-format
-folders=("collective" "helper" "include" "runner" "synthesizer" "topology")
+folders=("collective" "helper" "include" "runner" "synthesizer" "topology" "writer")
 
 # start:
 echo "Formatting TACOS Codebase:"

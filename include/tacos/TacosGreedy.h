@@ -5,22 +5,18 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include "AlgorithmStatMonitor.h"
+#include "ChakraWriter.h"
 #include "Collective.h"
 #include "EventQueue.h"
-#include "LinkUsageTracker.h"
 #include "TacosNetwork.h"
 #include "Topology.h"
-#include <array>
-#include <memory>
 
 namespace Tacos {
 class TacosGreedy {
   public:
     TacosGreedy(std::shared_ptr<Topology> topology,
                 std::shared_ptr<Collective> collective,
-                std::shared_ptr<AlgorithmStatMonitor> algStatMonitor,
-                std::shared_ptr<LinkUsageTracker> linkUsageTracker) noexcept;
+                std::shared_ptr<ChakraWriter> chakraWriter) noexcept;
 
     [[nodiscard]] Time solve() noexcept;
 
@@ -34,8 +30,7 @@ class TacosGreedy {
 
     std::shared_ptr<Topology> topology;
     std::shared_ptr<Collective> collective;
-    std::shared_ptr<AlgorithmStatMonitor> algorithmStatMonitor;
-    std::shared_ptr<LinkUsageTracker> linkUsageTracker;
+    std::shared_ptr<ChakraWriter> chakraWriter;
 
     int npusCount;
     int chunksCount;

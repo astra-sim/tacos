@@ -20,4 +20,7 @@ using LinkAlphaBeta = std::pair<LinkWeight, LinkWeight>;
 // Collective
 using ChunkId = int;
 using ChunkSize = double;
+
+// OpType
+enum class OpType { Send, Recv };
 }  // namespace Tacos

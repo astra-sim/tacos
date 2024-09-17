@@ -4,7 +4,7 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include "TacosGreedy.h"
-#include "AlgorithmStatMonitor.h"
+#include "ChakraWriter.h"
 #include "Log.h"
 #include <cassert>
 #include <iostream>
@@ -14,12 +14,10 @@ using namespace Tacos;
 
 TacosGreedy::TacosGreedy(const std::shared_ptr<Topology> topology,
                          const std::shared_ptr<Collective> collective,
-                         std::shared_ptr<AlgorithmStatMonitor> algorithmStatMonitor,
-                         std::shared_ptr<LinkUsageTracker> linkUsageTracker) noexcept
+                         const std::shared_ptr<ChakraWriter> chakraWriter) noexcept
     : topology(topology),
       collective(collective),
-      algorithmStatMonitor(algorithmStatMonitor),
-      linkUsageTracker(linkUsageTracker) {
+      chakraWriter(chakraWriter) {
     // set values
     npusCount = topology->getNpusCount();
     chunksCount = collective->getChunksCount();
@@ -158,19 +156,16 @@ bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
 
             if (linkTime <= 0) {
                 // nothing is happening on this link: just skip
-                linkUsageTracker->incrementLinkUnused(currentTime);
                 continue;
             }
 
             if (currentTime < linkTime) {
                 // transfer in progress: cannot use this link at this point
                 network->removeLink(link);
-                linkUsageTracker->incrementLinkUsage(currentTime);
                 continue;
             }
 
             // one transmission has finished
-            linkUsageTracker->incrementLinkUsage(currentTime);
             totalArrival++;
 
             // check this chunk should be replaced
@@ -214,8 +209,8 @@ bool TacosGreedy::prepareBacktracking(std::shared_ptr<RequestSet> requests,
             arrivalsCount++;
             (*contains)[chunk][dest] = true;  // chunk arrived at dest
 
-            // increment processed chunk size
-            algorithmStatMonitor->incrementProcessedChunkSize(link, chunkSize);
+            // add mapping to the writer
+            chakraWriter->addCommunication(chunk, src, dest);
 
             // reset chunk and link time
             network->setProcessingChunk(link, -1);
