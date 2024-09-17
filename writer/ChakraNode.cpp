@@ -59,7 +59,7 @@ std::string ChakraNode::getNodeName() const noexcept {
     return nodeName.str();
 }
 
-ChakraProtoMsg::Node* ChakraNode::generateChakraNode() const noexcept {
+ChakraProtoMsg::Node* ChakraNode::generateChakraNode(const NpuId src, const NpuId dest, const ChunkSize chunkSize) const noexcept {
     Node* node = new Node;
 
     node->set_id(nodeId);
@@ -82,6 +82,42 @@ ChakraProtoMsg::Node* ChakraNode::generateChakraNode() const noexcept {
     for (const auto dep : dependencies) {
         node->add_data_deps(dep);
     }
+
+    // add attributes
+    const auto chunkSizeInt = static_cast<int>(chunkSize);
+    auto* attrCommSize = node->add_attr();
+    attrCommSize->set_name("comm_size");
+    attrCommSize->set_int32_val(chunkSizeInt);
+
+    auto* attrCommType = node->add_attr();
+    attrCommType->set_name("comm_type");
+    auto* attrNpu = node->add_attr();
+
+    switch (opType) {
+    case OpType::Send:
+        attrCommType->set_int32_val(NodeType::COMM_SEND_NODE);
+
+        attrNpu->set_name("comm_dst");
+        attrNpu->set_int32_val(dest);
+        break;
+    case OpType::Recv:
+        attrCommType->set_int32_val(NodeType::COMM_RECV_NODE);
+
+        attrNpu->set_name("comm_src");
+        attrNpu->set_int32_val(src);
+        break;
+    default:
+        assert(false);
+        exit(-1);
+    }
+
+    auto* attrCommTag = node->add_attr();
+    attrCommTag->set_name("comm_tag");
+    attrCommTag->set_int32_val(0);
+
+    auto* attrCommCpu = node->add_attr();
+    attrCommCpu->set_name("is_cpu_op");
+    attrCommCpu->set_int32_val(0);
 
     return node;
 }

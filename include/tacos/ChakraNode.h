@@ -21,7 +21,7 @@ class ChakraNode {
 
     void addDependency(int depNodeId) noexcept;
 
-    ChakraProtoMsg::Node* generateChakraNode() const noexcept;
+    ChakraProtoMsg::Node* generateChakraNode(NpuId src, NpuId dest, ChunkSize chunkSize) const noexcept;
 
     [[nodiscard]] std::string getNodeName() const noexcept;
 

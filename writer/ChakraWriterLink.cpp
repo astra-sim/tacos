@@ -12,7 +12,7 @@ ChakraWriterLink::ChakraWriterLink(const NpuId src, const NpuId dest) noexcept :
 
 ChakraWriterLink::ChakraWriterLink() noexcept : ChakraWriterLink(-1, -1) {}
 
-std::pair<int, ChakraProtoMsg::Node*> ChakraWriterLink::addOp(const ChunkId chunkId, const OpType opType, const int depNodeId) noexcept {
+std::pair<int, ChakraProtoMsg::Node*> ChakraWriterLink::addOp(const ChunkId chunkId, const OpType opType, const int depNodeId, const ChunkSize chunkSize) noexcept {
     auto& newNode = synthesisResult.emplace_back(chunkId, src, dest, opType);
 
     // add trivial dependency: prev node
@@ -26,7 +26,7 @@ std::pair<int, ChakraProtoMsg::Node*> ChakraWriterLink::addOp(const ChunkId chun
             newNode.addDependency(depNodeId);
     }
 
-    auto* chakraNode = newNode.generateChakraNode();
+    auto* chakraNode = newNode.generateChakraNode(src, dest, chunkSize);
     auto nodeId = newNode.getNodeId();
     return std::make_pair(nodeId, chakraNode);
 }

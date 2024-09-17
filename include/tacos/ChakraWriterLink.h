@@ -18,7 +18,7 @@ class ChakraWriterLink {
 
     ChakraWriterLink() noexcept;
 
-    [[nodiscard]] std::pair<int, ChakraProtoMsg::Node*> addOp(NpuId id, OpType opType, int depNodeId) noexcept;
+    [[nodiscard]] std::pair<int, ChakraProtoMsg::Node*> addOp(NpuId id, OpType opType, int depNodeId, ChunkSize chunkSize) noexcept;
 
     void print() const noexcept;
 
