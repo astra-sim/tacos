@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 
 #include <memory>
 #include <random>
+#include <tacos/ChakraWriter.h>
 #include <tacos/collective/collective.h>
 #include <tacos/event-queue/event_queue.h>
 #include <tacos/synthesizer/time_expanded_network.h>
@@ -24,6 +25,7 @@ class Synthesizer {
 
     Synthesizer(std::shared_ptr<Topology> topology,
                 std::shared_ptr<Collective> collective,
+                std::shared_ptr<ChakraWriter> chakraWriter,
                 bool verbose = false) noexcept;
 
     [[nodiscard]] Time synthesize() noexcept;
@@ -34,6 +36,7 @@ class Synthesizer {
 
     std::shared_ptr<Topology> topology;
     std::shared_ptr<Collective> collective;
+    std::shared_ptr<ChakraWriter> chakraWriter;
 
     TimeExpandedNetwork ten;
 

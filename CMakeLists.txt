@@ -14,6 +14,9 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
 
+# find Protobuf
+find_package(protobuf CONFIG REQUIRED)
+
 # Compile external libraries
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/yaml-cpp yaml-cpp)
 
@@ -36,9 +39,12 @@ set_target_properties(tacos PROPERTIES
 
 # Path to header files
 target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/extern/chakra/schema/protobuf)
+target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/extern/chakra/src/third_party/utils)
 
 # Link to external libraries
 target_link_libraries(tacos PUBLIC yaml-cpp)
+target_link_libraries(tacos PUBLIC protobuf::libprotobuf)
 
 # List all source files to be compiled
 file(GLOB tacos_srcs
@@ -46,6 +52,9 @@ file(GLOB tacos_srcs
     ${CMAKE_CURRENT_SOURCE_DIR}/src/event-queue/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/synthesizer/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/topology/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/writer/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern/chakra/schema/protobuf/*.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/extern/chakra/src/third_party/utils/*.cc
 )
 target_sources(tacos PRIVATE ${tacos_srcs})
 target_sources(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)

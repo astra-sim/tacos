@@ -12,9 +12,11 @@ using namespace tacos;
 
 Synthesizer::Synthesizer(const std::shared_ptr<Topology> topology,
                          const std::shared_ptr<Collective> collective,
+                         const std::shared_ptr<ChakraWriter> chakraWriter,
                          const bool verbose) noexcept
     : topology(topology),
       collective(collective),
+      chakraWriter(chakraWriter),
       ten(topology),
       verbose(verbose) {
     assert(topology != nullptr);
@@ -177,6 +179,9 @@ void Synthesizer::markLinkChunkMatch(const NpuID src,
         std::cout << "[EventTime " << currentTime << " ps] ";
         std::cout << "Chunk " << chunk << ": " << src << " -> " << dest << std::endl;
     }
+
+    // mark chakraWriter
+    chakraWriter->addCommunication(chunk, src, dest);
 
     // insert the chunk to the precondition
     precondition[dest].insert(chunk);

@@ -4,6 +4,7 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include <iostream>
+#include <tacos/ChakraWriter.h>
 #include <tacos/collective/all_gather.h>
 #include <tacos/event-queue/timer.h>
 #include <tacos/synthesizer/synthesizer.h>
@@ -47,8 +48,22 @@ int main() {
     std::cout << " (" << chunkSizeMB << " MB)" << std::endl;
     std::cout << std::endl;
 
+    // create Chakra Writer
+    const auto chakraWriter = std::make_shared<ChakraWriter>(npusCount, collective);
+    for (auto src = 0; src < npusCount; src++) {
+        for (auto dest = 0; dest < npusCount; dest++) {
+            if (src == dest) {
+                continue;
+            }
+
+            if (topology->connected(src, dest)) {
+                chakraWriter->addLink(src, dest);
+            }
+        }
+    }
+
     // instantiate synthesizer
-    auto synthesizer = Synthesizer(topology, collective);
+    auto synthesizer = Synthesizer(topology, collective, chakraWriter);
 
     // create timer
     auto timer = Timer();
@@ -73,6 +88,9 @@ int main() {
     const auto collectiveTimeUSec = collectiveTimePS / 1.0e6;
     std::cout << "\t- Synthesized Collective Time: " << collectiveTimePS << " ps";
     std::cout << " (" << collectiveTimeUSec << " us)" << std::endl;
+
+    // store synthesis rsults
+    chakraWriter->writeToChakra("tacos");
 
     // terminate
     return 0;
