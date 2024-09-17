@@ -14,7 +14,7 @@ ChakraWriter::ChakraWriter(const int npusCount, const std::shared_ptr<Collective
       chunksCount(collective->getChunksCount()) {
     npus.reserve(npusCount);
     for (int id = 0; id < npusCount; id++) {
-        npus.emplace_back(id, chunksCount);
+        npus.emplace_back(id, chunksCount, chunkSize);
     }
 
     // mark precondition
