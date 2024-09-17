@@ -12,7 +12,7 @@ using namespace Tacos;
 
 ChakraWriterNpu::ChunkDepInfo::ChunkDepInfo() noexcept : isPrecond(false), depNodeId(-1) {}
 
-ChakraWriterNpu::ChakraWriterNpu(const int id, const int chunksCount) noexcept : id(id) {
+ChakraWriterNpu::ChakraWriterNpu(const int id, const int chunksCount, const ChunkSize chunkSize) noexcept : id(id), chunkSize(chunkSize) {
     for (auto c = 0; c < chunksCount; c++) {
         dependencyTable[c] = ChunkDepInfo();
     }
@@ -43,12 +43,12 @@ void ChakraWriterNpu::addSendOp(const ChunkId chunkId, const NpuId dest) noexcep
         }
     }
 
-    const auto [_, chakraNode] = outlinks[dest].addOp(chunkId, OpType::Send, depNodeId);
+    const auto [_, chakraNode] = outlinks[dest].addOp(chunkId, OpType::Send, depNodeId, chunkSize);
     et_nodes.push_back(chakraNode);
 }
 
 void ChakraWriterNpu::addRecvOp(const ChunkId chunkId, const NpuId src) noexcept {
-    const auto [nodeId, chakraNode] = inlinks[src].addOp(chunkId, OpType::Recv, -1);
+    const auto [nodeId, chakraNode] = inlinks[src].addOp(chunkId, OpType::Recv, -1, chunkSize);
     et_nodes.push_back(chakraNode);
 
     // mark dependent op

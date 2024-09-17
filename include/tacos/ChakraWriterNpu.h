@@ -15,7 +15,7 @@ LICENSE file in the root directory of this source tree.
 namespace Tacos {
 class ChakraWriterNpu {
   public:
-    ChakraWriterNpu(NpuId id, int chunksCount) noexcept;
+    ChakraWriterNpu(NpuId id, int chunksCount, ChunkSize chunkSize) noexcept;
 
     void markPrecond(ChunkId chunkId) noexcept;
 
@@ -46,13 +46,11 @@ class ChakraWriterNpu {
     std::map<int, ChakraWriterLink> inlinks;
     std::map<int, ChakraWriterLink> outlinks;
 
+    ChunkSize chunkSize;
+
     std::map<ChunkId, ChunkDepInfo> dependencyTable;
 
     // ET Storage
     std::vector<Node*> et_nodes;
-    // ProtoOutputStream* graph_stream;
-    // bool first_win_;
-    // uint32_t dep_window_size_;
-    // uint64_t curr_id_;
 };
 }  // namespace Tacos
