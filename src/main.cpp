@@ -3,6 +3,7 @@ This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
+#include <iostream>
 #include <tacos/AlgorithmStatMonitor.h>
 #include <tacos/AllGather.h>
 #include <tacos/Hypercube3D.h>
@@ -12,7 +13,6 @@ LICENSE file in the root directory of this source tree.
 #include <tacos/Timer.h>
 #include <tacos/Torus2D.h>
 #include <tacos/Torus3D.h>
-#include <iostream>
 
 using namespace Tacos;
 
