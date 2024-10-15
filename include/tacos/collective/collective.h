@@ -13,7 +13,7 @@ namespace tacos {
 class Collective {
   public:
     using ChunkID = int;
-    using ChunkSize = double;  // MB
+    using ChunkSize = Topology::ChunkSize;
     using NpuID = Topology::NpuID;
 
     using CollectiveCondition = std::map<NpuID, std::set<ChunkID>>;

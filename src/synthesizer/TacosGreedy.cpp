@@ -6,20 +6,14 @@ LICENSE file in the root directory of this source tree.
 #include <cassert>
 #include <iostream>
 #include <limits>
-#include <tacos/AlgorithmStatMonitor.h>
-#include <tacos/Log.h>
-#include <tacos/TacosGreedy.h>
+#include <tacos/synthesizer/TacosGreedy.h>
 
 using namespace tacos;
 
 TacosGreedy::TacosGreedy(const std::shared_ptr<Topology> topology,
-                         const std::shared_ptr<Collective> collective,
-                         std::shared_ptr<AlgorithmStatMonitor> algorithmStatMonitor,
-                         std::shared_ptr<LinkUsageTracker> linkUsageTracker) noexcept
+                         const std::shared_ptr<Collective> collective) noexcept
     : topology(topology),
-      collective(collective),
-      algorithmStatMonitor(algorithmStatMonitor),
-      linkUsageTracker(linkUsageTracker) {
+      collective(collective) {
     // set values
     npusCount = topology->getNpusCount();
     chunksCount = collective->getChunksCount();
@@ -76,7 +70,7 @@ Time TacosGreedy::solve() noexcept {
         auto successfulMatchingCount = 0;
 
         for (auto [chunk, dest] : *requests) {
-            const auto incomingNpus = network->incomingNpus(dest);
+            const auto incomingNpus = network->backtrackSourceNpus(dest);
             auto candidateLinks = std::set<std::pair<LinkId, Time>>();
 
             // choose candidate links by iterating over incoming NPUs

@@ -5,25 +5,31 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include "AlgorithmStatMonitor.h"
-#include "Collective.h"
-#include "LinkUsageTracker.h"
 #include "TacosNetwork.h"
+#include <tacos/collective/collective.h>
 #include <tacos/event-queue/event_queue.h>
 #include <tacos/topology/topology.h>
 
 namespace tacos {
 class TacosGreedy {
   public:
+    using ChunkSize = Topology::ChunkSize;
+    using Time = EventQueue::Time;
+    using NpuID = Topology::NpuID;
+    using ChunkID = Collective::ChunkID;
+    using LinkId = Topology::LinkId;
+
+    using RequestSet = std::vector<std::pair<ChunkID, NpuId>>;
+    using CandidateLinkSet = std::set<std::pair<LinkId, Time>>;
+    using Contains = std::vector<std::vector<bool>>;
+
     TacosGreedy(std::shared_ptr<Topology> topology,
-                std::shared_ptr<Collective> collective,
-                std::shared_ptr<AlgorithmStatMonitor> algStatMonitor,
-                std::shared_ptr<LinkUsageTracker> linkUsageTracker) noexcept;
+                std::shared_ptr<Collective> collective) noexcept;
 
     [[nodiscard]] Time solve() noexcept;
 
   private:
-    using RequestSet = std::vector<std::pair<ChunkId, NpuId>>;
+    using RequestSet = std::vector<std::pair<ChunkID, NpuID>>;
     using CandidateLinkSet = std::set<std::pair<LinkId, Time>>;
     using Contains = std::vector<std::vector<bool>>;
 
@@ -32,8 +38,6 @@ class TacosGreedy {
 
     std::shared_ptr<Topology> topology;
     std::shared_ptr<Collective> collective;
-    std::shared_ptr<AlgorithmStatMonitor> algorithmStatMonitor;
-    std::shared_ptr<LinkUsageTracker> linkUsageTracker;
 
     int npusCount;
     int chunksCount;

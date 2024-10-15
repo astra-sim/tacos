@@ -8,18 +8,22 @@ LICENSE file in the root directory of this source tree.
 #include <algorithm>
 #include <memory>
 #include <random>
-#include <tacos/Typing.h>
 #include <tacos/topology/topology.h>
 #include <vector>
 
 namespace tacos {
 class TacosNetwork {
   public:
+    using ChunkSize = Topology::ChunkSize;
+    using NpuID = Topology::NpuID;
+    using Time = EventQueue::Time;
+    using LinkId = Topology::LinkId;
+
     TacosNetwork(std::shared_ptr<Topology> topology, ChunkSize chunkSize) noexcept;
 
-    std::vector<NpuId> incomingNpus(NpuId dest, bool shuffle = true) noexcept;
+    std::vector<NpuID> backtrackSourceNpus(NpuID dest, bool shuffle = true) noexcept;
 
-    std::vector<NpuId> outgoingNpus(NpuId src, bool shuffle = true) noexcept;
+    std::vector<NpuID> outgoingNpus(NpuID src, bool shuffle = true) noexcept;
 
     void removeLink(LinkId link) noexcept;
 

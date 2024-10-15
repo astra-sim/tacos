@@ -5,7 +5,7 @@ LICENSE file in the root directory of this source tree.
 
 #include <cassert>
 #include <memory>
-#include <tacos/TacosNetwork.h>
+#include <tacos/synthesizer/TacosNetwork.h>
 
 using namespace tacos;
 
@@ -27,7 +27,8 @@ TacosNetwork::TacosNetwork(const std::shared_ptr<Topology> topology,
     reset();
 }
 
-std::vector<NpuId> TacosNetwork::incomingNpus(const NpuId dest, const bool shuffle) noexcept {
+std::vector<NpuId> TacosNetwork::backtrackSourceNpus(const NpuId dest,
+                                                     const bool shuffle) noexcept {
     assert(0 <= dest < npusCount);
 
     auto incomingNpus = std::vector<NpuId>();
