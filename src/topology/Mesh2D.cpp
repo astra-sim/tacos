@@ -4,9 +4,9 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include <cassert>
-#include <tacos/Mesh2D.h>
+#include <tacos/topology/Mesh2D.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 Mesh2D::Mesh2D(const int width, const int height, const LinkAlphaBeta linkAlphaBeta) noexcept : Topology() {
     assert(width > 0);

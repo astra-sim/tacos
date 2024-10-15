@@ -4,9 +4,9 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include <cassert>
-#include <tacos/Hypercube3D.h>
+#include <tacos/topology/Hypercube3D.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 Hypercube3D::Hypercube3D(int size_x, int size_y, int size_z, LinkAlphaBeta linkAlphaBeta) noexcept : Topology() {
     assert(size_x > 0);

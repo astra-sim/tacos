@@ -5,12 +5,15 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include "Typing.h"
+#include <tacos/Typing.h>
 #include <vector>
 
-namespace Tacos {
+namespace tacos {
 class Topology {
   public:
+    using NpuID = int;
+    using Latency = double;    // us
+    using Bandwidth = double;  // GB/s
     Topology() noexcept;
 
     [[nodiscard]] std::vector<NpuId> incomingNpus(NpuId dest) const noexcept;
@@ -41,4 +44,4 @@ class Topology {
 
     int linksCount;
 };
-}  // namespace Tacos
+}  // namespace tacos

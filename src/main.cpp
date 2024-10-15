@@ -6,15 +6,13 @@ LICENSE file in the root directory of this source tree.
 #include <iostream>
 #include <tacos/AlgorithmStatMonitor.h>
 #include <tacos/AllGather.h>
-#include <tacos/Hypercube3D.h>
 #include <tacos/LinkUsageTracker.h>
-#include <tacos/Mesh2D.h>
 #include <tacos/TacosGreedy.h>
-#include <tacos/Timer.h>
-#include <tacos/Torus2D.h>
-#include <tacos/Torus3D.h>
+#include <tacos/event-queue/timer.h>
+#include <tacos/topology/Hypercube3D.h>
+#include <tacos/topology/Mesh2D.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 int main() {
     // set print precision
@@ -22,44 +20,19 @@ int main() {
     std::cout.precision(2);
 
     // construct a topology
-    //    const auto x = 8;
     const auto x = 5;
-    const auto y = x;
-    const auto z = y;
-
+    const auto y = 5;
     const auto bw = 50;
     const auto bw_beta = 1'000'000 / (bw * 1024.0);
-    std::cout << bw_beta << std::endl;
-
-    //    const auto linkAlphaBeta = std::make_pair(0, 1);
     const auto linkAlphaBeta = std::make_pair(0.5, bw_beta);
 
-    //    const auto topology = std::make_shared<Mesh2D>(x, y, linkAlphaBeta);
-    //    const auto filename = "../../Mesh2D_" + std::to_string(x) + "_" + std::to_string(y) + ".csv";
-
-    //    const auto topology = std::make_shared<Torus2D>(x, y, linkAlphaBeta);
-    //    const auto filename = "../../Torus2D_" + std::to_string(x) + "_" + std::to_string(y) + ".csv";
-
-    const auto topology = std::make_shared<Hypercube3D>(x, y, z, linkAlphaBeta);
-    const auto filename =
-        "../../Hypercube3D_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z) + ".csv";
-
-    //    const auto topology = std::make_shared<Torus3D>(x, y, z, linkAlphaBeta);
-    //    const auto filename = "../../Torus3D_" + std::to_string(x) + "_" + std::to_string(y) + "_" + std::to_string(z)
-    //    + ".csv"; const auto filename = "../../Torus3D_" + std::to_string(x) + "_" + std::to_string(y) + "_" +
-    //    std::to_string(z) + ".csv";
-
+    const auto topology = std::make_shared<Mesh2D>(x, y, linkAlphaBeta);
     const auto npusCount = topology->getNpusCount();
     std::cout << "NPUs count: " << npusCount << std::endl;
 
     // create collective
     const auto collectivesCount = 1;
     const auto chunkSize = 1024.0 / (npusCount * collectivesCount);
-    //    const auto chunkSize = 0.25;
-    //    const auto chunkSize = 1;
-    //    const auto chunkSize = 1024 / npusCount;
-    //    const auto chunkSize = 8;
-    //    const auto collectivesCount = 2;
     const auto collective = std::make_shared<AllGather>(npusCount, chunkSize, collectivesCount);
     const auto chunksCount = collective->getChunksCount();
     std::cout << "Chunks count: " << chunksCount << std::endl;
@@ -69,7 +42,7 @@ int main() {
     auto linkUsageTracker = std::make_shared<LinkUsageTracker>();
 
     // create timer
-    auto solverTimer = Timer("PathSolver");
+    auto solverTimer = Timer();
 
     // create solver and solve
     solverTimer.start();
@@ -78,17 +51,11 @@ int main() {
     solverTimer.stop();
 
     // print result
-    auto time = solverTimer.getTime("ms");
+    auto time = solverTimer.elapsedTime();
     std::cout << std::endl;
-    std::cout << "Time to solve: " << time << " ms" << std::endl;
+    std::cout << "Time to solve: " << time << " us" << std::endl;
     std::cout << "All-Gather Time: " << collectiveTime << std::endl;
     std::cout << "All-Reduce Time: " << collectiveTime * 2 << std::endl;
-
-    const auto linksCount = topology->getLinksCount();
-    std::cout << "Links: " << linksCount << std::endl;
-
-    // save link usage
-    linkUsageTracker->saveLinkUsage(filename, linksCount, collectiveTime);
 
     // terminate
     return 0;

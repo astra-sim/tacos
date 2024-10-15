@@ -5,26 +5,30 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include "Typing.h"
+#include <cstdint>
 #include <functional>
 #include <queue>
 #include <set>
 #include <vector>
 
-namespace Tacos {
+namespace tacos {
+
 class EventQueue {
   public:
+    using Time = uint64_t;  // ps
+
     EventQueue() noexcept;
 
-    void schedule(Time nextTime) noexcept;
+    void schedule(Time newEventTime) noexcept;
 
-    Time pop() noexcept;
+    [[nodiscard]] Time pop() noexcept;
 
-    [[nodiscard]] bool empty() noexcept;
+    [[nodiscard]] bool empty() const noexcept;
 
   private:
-    Time currentTime;
-    std::set<Time> events;
-    std::priority_queue<Time, std::vector<Time>, std::greater<>> event_queue;
+    Time currentTime = 0;
+    std::set<Time> eventTimes = {};
+    std::priority_queue<Time, std::vector<Time>, std::greater<>> eventQueue = {};
 };
-}  // namespace Tacos
+
+}  // namespace tacos

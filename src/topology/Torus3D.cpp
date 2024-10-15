@@ -4,9 +4,9 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include <cassert>
-#include <tacos/Torus3D.h>
+#include <tacos/topology/Torus3D.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 Torus3D::Torus3D(int size_x, int size_y, int size_z, LinkAlphaBeta linkAlphaBeta) noexcept : Topology() {
     assert(size_x > 0);

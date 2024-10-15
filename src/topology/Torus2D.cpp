@@ -4,9 +4,9 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include <cassert>
-#include <tacos/Torus2D.h>
+#include <tacos/topology/Torus2D.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 Torus2D::Torus2D(const int width, const int height, const LinkAlphaBeta linkAlphaBeta) noexcept : Topology() {
     assert(width > 0);

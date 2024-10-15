@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 #include <string>
 #include <vector>
 
-namespace Tacos {
+namespace tacos {
 class LinkUsageTracker {
   public:
     LinkUsageTracker() noexcept;
@@ -24,4 +24,4 @@ class LinkUsageTracker {
     std::map<double, int> linkUsage;
     std::map<double, int> linkUnused;
 };
-}  // namespace Tacos
+}  // namespace tacos

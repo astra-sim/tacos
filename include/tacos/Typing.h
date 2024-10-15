@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 
 #include <utility>
 
-namespace Tacos {
+namespace tacos {
 // Time
 using Time = double;
 
@@ -20,4 +20,4 @@ using LinkAlphaBeta = std::pair<LinkWeight, LinkWeight>;
 // Collective
 using ChunkId = int;
 using ChunkSize = double;
-}  // namespace Tacos
+}  // namespace tacos

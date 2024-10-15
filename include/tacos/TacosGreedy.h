@@ -7,14 +7,12 @@ LICENSE file in the root directory of this source tree.
 
 #include "AlgorithmStatMonitor.h"
 #include "Collective.h"
-#include "EventQueue.h"
 #include "LinkUsageTracker.h"
 #include "TacosNetwork.h"
-#include "Topology.h"
-#include <array>
-#include <memory>
+#include <tacos/event-queue/event_queue.h>
+#include <tacos/topology/topology.h>
 
-namespace Tacos {
+namespace tacos {
 class TacosGreedy {
   public:
     TacosGreedy(std::shared_ptr<Topology> topology,
@@ -52,4 +50,4 @@ class TacosGreedy {
 
     static std::pair<LinkId, Time> selectBestLink(const CandidateLinkSet& candidateLinks) noexcept;
 };
-}  // namespace Tacos
+}  // namespace tacos

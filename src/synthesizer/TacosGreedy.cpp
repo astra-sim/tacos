@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 #include <tacos/Log.h>
 #include <tacos/TacosGreedy.h>
 
-using namespace Tacos;
+using namespace tacos;
 
 TacosGreedy::TacosGreedy(const std::shared_ptr<Topology> topology,
                          const std::shared_ptr<Collective> collective,

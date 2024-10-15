@@ -5,10 +5,10 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include "Typing.h"
 #include <set>
+#include <tacos/Typing.h>
 
-namespace Tacos {
+namespace tacos {
 class Collective {
   public:
     using CollectiveSet = std::set<std::pair<ChunkId, NpuId>>;
@@ -35,4 +35,4 @@ class Collective {
     CollectiveSet precondition;
     CollectiveSet postcondition;
 };
-}  // namespace Tacos
+}  // namespace tacos

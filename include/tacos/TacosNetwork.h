@@ -5,14 +5,14 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
-#include "Topology.h"
-#include "Typing.h"
 #include <algorithm>
 #include <memory>
 #include <random>
+#include <tacos/Typing.h>
+#include <tacos/topology/topology.h>
 #include <vector>
 
-namespace Tacos {
+namespace tacos {
 class TacosNetwork {
   public:
     TacosNetwork(std::shared_ptr<Topology> topology, ChunkSize chunkSize) noexcept;
@@ -48,4 +48,4 @@ class TacosNetwork {
     std::random_device randomDevice;
     std::default_random_engine randomEngine{randomDevice()};
 };
-}  // namespace Tacos
+}  // namespace tacos
