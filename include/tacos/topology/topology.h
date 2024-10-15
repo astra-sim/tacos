@@ -5,6 +5,7 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
+#include <cstdint>
 #include <set>
 #include <tacos/event-queue/event_queue.h>
 #include <tuple>
@@ -18,9 +19,9 @@ class Topology {
     using Time = EventQueue::Time;
 
     using NpuID = int;
-    using Latency = double;    // ns
-    using Bandwidth = double;  // GB/s ~ B/ns
-    using ChunkSize = double;  // B
+    using Latency = double;      // ns
+    using Bandwidth = double;    // GB/s ~ B/ns
+    using ChunkSize = uint64_t;  // B
 
     Topology() noexcept;
 
