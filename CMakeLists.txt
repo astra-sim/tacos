@@ -28,10 +28,10 @@ file(GLOB srcs
         ${CMAKE_CURRENT_SOURCE_DIR}/synthesizer/*.cpp
 )
 
-add_executable(TACOS ${srcs})
-target_sources(TACOS PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/runner/main.cpp)
-target_link_libraries(TACOS PUBLIC yaml-cpp)
-set_target_properties(TACOS PROPERTIES
+add_executable(tacos ${srcs})
+target_sources(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/runner/main.cpp)
+target_link_libraries(tacos PUBLIC yaml-cpp)
+set_target_properties(tacos PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin
         LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib
         ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
