@@ -8,8 +8,13 @@ LICENSE file in the root directory of this source tree.
 #include <tacos/topology/topology.h>
 
 namespace tacos {
-class Hypercube3D final : public Topology {
+class Torus2D final : public Topology {
   public:
-    Hypercube3D(int size_x, int size_y, int size_z, LinkAlphaBeta linkAlphaBeta) noexcept;
+    Torus2D(int width, int height, Latency latency, Bandwidth bandwidth) noexcept;
+
+  private:
+    int width;
+    int height;
 };
+
 }  // namespace tacos

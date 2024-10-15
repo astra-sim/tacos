@@ -10,23 +10,26 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-AlgorithmStatMonitor::AlgorithmStatMonitor(const std::shared_ptr<Topology> topology) noexcept : topology(topology) {
+AlgorithmStatMonitor::AlgorithmStatMonitor(const std::shared_ptr<Topology> topology) noexcept
+    : topology(topology) {
     npusCount = topology->getNpusCount();
 
     // reset 2D vector
-    chunkSizeProcessedPerLink = decltype(chunkSizeProcessedPerLink)(npusCount, std::vector<ChunkSize>(npusCount, -1));
+    chunkSizeProcessedPerLink =
+        decltype(chunkSizeProcessedPerLink)(npusCount, std::vector<ChunkSize>(npusCount, -1));
 
     // for existing links, set the value to 0
     for (auto src = 0; src < npusCount; src++) {
         for (auto dest = 0; dest < npusCount; dest++) {
-            if (topology->connected(src, dest)) {
+            if (topology->isConnected(src, dest)) {
                 chunkSizeProcessedPerLink[src][dest] = 0;
             }
         }
     }
 }
 
-void AlgorithmStatMonitor::incrementProcessedChunkSize(const LinkId link, const ChunkSize chunkSize) noexcept {
+void AlgorithmStatMonitor::incrementProcessedChunkSize(const LinkId link,
+                                                       const ChunkSize chunkSize) noexcept {
     const auto [src, dest] = link;
 
     // assert validity
@@ -37,9 +40,8 @@ void AlgorithmStatMonitor::incrementProcessedChunkSize(const LinkId link, const 
     chunkSizeProcessedPerLink[src][dest] += chunkSize;
 }
 
-void AlgorithmStatMonitor::saveProcessedChunkSize(const std::string& filename,
-                                                  double artime,
-                                                  std::shared_ptr<Topology> topology) const noexcept {
+void AlgorithmStatMonitor::saveProcessedChunkSize(
+    const std::string& filename, double artime, std::shared_ptr<Topology> topology) const noexcept {
     // YAML node to save link loads
     YAML::Node link_loads;
 
@@ -58,7 +60,7 @@ void AlgorithmStatMonitor::saveProcessedChunkSize(const std::string& filename,
             }
 
             // skip if (src, dest) is not connected
-            if (!topology->connected(src, dest)) {
+            if (!topology->isConnected(src, dest)) {
                 continue;
             }
 
@@ -72,7 +74,8 @@ void AlgorithmStatMonitor::saveProcessedChunkSize(const std::string& filename,
             link_load["link"]["dest"] = dest;
             link_load["link"]["bw"] = topology->getBW(src, dest);
             link_load["load"] = -1;
-            link_load["chunk_size"] = chunkSizeMB * 2;  // FIXME: assuming All-Reduce (synthesized from All-Gather)
+            link_load["chunk_size"] =
+                chunkSizeMB * 2;  // FIXME: assuming All-Reduce (synthesized from All-Gather)
 
             // push back to the link_loads
             link_loads["loads"].push_back(link_load);

@@ -26,7 +26,7 @@ int main() {
     const auto bw_beta = 1'000'000 / (bw * 1024.0);
     const auto linkAlphaBeta = std::make_pair(0.5, bw_beta);
 
-    const auto topology = std::make_shared<Mesh2D>(x, y, linkAlphaBeta);
+    const auto topology = std::make_shared<mesh2d>(x, y, linkAlphaBeta);
     const auto npusCount = topology->getNpusCount();
     std::cout << "NPUs count: " << npusCount << std::endl;
 

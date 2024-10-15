@@ -18,7 +18,9 @@ class LinkUsageTracker {
 
     void incrementLinkUnused(double time) noexcept;
 
-    void saveLinkUsage(const std::string& filename, int linksCount, double finishTime) const noexcept;
+    void saveLinkUsage(const std::string& filename,
+                       int linksCount,
+                       double finishTime) const noexcept;
 
   private:
     std::map<double, int> linkUsage;

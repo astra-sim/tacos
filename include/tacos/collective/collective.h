@@ -5,34 +5,39 @@ LICENSE file in the root directory of this source tree.
 
 #pragma once
 
+#include <map>
 #include <set>
-#include <tacos/Typing.h>
+#include <tacos/topology/topology.h>
 
 namespace tacos {
 class Collective {
   public:
-    using CollectiveSet = std::set<std::pair<ChunkId, NpuId>>;
+    using ChunkID = int;
+    using ChunkSize = double;  // MB
+    using NpuID = Topology::NpuID;
 
-    explicit Collective(ChunkSize chunkSize) noexcept;
+    using CollectiveCondition = std::map<NpuID, std::set<ChunkID>>;
 
-    [[nodiscard]] const CollectiveSet& getPrecondition() const noexcept;
-
-    [[nodiscard]] const CollectiveSet& getPostcondition() const noexcept;
+    Collective(int npusCount, ChunkSize chunkSize) noexcept;
 
     [[nodiscard]] ChunkSize getChunkSize() const noexcept;
 
     [[nodiscard]] int getChunksCount() const noexcept;
 
   protected:
-    int chunksCount;
+    int npusCount;
+    int chunksCount = 0;
 
-    void add(ChunkId chunkId, NpuId src, NpuId dest) noexcept;
+    void add(ChunkID chunkID, NpuID src, NpuID dest) noexcept;
+
     void updateChunksCount() noexcept;
 
   private:
     ChunkSize chunkSize;
-    std::set<ChunkId> chunks;
-    CollectiveSet precondition;
-    CollectiveSet postcondition;
+
+    std::set<ChunkID> chunks = {};
+    CollectiveCondition precondition = {};
+    CollectiveCondition postcondition = {};
 };
+
 }  // namespace tacos

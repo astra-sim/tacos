@@ -4,44 +4,40 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include <cassert>
-#include <tacos/Collective.h>
+#include <tacos/collective/collective.h>
 
 using namespace tacos;
 
-Collective::Collective(const ChunkSize chunkSize) noexcept : chunkSize(chunkSize) {
+Collective::Collective(const int npusCount, const ChunkSize chunkSize) noexcept
+    : npusCount(npusCount),
+      chunkSize(chunkSize) {
+    assert(npusCount > 0);
     assert(chunkSize > 0);
 
-    chunks = {};
-    precondition = {};
-    postcondition = {};
+    for (auto npu = 0; npu < npusCount; npu++) {
+        precondition[npu] = {};
+        postcondition[npu] = {};
+    }
 }
 
-void Collective::add(const ChunkId chunkId, const NpuId src, const NpuId dest) noexcept {
-    assert(chunkId >= 0);
-    assert(src >= 0);
-    assert(dest >= 0);
+void Collective::add(const ChunkID chunkID, const NpuID src, const NpuID dest) noexcept {
+    assert(chunkID >= 0);
+    assert(0 <= src && src < npusCount);
+    assert(0 <= dest && dest < npusCount);
 
-    chunks.insert(chunkId);
-    precondition.emplace(chunkId, src);
-    postcondition.emplace(chunkId, dest);
+    chunks.insert(chunkID);
+    precondition[src].insert(chunkID);
+    postcondition[dest].insert(chunkID);
 }
 
-const Collective::CollectiveSet& Collective::getPrecondition() const noexcept {
-    return precondition;
+void Collective::updateChunksCount() noexcept {
+    chunksCount = static_cast<int>(chunks.size());
 }
 
-const Collective::CollectiveSet& Collective::getPostcondition() const noexcept {
-    return postcondition;
-}
-
-ChunkSize Collective::getChunkSize() const noexcept {
+Collective::ChunkSize Collective::getChunkSize() const noexcept {
     return chunkSize;
 }
 
 int Collective::getChunksCount() const noexcept {
     return chunksCount;
-}
-
-void Collective::updateChunksCount() noexcept {
-    chunksCount = static_cast<int>(chunks.size());
 }

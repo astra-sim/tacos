@@ -42,7 +42,8 @@ class TacosGreedy {
     std::random_device randomDevice;
     std::default_random_engine randomEngine{randomDevice()};
 
-    std::shared_ptr<TacosGreedy::RequestSet> initializeRequests(std::shared_ptr<Contains> contains) noexcept;
+    std::shared_ptr<TacosGreedy::RequestSet> initializeRequests(
+        std::shared_ptr<Contains> contains) noexcept;
 
     bool prepareBacktracking(std::shared_ptr<RequestSet> requests,
                              Time currentTime,

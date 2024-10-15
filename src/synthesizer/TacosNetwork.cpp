@@ -9,7 +9,8 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-TacosNetwork::TacosNetwork(const std::shared_ptr<Topology> topology, const ChunkSize chunkSize) noexcept
+TacosNetwork::TacosNetwork(const std::shared_ptr<Topology> topology,
+                           const ChunkSize chunkSize) noexcept
     : topology(topology),
       chunksSize(chunkSize) {
     assert(chunkSize > 0);
@@ -19,7 +20,8 @@ TacosNetwork::TacosNetwork(const std::shared_ptr<Topology> topology, const Chunk
     // initialize 2D vectors
     linkTimes = decltype(linkTimes)(npusCount, std::vector<Time>(npusCount, -1));
     processingChunks = decltype(processingChunks)(npusCount, std::vector<ChunkId>(npusCount, -1));
-    backtrackingTopology = decltype(backtrackingTopology)(npusCount, std::vector<bool>(npusCount, false));
+    backtrackingTopology =
+        decltype(backtrackingTopology)(npusCount, std::vector<bool>(npusCount, false));
 
     // initialize 2D backtracking topology
     reset();

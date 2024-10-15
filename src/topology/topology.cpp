@@ -4,11 +4,12 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include <cassert>
+#include <limits>
 #include <tacos/topology/topology.h>
 
 using namespace tacos;
 
-Topology::Topology() noexcept : npusCount(0), linksCount(0) {}
+Topology::Topology() noexcept = default;
 
 void Topology::setNpusCount(const int newNpusCount) noexcept {
     assert(newNpusCount > 0);
@@ -16,15 +17,40 @@ void Topology::setNpusCount(const int newNpusCount) noexcept {
     npusCount = newNpusCount;
 
     // allocate memory
-    topology = decltype(topology)(npusCount, std::vector<bool>(npusCount, false));
-    alpha = decltype(alpha)(npusCount, std::vector<LinkWeight>(npusCount, -1.0));
-    beta = decltype(beta)(npusCount, std::vector<LinkWeight>(npusCount, -1.0));
+    connected.resize(npusCount, std::vector(npusCount, false));
+    latencies.resize(npusCount, std::vector<Latency>(npusCount, -1));
+    bandwidths.resize(npusCount, std::vector<Bandwidth>(npusCount, -1));
+    linkDelays.resize(npusCount,
+                      std::vector<Time>(npusCount, std::numeric_limits<uint64_t>::max()));
 }
 
-std::vector<NpuId> Topology::incomingNpus(const NpuId dest) const noexcept {
+void Topology::connect(const NpuID src,
+                       const NpuID dest,
+                       const Latency latency,
+                       const Bandwidth bandwidth,
+                       const bool bidirectional) noexcept {
+    assert(0 <= src && src < npusCount);
+    assert(0 <= dest && dest < npusCount);
+    assert(src != dest);
+    assert(latency >= 0);
+    assert(bandwidth > 0);
+    assert(!connected[src][dest]);
+
+    // connect src -> dest
+    connected[src][dest] = true;
+    latencies[src][dest] = latency;
+    bandwidths[src][dest] = bandwidth;
+
+    // if bidirectional, connect dest -> src
+    if (bidirectional) {
+        connect(dest, src, latency, bandwidth, false);
+    }
+}
+
+std::vector<NpuID> Topology::incomingNpus(const NpuID dest) const noexcept {
     assert(0 <= dest && dest < npusCount);
 
-    auto incomingNpus = std::vector<NpuId>();
+    auto incomingNpus = std::vector<NpuID>();
 
     // iterate over src, get NPUs connected to dest
     for (auto src = 0; src < npusCount; src++) {
@@ -36,31 +62,7 @@ std::vector<NpuId> Topology::incomingNpus(const NpuId dest) const noexcept {
     return incomingNpus;
 }
 
-void Topology::connect(const NpuId src,
-                       const NpuId dest,
-                       const LinkAlphaBeta linkAlphaBeta,
-                       const bool bidirectional) noexcept {
-    assert(0 <= src && src < npusCount);
-    assert(0 <= dest && dest < npusCount);
-    assert(linkAlphaBeta.first >= 0);
-    assert(linkAlphaBeta.second >= 0);
-
-    // connect src -> dest
-    topology[src][dest] = true;
-    alpha[src][dest] = linkAlphaBeta.first;
-    beta[src][dest] = linkAlphaBeta.second;
-    linksCount++;
-
-    if (bidirectional) {
-        // connect dest -> src (if bi-directional)
-        topology[dest][src] = true;
-        alpha[dest][src] = linkAlphaBeta.first;
-        beta[dest][src] = linkAlphaBeta.second;
-        linksCount++;
-    }
-}
-
-bool Topology::connected(const NpuId src, const NpuId dest) const noexcept {
+bool Topology::isConnected(const NpuID src, const NpuID dest) const noexcept {
     assert(0 <= src && src < npusCount);
     assert(0 <= dest && dest < npusCount);
 
@@ -90,7 +92,7 @@ bool Topology::getTopologyValue(const LinkId link) const noexcept {
     return topology[src][dest];
 }
 
-double Topology::getBW(NpuId src, NpuId dest) {
+double Topology::getBW(NpuID src, NpuID dest) {
     const auto b = beta[src][dest];
     const auto bb = 1 / b;                  // MB/us
     const auto bbb = bb * 1e6 / (1 << 10);  // GB/s

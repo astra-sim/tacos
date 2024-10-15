@@ -83,7 +83,8 @@ void LinkUsageTracker::saveLinkUsage(const std::string& filename,
         assert(total == linksCount);
 
         // save
-        csv_file << time + finishTime << "," << finishTime << "," << usage << "," << linksCount << std::endl;
+        csv_file << time + finishTime << "," << finishTime << "," << usage << "," << linksCount
+                 << std::endl;
     }
 
     csv_file.close();
