@@ -23,6 +23,10 @@ void EventQueue::schedule(const Time newEventTime) noexcept {
     eventQueue.push(newEventTime);
 }
 
+EventQueue::Time EventQueue::getCurrentTime() const noexcept {
+    return currentTime;
+}
+
 EventQueue::Time EventQueue::pop() noexcept {
     // there must be at least one event
     assert(!empty());

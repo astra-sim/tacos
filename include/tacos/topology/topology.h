@@ -31,7 +31,7 @@ class Topology {
 
     [[nodiscard]] int getNpusCount() const noexcept;
 
-    [[nodiscard]] const std::set<Time>& getDistinctLinkDelays() const noexcept;
+    [[nodiscard]] std::set<Time> getDistinctLinkDelays() const noexcept;
 
     [[nodiscard]] std::set<NpuID> backtrackSourceNpus(NpuID dest, Time currentTime) const noexcept;
 

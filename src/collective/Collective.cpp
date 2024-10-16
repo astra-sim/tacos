@@ -4,6 +4,7 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include <cassert>
+#include <iostream>
 #include <tacos/collective/collective.h>
 
 using namespace tacos;
@@ -40,4 +41,12 @@ Collective::ChunkSize Collective::getChunkSize() const noexcept {
 
 int Collective::getChunksCount() const noexcept {
     return chunksCount;
+}
+
+Collective::CollectiveCondition Collective::getPrecondition() const noexcept {
+    return precondition;
+}
+
+Collective::CollectiveCondition Collective::getPostcondition() const noexcept {
+    return postcondition;
 }

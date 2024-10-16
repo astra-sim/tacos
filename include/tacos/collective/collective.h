@@ -24,6 +24,12 @@ class Collective {
 
     [[nodiscard]] int getChunksCount() const noexcept;
 
+    [[nodiscard]] CollectiveCondition getPrecondition() const noexcept;
+
+    [[nodiscard]] CollectiveCondition getPostcondition() const noexcept;
+
+    [[nodiscard]] bool synthesisCompleted() const noexcept;
+
   protected:
     int npusCount;
     int chunksCount = 0;

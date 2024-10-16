@@ -6,6 +6,7 @@ LICENSE file in the root directory of this source tree.
 #include <iostream>
 #include <tacos/collective/all_gather.h>
 #include <tacos/event-queue/timer.h>
+#include <tacos/synthesizer/synthesizer.h>
 #include <tacos/topology/mesh_2d.h>
 
 using namespace tacos;
@@ -46,24 +47,20 @@ int main() {
     std::cout << " (" << chunkSizeMB << " MB)" << std::endl;
     std::cout << std::endl;
 
-    // setup topology
-    topology->setChunkSize(chunkSize);
+    // instantiate synthesizer
+    auto synthesizer = Synthesizer(topology, collective);
 
     // create timer
     auto timer = Timer();
 
-    // start timer
+    // synthesize collective algorithm
+    std::cout << "[Synthesis Process]" << std::endl;
+
     timer.start();
-
-    // FIXME: do something
-    // // create solver and solve
-    // solverTimer.start();
-    // auto solver = TacosGreedy(topology, collective, algorithmStatMonitor, linkUsageTracker);
-    // auto collectiveTime = solver.solve();
-    // solverTimer.stop();
-
-    // stop the timer
+    synthesizer.synthesize();
     timer.stop();
+
+    std::cout << std::endl;
 
     // print result
     std::cout << "[Synthesis Result]" << std::endl;

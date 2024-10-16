@@ -79,7 +79,7 @@ void Topology::setChunkSize(const ChunkSize newChunkSize) noexcept {
     }
 }
 
-const std::set<Topology::Time>& Topology::getDistinctLinkDelays() const noexcept {
+std::set<Topology::Time> Topology::getDistinctLinkDelays() const noexcept {
     assert(chunkSizeSet);
 
     return distinctLinkDelays;

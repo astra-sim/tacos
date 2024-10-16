@@ -21,6 +21,8 @@ class EventQueue {
 
     void schedule(Time newEventTime) noexcept;
 
+    [[nodiscard]] Time getCurrentTime() const noexcept;
+
     [[nodiscard]] Time pop() noexcept;
 
     [[nodiscard]] bool empty() const noexcept;
