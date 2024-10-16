@@ -20,7 +20,7 @@ Below figure summarizes the TACOS framework:
 ![TACOS Abstraction](https://github.com/astra-sim/tacos/blob/main/docs/images/tacos_overview.png)
 
 Please find more information about TACOS in [this paper](https://arxiv.org/abs/2304.05301).
-- William Won, Midhilesh Elavazhagan, Sudarshan Srinivasan, Ajaya Durg, Samvit Kaul, Swati Gupta, and Tushar Krishna, "TACOS: Topology-Aware Collective Algorithm Synthesizer for Distributed Machine Learning," arXiv:2304.05301 [cs.DC]
+- William Won, Midhilesh Elavazhagan, Sudarshan Srinivasan, Swati Gupta, and Tushar Krishna, "TACOS: Topology-Aware Collective Algorithm Synthesizer for Distributed Machine Learning," arXiv:2304.05301 [cs.DC]
 
 ## Getting Started
 We highly recommend using the provided Docker image as the runtime environment, since TACOS requires several dependencies including protobuf and boost. You can either download the Docker image from the Docker Hub, or you may build one locally using the provided script.
