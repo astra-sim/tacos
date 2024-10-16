@@ -7,7 +7,6 @@ LABEL maintainer="Will Won <william.won@gatech.edu>"
 ## Install System Dependencies
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt -y update
-RUN apt -y upgrade
 RUN apt -y install \
     coreutils wget vim git \
     gcc g++ clang-format \
@@ -57,5 +56,5 @@ ENV protobuf_DIR="/opt/protobuf-25.3/install"
 
 ### ================== Finalize ==========================
 ## Move to the application directory
-WORKDIR /app
+WORKDIR /app/tacos
 ### ======================================================

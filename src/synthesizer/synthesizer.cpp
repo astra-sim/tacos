@@ -12,11 +12,10 @@ using namespace tacos;
 
 Synthesizer::Synthesizer(const std::shared_ptr<Topology> topology,
                          const std::shared_ptr<Collective> collective,
-                         const std::shared_ptr<ChakraWriter> chakraWriter,
                          const bool verbose) noexcept
     : topology(topology),
       collective(collective),
-      chakraWriter(chakraWriter),
+      synthesisResult(topology, collective),
       ten(topology),
       verbose(verbose) {
     assert(topology != nullptr);
@@ -39,7 +38,7 @@ Synthesizer::Synthesizer(const std::shared_ptr<Topology> topology,
     scheduleNextEvents();
 }
 
-Synthesizer::Time Synthesizer::synthesize() noexcept {
+SynthesisResult Synthesizer::synthesize() noexcept {
     while (!eventQueue.empty()) {
         // update current time
         currentTime = eventQueue.pop();
@@ -60,7 +59,9 @@ Synthesizer::Time Synthesizer::synthesize() noexcept {
     }
 
     assert(synthesisCompleted());
-    return currentTime;
+
+    synthesisResult.setCollectiveTime(currentTime);
+    return synthesisResult;
 }
 
 void Synthesizer::scheduleNextEvents() noexcept {
@@ -180,8 +181,8 @@ void Synthesizer::markLinkChunkMatch(const NpuID src,
         std::cout << "Chunk " << chunk << ": " << src << " -> " << dest << std::endl;
     }
 
-    // mark chakraWriter
-    chakraWriter->addCommunication(chunk, src, dest);
+    // mark the synthesis result
+    synthesisResult.markLinkChunkMatch(chunk, src, dest);
 
     // insert the chunk to the precondition
     precondition[dest].insert(chunk);

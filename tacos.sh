@@ -13,9 +13,9 @@ BUILD_DIR="$PROJECT_DIR/build"
 # compile Chakra
 function compile_chakra {
     protoc \
-      --proto_path="$PROJECT_DIR/extern/chakra/schema/protobuf" \
-      --cpp_out="$PROJECT_DIR/extern/chakra/schema/protobuf" \
-      "$PROJECT_DIR/extern/chakra/schema/protobuf/et_def.proto"
+      --proto_path="$PROJECT_DIR/libs/chakra/schema/protobuf" \
+      --cpp_out="$PROJECT_DIR/libs/chakra/schema/protobuf" \
+      "$PROJECT_DIR/libs/chakra/schema/protobuf/et_def.proto"
 }
 
 # compile TACOS

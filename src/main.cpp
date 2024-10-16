@@ -4,11 +4,11 @@ LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
 #include <iostream>
-#include <tacos/ChakraWriter.h>
 #include <tacos/collective/all_gather.h>
 #include <tacos/event-queue/timer.h>
 #include <tacos/synthesizer/synthesizer.h>
 #include <tacos/topology/mesh_2d.h>
+#include <tacos/writer/synthesis_result.h>
 
 using namespace tacos;
 
@@ -48,22 +48,8 @@ int main() {
     std::cout << " (" << chunkSizeMB << " MB)" << std::endl;
     std::cout << std::endl;
 
-    // create Chakra Writer
-    const auto chakraWriter = std::make_shared<ChakraWriter>(npusCount, collective);
-    for (auto src = 0; src < npusCount; src++) {
-        for (auto dest = 0; dest < npusCount; dest++) {
-            if (src == dest) {
-                continue;
-            }
-
-            if (topology->connected(src, dest)) {
-                chakraWriter->addLink(src, dest);
-            }
-        }
-    }
-
     // instantiate synthesizer
-    auto synthesizer = Synthesizer(topology, collective, chakraWriter);
+    auto synthesizer = Synthesizer(topology, collective);
 
     // create timer
     auto timer = Timer();
@@ -72,7 +58,7 @@ int main() {
     std::cout << "[Synthesis Process]" << std::endl;
 
     timer.start();
-    const auto collectiveTimePS = synthesizer.synthesize();
+    const auto synthesisResult = synthesizer.synthesize();
     timer.stop();
 
     std::cout << std::endl;
@@ -85,12 +71,10 @@ int main() {
     std::cout << "\t- Time to solve: " << elapsedTimeUSec << " us";
     std::cout << " (" << elapsedTimeSec << " s)" << std::endl;
 
+    const auto collectiveTimePS = synthesisResult.getCollectiveTime();
     const auto collectiveTimeUSec = collectiveTimePS / 1.0e6;
     std::cout << "\t- Synthesized Collective Time: " << collectiveTimePS << " ps";
     std::cout << " (" << collectiveTimeUSec << " us)" << std::endl;
-
-    // store synthesis rsults
-    chakraWriter->writeToChakra("tacos");
 
     // terminate
     return 0;
