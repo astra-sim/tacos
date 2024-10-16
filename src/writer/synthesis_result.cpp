@@ -51,3 +51,11 @@ std::vector<SynthesisResult::ChunkID> SynthesisResult::getEgressLinkInfo(
 
     return npuResults[src].getEgressLinkInfo(dest);
 }
+
+std::vector<SynthesisResult::ChunkID> SynthesisResult::getIngressLinkInfo(
+    const NpuID src, const NpuID dest) const noexcept {
+    assert(0 <= src && src < npusCount);
+    assert(0 <= dest && dest < npusCount);
+
+    return npuResults[dest].getIngressLinkInfo(src);
+}

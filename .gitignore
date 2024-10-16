@@ -10,6 +10,7 @@
 build/
 
 # output formats
+results/
 *.csv
 *.et
 *.xml

@@ -15,9 +15,7 @@ using namespace tacos;
 CsvWriter::CsvWriter(const std::shared_ptr<Topology> topology,
                      const std::shared_ptr<Collective> collective,
                      const SynthesisResult synthesisResult) noexcept
-    : topology(topology),
-      collective(collective),
-      synthesisResult(synthesisResult) {
+    : Writer(topology, collective, synthesisResult) {
     assert(topology != nullptr);
     assert(collective != nullptr);
 
@@ -27,24 +25,9 @@ CsvWriter::CsvWriter(const std::shared_ptr<Topology> topology,
 void CsvWriter::write(const std::string& filename) const noexcept {
     assert(!filename.empty());
 
-    // get the current process path
-    auto currentPath = boost::filesystem::current_path();
-    auto directoryPath = currentPath.append("results");
-
-    // create directory, if not already exist
-    if (!boost::filesystem::exists(directoryPath)) {
-        boost::filesystem::create_directory(directoryPath);
-    }
-
-    // get filepath
-    const auto filePath = directoryPath.append(filename);
-    assert(filePath.has_extension());
+    // prepare the file
+    const auto filePath = prepareFile(filename);
     assert(filePath.extension() == ".csv");
-
-    // if the file already exists, remove it
-    if (boost::filesystem::exists(filePath)) {
-        boost::filesystem::remove(filePath);
-    }
 
     // open the file
     auto csvFile = std::ofstream(filePath.string(), std::ios::out);

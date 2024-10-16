@@ -30,6 +30,11 @@ NpuResult::NpuResult(const int npu,
             ingressLinksInfo[dest] = {};
         }
     }
+
+    // initialize dependencyInfo
+    for (auto chunk = 0; chunk < chunksCount; chunk++) {
+        dependencyInfo[chunk] = std::nullopt;
+    }
 }
 
 void NpuResult::addIngressLinkInfo(ChunkID chunk, NpuID src) noexcept {
@@ -39,7 +44,9 @@ void NpuResult::addIngressLinkInfo(ChunkID chunk, NpuID src) noexcept {
 
     ingressLinksInfo[src].push_back(chunk);
 
-    // FIXME: if this is the first arrival, mark dependency op information
+    // mark dependency info
+    const auto opIdx = ingressLinksInfo[src].size() - 1;
+    dependencyInfo[chunk] = opIdx;
 }
 
 void NpuResult::addEgressLinkInfo(ChunkID chunk, NpuID dest) noexcept {

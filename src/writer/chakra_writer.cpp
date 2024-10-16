@@ -3,46 +3,34 @@ This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
 *******************************************************************************/
 
-
-#include "ChakraNode.h"
-// #include "protoio.hh"
-// #include "et_def.pb.h"
 #include <iostream>
 #include <sstream>
+#include <tacos/writer/chakra_writer.h>
 
-using namespace Tacos;
+using namespace tacos;
 
-int ChakraNode::nextNodeId = 0;
+ChakraWriter::ChakraWriter(std::shared_ptr<Topology> topology,
+                           std::shared_ptr<Collective> collective,
+                           SynthesisResult synthesisResult) noexcept
+    : Writer(topology, collective, synthesisResult) {}
 
-ChakraNode::ChakraNode(const ChunkId chunkId, const NpuId src, const NpuId dest, const OpType opType) noexcept
-    : chunkId(chunkId),
-      nodeId(nextNodeId),
-      src(src),
-      dest(dest),
-      opType(opType) {
-    ChakraNode::nextNodeId++;
-}
-
-int ChakraNode::getNodeId() const noexcept {
-    return nodeId;
-}
-
-void ChakraNode::print() const noexcept {
-    std::cout << "(Chunk: " << chunkId << ", chakra: " << nodeId << ", dep: [";
-    for (const auto dep : dependencies) {
-        std::cout << dep << ", ";
+void ChakraWriter::write(const std::string& filename) const noexcept {
+    for (auto npu = 0; npu < npusCount; npu++) {
+        const auto ingressChakraNodes = constructIngressChakraNodes(npu);
+        const auto egressChakraNodes = constructEgressChakraNodes(npu);
     }
-    std::cout << "])";
 }
 
-void ChakraNode::addDependency(int depNodeId) noexcept {
-    dependencies.insert(depNodeId);
-}
-
-std::string ChakraNode::getNodeName() const noexcept {
+std::string ChakraWriter::getNodeName(const ChakraNodeID chakraNodeID,
+                                      const ChunkID chunk,
+                                      const NpuID src,
+                                      const NpuID dest,
+                                      const OpType opType) const noexcept {
     std::ostringstream nodeName;
-    nodeName << "Node " << nodeId << ", ";
-    nodeName << "Chunk: " << chunkId << ", ";
+
+    nodeName << "Node " << chakraNodeID << ", ";
+    nodeName << "Chunk: " << chunk << ", ";
+
     switch (opType) {
     case OpType::Send:
         nodeName << "Send: ";
@@ -59,28 +47,32 @@ std::string ChakraNode::getNodeName() const noexcept {
     return nodeName.str();
 }
 
-ChakraProtoMsg::Node* ChakraNode::generateChakraNode(const NpuId src, const NpuId dest, const ChunkSize chunkSize) const noexcept {
-    Node* node = new Node;
+std::unique_ptr<ChakraWriter::ChakraNode> ChakraWriter::generateChakraNode(
+    const ChunkID chunk, const NpuID src, const NpuID dest, const OpType opType) noexcept {
+    // create a new node
+    auto node = std::make_unique<ChakraNode>();
 
-    node->set_id(nodeId);
+    // assign node id
+    const auto chakraNodeID = newChakraNodeID;
+    newChakraNodeID++;
 
-    const auto nodeName = getNodeName();
+    node->set_id(chakraNodeID);
+
+    // assign node name
+    const auto nodeName = getNodeName(chakraNodeID, chunk, src, dest, opType);
     node->set_name(nodeName);
 
+    // assign node type
     switch (opType) {
     case OpType::Send:
-        node->set_type(NodeType::COMM_SEND_NODE);
+        node->set_type(ChakraNodeType::COMM_SEND_NODE);
         break;
     case OpType::Recv:
-        node->set_type(NodeType::COMM_RECV_NODE);
+        node->set_type(ChakraNodeType::COMM_RECV_NODE);
         break;
     default:
         assert(false);
         exit(-1);
-    }
-
-    for (const auto dep : dependencies) {
-        node->add_data_deps(dep);
     }
 
     // add attributes
@@ -95,13 +87,13 @@ ChakraProtoMsg::Node* ChakraNode::generateChakraNode(const NpuId src, const NpuI
 
     switch (opType) {
     case OpType::Send:
-        attrCommType->set_int32_val(NodeType::COMM_SEND_NODE);
+        attrCommType->set_int32_val(ChakraNodeType::COMM_SEND_NODE);
 
         attrNpu->set_name("comm_dst");
         attrNpu->set_int32_val(dest);
         break;
     case OpType::Recv:
-        attrCommType->set_int32_val(NodeType::COMM_RECV_NODE);
+        attrCommType->set_int32_val(ChakraNodeType::COMM_RECV_NODE);
 
         attrNpu->set_name("comm_src");
         attrNpu->set_int32_val(src);

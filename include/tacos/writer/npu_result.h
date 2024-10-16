@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 
 #include <map>
 #include <memory>
+#include <optional>
 #include <tacos/collective/collective.h>
 #include <tacos/topology/topology.h>
 #include <vector>
@@ -36,6 +37,8 @@ class NpuResult {
     int chunksCount;
     std::map<NpuID, std::vector<ChunkID>> ingressLinksInfo;
     std::map<NpuID, std::vector<ChunkID>> egressLinksInfo;
+
+    std::map<ChunkID, std::optional<int>> dependencyInfo;
 };
 
 }  // namespace tacos

@@ -40,8 +40,7 @@ set_target_properties(tacos PROPERTIES
 
 # Path to header files
 target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/extern/chakra/schema/protobuf)
-target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/extern/chakra/src/third_party/utils)
+target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
 # Link to external libraries
 target_link_libraries(tacos PRIVATE yaml-cpp)
