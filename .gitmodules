@@ -1,3 +1,6 @@
-[submodule "extern/yaml-cpp"]
-	path = extern/yaml-cpp
-	url = git@github.com:jbeder/yaml-cpp.git
+[submodule "libs/yaml-cpp"]
+	path = libs/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp.git
+[submodule "libs/chakra"]
+	path = libs/chakra
+	url = https://github.com/mlcommons/chakra.git

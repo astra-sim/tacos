@@ -10,17 +10,12 @@ set -e
 SCRIPT_DIR=$(dirname "$(realpath "$0")")
 PROJECT_DIR="${SCRIPT_DIR:?}/.."
 
-# start:
-echo "Formatting TACOS Codebase..."
+# start
+echo "[TACOS] Building Docker Image..."
 
-# format everything inside `src` directory
-printf "\tFormatting src directory...\n"
-find "${PROJECT_DIR:?}"/src \( -name "*.cpp" -o -name "*.h" \) -exec \
-    clang-format -style=file -i {} \;
-
-  printf "\tFormatting include directory...\n"
-  find "${PROJECT_DIR:?}"/include \( -name "*.cpp" -o -name "*.h" \) -exec \
-      clang-format -style=file -i {} \;
+# build docker image
+docker build -t astrasim/tacos:latest ${PROJECT_DIR:?}
 
 # finalize
-echo "Formatting Done."
+echo "[TACOS] Docker Image built: astrasim/tacos:latest"
+echo "[TACOS] Consider running utils/start_docker_container.sh to start the container."

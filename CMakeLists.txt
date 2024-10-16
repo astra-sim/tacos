@@ -1,37 +1,61 @@
-# Check CMake version
-cmake_minimum_required(VERSION 3.25)
+## ******************************************************************************
+## This source code is licensed under the MIT license found in the
+## LICENSE file in the root directory of this source tree.
+## ******************************************************************************
 
-# Create Project
-project(TACOS)
+# CMake requirement
+cmake_minimum_required(VERSION 3.22)
 
-# Setup compilation options
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# Start TACOS project
+project(tacos)
 
-# Set build type
-set(CMAKE_BUILD_TYPE Release)
+# Default build mode: Release
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif ()
 
-# Debug option
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+# find external packages
+find_package(protobuf CONFIG REQUIRED)
+find_package(Boost CONFIG REQUIRED COMPONENTS filesystem)
 
 # Compile external libraries
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/yaml-cpp yaml-cpp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/yaml-cpp yaml-cpp)
 
-# Project include option
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include/tacos)
+# Create tacos binary target
+add_executable(tacos)
 
-# Target (common) compilation files
-file(GLOB srcs
-        ${CMAKE_CURRENT_SOURCE_DIR}/helper/*.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/topology/*.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/collective/*.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/synthesizer/*.cpp
-)
-
-add_executable(tacos ${srcs})
-target_sources(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/runner/main.cpp)
-target_link_libraries(tacos PUBLIC yaml-cpp)
+# Standard: C++17
 set_target_properties(tacos PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin
-        LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib
-        ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED ON)
+
+# Treat all warnings as errors
+set_target_properties(tacos PROPERTIES COMPILE_WARNING_AS_ERROR ON)
+
+# Compiled binary/library file locations
+set_target_properties(tacos PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin
+    LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib
+    ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+
+# Path to header files
+target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs)
+
+# Link to external libraries
+target_link_libraries(tacos PRIVATE yaml-cpp)
+target_link_libraries(tacos PRIVATE protobuf::libprotobuf)
+target_link_libraries(tacos PRIVATE Boost::filesystem)
+
+# List all source files to be compiled
+file(GLOB tacos_srcs
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/collective/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/event-queue/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/synthesizer/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/topology/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/writer/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/chakra/schema/protobuf/*.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/libs/chakra/src/third_party/utils/*.cc
+)
+target_sources(tacos PRIVATE ${tacos_srcs})
+target_sources(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)

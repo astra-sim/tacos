@@ -10,6 +10,14 @@ set -e
 PROJECT_DIR=$(dirname "$(realpath "$0")")
 BUILD_DIR="$PROJECT_DIR/build"
 
+# compile Chakra
+function compile_chakra {
+    protoc \
+      --proto_path="$PROJECT_DIR/libs/chakra/schema/protobuf" \
+      --cpp_out="$PROJECT_DIR/libs/chakra/schema/protobuf" \
+      "$PROJECT_DIR/libs/chakra/schema/protobuf/et_def.proto"
+}
+
 # compile TACOS
 function compile {
     cmake -S "$PROJECT_DIR" -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=Release
@@ -23,6 +31,8 @@ function run {
 
 # cleanup build
 function cleanup {
+    rm -f "$PROJECT_DIR/extern/chakra/schema/protobuf/et_def.pb.h"
+    rm -f "$PROJECT_DIR/extern/chakra/schema/protobuf/et_def.pb.cc"
     rm -rf "$BUILD_DIR"
 }
 
@@ -39,6 +49,7 @@ function print_help {
 # execute
 # no flag: compile and run
 if [ $# -eq 0 ]; then
+    compile_chakra
     compile
     run
     exit $?
@@ -53,7 +64,11 @@ case "$1" in
         cleanup
         ;;
     -c|--compile)
+        compile_chakra
         compile
+        ;;
+    -k|--chakra)
+        compile_chakra
         ;;
     -r|--run)
         run

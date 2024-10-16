@@ -23,32 +23,32 @@ Please find more information about TACOS in [this paper](https://arxiv.org/abs/2
 - William Won, Midhilesh Elavazhagan, Sudarshan Srinivasan, Ajaya Durg, Samvit Kaul, Swati Gupta, and Tushar Krishna, "TACOS: Topology-Aware Collective Algorithm Synthesizer for Distributed Machine Learning," arXiv:2304.05301 [cs.DC]
 
 ## Getting Started
+We highly recommend using the provided Docker image as the runtime environment, since TACOS requires several dependencies including protobuf and boost. You can either download the Docker image from the Docker Hub, or you may build one locally using the provided script.
+
 1. Download the TACOS project.
 ```sh
-git clone --recurse-submodules git@github.com:astra-sim/tacos.git
+git clone --recurse-submodules https://github.com/astra-sim/tacos.git
 ```
 
-2. Run TACOS with the provided script.
+2. Pull the TACOS Docker Image.
 ```sh
-./tacos.sh
+docker pull astrasim/tacos:latest
+
+# Instead, you may consider building this Docker Image locally.
+./utils/build_docker_image.sh
 ```
 
-If you'd like to analyze the codebase, `runner/main.cpp` is the main entry point.
-
-### Docker Execution Environment
-To assist the execution environment setup, you may also consider building a Docker image.
+3. Start the Docker Container (which becomes your TACOS runtime environment).
 ```sh
-docker built -t tacos .
+./utils/start_docker_container.sh
 ```
 
-You can start the Docker container as a sandboxed execution environment.
+4. Run TACOS with the provided script.
 ```sh
-docker run -it -v /path/to/your/tacos/repository:/app/tacos tacos
-
-# once Docker container starts running
-cd /app/tacos
-./tacos.sh
+[docker] ./tacos.sh
 ```
+
+If you'd like to analyze the codebase, `src/main.cpp` is the main entry point.
 
 ## Contact Us
 For any questions about TACOS, please contact [Will Won](mailto:william.won@gatech.edu)

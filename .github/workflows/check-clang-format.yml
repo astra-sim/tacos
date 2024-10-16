@@ -19,35 +19,15 @@ jobs:
     name: Code Formatting
     runs-on: ubuntu-24.04  # comes with clang-format v18
     steps:
-    - name: Clone repository
-      uses: actions/checkout@v4
+      - name: Clone repository
+        uses: actions/checkout@v4
 
-    - name: Check format of `collective` directory
-      run: |
-        find collective -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
-          xargs -0L1 clang-format -style=file --dry-run -Werror
+      - name: Check format of `src` directory
+        run: |
+          find src -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
+            xargs -0L1 clang-format -style=file --dry-run -Werror
 
-    - name: Check format of `helper` directory
-      run: |
-        find helper -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
-          xargs -0L1 clang-format -style=file --dry-run -Werror
-
-    - name: Check format of `include` directory
-      run: |
-        find include -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
-          xargs -0L1 clang-format -style=file --dry-run -Werror
-
-    - name: Check format of `runner` directory
-      run: |
-        find runner -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
-          xargs -0L1 clang-format -style=file --dry-run -Werror
-
-    - name: Check format of `synthesizer` directory
-      run: |
-        find synthesizer -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
-          xargs -0L1 clang-format -style=file --dry-run -Werror
-
-    - name: Check format of `topology` directory
-      run: |
-        find topology -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
-          xargs -0L1 clang-format -style=file --dry-run -Werror
+      - name: Check format of `include` directory
+        run: |
+          find include -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
+            xargs -0L1 clang-format -style=file --dry-run -Werror
