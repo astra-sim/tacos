@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 #include <tacos/event-queue/timer.h>
 #include <tacos/synthesizer/synthesizer.h>
 #include <tacos/topology/mesh_2d.h>
+#include <tacos/writer/csv_writer.h>
 #include <tacos/writer/synthesis_result.h>
 
 using namespace tacos;
@@ -75,7 +76,16 @@ int main() {
     const auto collectiveTimeUSec = collectiveTimePS / 1.0e6;
     std::cout << "\t- Synthesized Collective Time: " << collectiveTimePS << " ps";
     std::cout << " (" << collectiveTimeUSec << " us)" << std::endl;
+    std::cout << std::endl;
+
+    // write results to file
+    std::cout << "[Synthesis Result Dump]" << std::endl;
+    const auto csvWriter = CsvWriter(topology, collective, synthesisResult);
+    csvWriter.write("tacos_synthesis_result.csv");
+
+    std::cout << std::endl;
 
     // terminate
+    std::cout << "[TACOS] Done!" << std::endl;
     return 0;
 }

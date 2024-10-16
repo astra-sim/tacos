@@ -16,6 +16,7 @@ class SynthesisResult {
   public:
     using NpuID = Topology::NpuID;
     using ChunkID = Collective::ChunkID;
+    using ChunkSize = Collective::ChunkSize;
     using Time = EventQueue::Time;
 
     SynthesisResult(std::shared_ptr<Topology> topology,
@@ -26,6 +27,8 @@ class SynthesisResult {
     void setCollectiveTime(Time newCollectiveTime) noexcept;
 
     [[nodiscard]] Time getCollectiveTime() const noexcept;
+
+    [[nodiscard]] std::vector<ChunkID> getEgressLinkInfo(NpuID src, NpuID dest) const noexcept;
 
   private:
     int npusCount;

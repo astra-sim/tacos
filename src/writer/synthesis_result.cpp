@@ -43,3 +43,11 @@ void SynthesisResult::setCollectiveTime(Time newCollectiveTime) noexcept {
 SynthesisResult::Time SynthesisResult::getCollectiveTime() const noexcept {
     return collectiveTime;
 }
+
+std::vector<SynthesisResult::ChunkID> SynthesisResult::getEgressLinkInfo(
+    const NpuID src, const NpuID dest) const noexcept {
+    assert(0 <= src && src < npusCount);
+    assert(0 <= dest && dest < npusCount);
+
+    return npuResults[src].getEgressLinkInfo(dest);
+}

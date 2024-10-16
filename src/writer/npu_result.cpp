@@ -38,6 +38,8 @@ void NpuResult::addIngressLinkInfo(ChunkID chunk, NpuID src) noexcept {
     assert(ingressLinksInfo.find(src) != ingressLinksInfo.end());
 
     ingressLinksInfo[src].push_back(chunk);
+
+    // FIXME: if this is the first arrival, mark dependency op information
 }
 
 void NpuResult::addEgressLinkInfo(ChunkID chunk, NpuID dest) noexcept {
@@ -46,4 +48,24 @@ void NpuResult::addEgressLinkInfo(ChunkID chunk, NpuID dest) noexcept {
     assert(egressLinksInfo.find(dest) != egressLinksInfo.end());
 
     egressLinksInfo[dest].push_back(chunk);
+}
+
+std::vector<NpuResult::ChunkID> NpuResult::getIngressLinkInfo(const NpuID src) const noexcept {
+    assert(0 <= src && src < npusCount);
+
+    if (ingressLinksInfo.find(src) == ingressLinksInfo.end()) {
+        return {};
+    }
+
+    return ingressLinksInfo.at(src);
+}
+
+std::vector<NpuResult::ChunkID> NpuResult::getEgressLinkInfo(const NpuID dest) const noexcept {
+    assert(0 <= dest && dest < npusCount);
+
+    if (egressLinksInfo.find(dest) == egressLinksInfo.end()) {
+        return {};
+    }
+
+    return egressLinksInfo.at(dest);
 }

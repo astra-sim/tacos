@@ -11,6 +11,7 @@ RUN apt -y install \
     coreutils wget vim git \
     gcc g++ clang-format \
     make cmake \
+    libboost-all-dev \
     zlib1g-dev
 ### ======================================================
 

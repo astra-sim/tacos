@@ -42,6 +42,7 @@ void Topology::connect(const NpuID src,
     connected[src][dest] = true;
     latencies[src][dest] = latency;
     bandwidths[src][dest] = bandwidth;
+    linksCount++;
 
     // if bidirectional, connect dest -> src
     if (bidirectional) {
@@ -119,4 +120,24 @@ Topology::Time Topology::getLinkDelay(NpuID src, NpuID dest) const noexcept {
     assert(0 <= dest && dest < npusCount);
 
     return linkDelays[src][dest];
+}
+
+int Topology::getLinksCount() const noexcept {
+    return linksCount;
+}
+
+Topology::Latency Topology::getLatency(NpuID src, NpuID dest) const noexcept {
+    assert(npusCountSet);
+    assert(0 <= src && src < npusCount);
+    assert(0 <= dest && dest < npusCount);
+
+    return latencies[src][dest];
+}
+
+Topology::Bandwidth Topology::getBandwidth(NpuID src, NpuID dest) const noexcept {
+    assert(npusCountSet);
+    assert(0 <= src && src < npusCount);
+    assert(0 <= dest && dest < npusCount);
+
+    return bandwidths[src][dest];
 }

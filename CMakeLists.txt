@@ -14,8 +14,9 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif ()
 
-# find Protobuf
+# find external packages
 find_package(protobuf CONFIG REQUIRED)
+find_package(Boost CONFIG REQUIRED COMPONENTS filesystem)
 
 # Compile external libraries
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/yaml-cpp yaml-cpp)
@@ -43,8 +44,9 @@ target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/extern/chak
 target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/extern/chakra/src/third_party/utils)
 
 # Link to external libraries
-target_link_libraries(tacos PUBLIC yaml-cpp)
-target_link_libraries(tacos PUBLIC protobuf::libprotobuf)
+target_link_libraries(tacos PRIVATE yaml-cpp)
+target_link_libraries(tacos PRIVATE protobuf::libprotobuf)
+target_link_libraries(tacos PRIVATE Boost::filesystem)
 
 # List all source files to be compiled
 file(GLOB tacos_srcs

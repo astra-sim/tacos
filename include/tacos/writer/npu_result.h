@@ -26,6 +26,10 @@ class NpuResult {
 
     void addEgressLinkInfo(ChunkID chunk, NpuID dest) noexcept;
 
+    std::vector<ChunkID> getIngressLinkInfo(NpuID src) const noexcept;
+
+    std::vector<ChunkID> getEgressLinkInfo(NpuID dest) const noexcept;
+
   private:
     int npu;
     int npusCount;

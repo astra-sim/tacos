@@ -35,6 +35,12 @@ class Topology {
 
     [[nodiscard]] std::set<Time> getDistinctLinkDelays() const noexcept;
 
+    [[nodiscard]] int getLinksCount() const noexcept;
+
+    [[nodiscard]] Latency getLatency(NpuID src, NpuID dest) const noexcept;
+
+    [[nodiscard]] Bandwidth getBandwidth(NpuID src, NpuID dest) const noexcept;
+
   protected:
     void setNpusCount(int newNpusCount) noexcept;
 
@@ -46,6 +52,7 @@ class Topology {
 
   private:
     int npusCount = -1;
+    int linksCount = 0;
     bool npusCountSet = false;
 
     std::set<Time> distinctLinkDelays = {};
