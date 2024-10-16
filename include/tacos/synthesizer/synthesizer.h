@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 #include <random>
 #include <tacos/collective/collective.h>
 #include <tacos/event-queue/event_queue.h>
+#include <tacos/synthesizer/time_expanded_network.h>
 #include <tacos/topology/topology.h>
 
 namespace tacos {
@@ -22,9 +23,10 @@ class Synthesizer {
     using CollectiveCondition = Collective::CollectiveCondition;
 
     Synthesizer(std::shared_ptr<Topology> topology,
-                std::shared_ptr<Collective> collective) noexcept;
+                std::shared_ptr<Collective> collective,
+                bool verbose = false) noexcept;
 
-    void synthesize() noexcept;
+    [[nodiscard]] Time synthesize() noexcept;
 
   private:
     EventQueue eventQueue = {};
@@ -33,8 +35,12 @@ class Synthesizer {
     std::shared_ptr<Topology> topology;
     std::shared_ptr<Collective> collective;
 
+    TimeExpandedNetwork ten;
+
     int npusCount;
     int chunksCount;
+
+    bool verbose;
 
     CollectiveCondition precondition = {};
     CollectiveCondition postcondition = {};

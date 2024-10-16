@@ -57,7 +57,7 @@ int main() {
     std::cout << "[Synthesis Process]" << std::endl;
 
     timer.start();
-    synthesizer.synthesize();
+    const auto collectiveTimePS = synthesizer.synthesize();
     timer.stop();
 
     std::cout << std::endl;
@@ -69,6 +69,10 @@ int main() {
     const auto elapsedTimeSec = elapsedTimeUSec / 1e6;
     std::cout << "\t- Time to solve: " << elapsedTimeUSec << " us";
     std::cout << " (" << elapsedTimeSec << " s)" << std::endl;
+
+    const auto collectiveTimeUSec = collectiveTimePS / 1.0e6;
+    std::cout << "\t- Synthesized Collective Time: " << collectiveTimePS << " ps";
+    std::cout << " (" << collectiveTimeUSec << " us)" << std::endl;
 
     // terminate
     return 0;

@@ -11,9 +11,12 @@ LICENSE file in the root directory of this source tree.
 using namespace tacos;
 
 Synthesizer::Synthesizer(const std::shared_ptr<Topology> topology,
-                         const std::shared_ptr<Collective> collective) noexcept
+                         const std::shared_ptr<Collective> collective,
+                         const bool verbose) noexcept
     : topology(topology),
-      collective(collective) {
+      collective(collective),
+      ten(topology),
+      verbose(verbose) {
     assert(topology != nullptr);
     assert(collective != nullptr);
 
@@ -34,10 +37,13 @@ Synthesizer::Synthesizer(const std::shared_ptr<Topology> topology,
     scheduleNextEvents();
 }
 
-void Synthesizer::synthesize() noexcept {
+Synthesizer::Time Synthesizer::synthesize() noexcept {
     while (!eventQueue.empty()) {
         // update current time
         currentTime = eventQueue.pop();
+
+        // update TEN current time
+        ten.updateCurrentTime(currentTime);
 
         // run link-chunk matching
         linkChunkMatching();
@@ -52,6 +58,7 @@ void Synthesizer::synthesize() noexcept {
     }
 
     assert(synthesisCompleted());
+    return currentTime;
 }
 
 void Synthesizer::scheduleNextEvents() noexcept {
@@ -73,8 +80,8 @@ void Synthesizer::linkChunkMatching() noexcept {
         // randomly select one postcondition
         const auto [dest, chunk] = selectPostcondition(&currentPostcondition);
 
-        // backtrack the topology to find potential source NPUs
-        const auto sourceNpus = topology->backtrackSourceNpus(dest, currentTime);
+        // backtrack the TEN to find potential source NPUs
+        const auto sourceNpus = ten.backtrackTEN(dest);
 
         // among the sourceNpus, find the candidate sources
         const auto candidateSourceNpus =
@@ -166,8 +173,10 @@ void Synthesizer::markLinkChunkMatch(const NpuID src,
                                      const NpuID dest,
                                      const ChunkID chunk) noexcept {
     // mark the link-chunk match
-    std::cout << "[Time " << currentTime << "] ";
-    std::cout << src << " -> " << dest << ": " << chunk << std::endl;
+    if (verbose) {
+        std::cout << "[EventTime " << currentTime << " ps] ";
+        std::cout << "Chunk " << chunk << ": " << src << " -> " << dest << std::endl;
+    }
 
     // insert the chunk to the precondition
     precondition[dest].insert(chunk);

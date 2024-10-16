@@ -29,11 +29,11 @@ class Topology {
 
     void setChunkSize(ChunkSize newChunkSize) noexcept;
 
+    [[nodiscard]] Time getLinkDelay(NpuID src, NpuID dest) const noexcept;
+
     [[nodiscard]] int getNpusCount() const noexcept;
 
     [[nodiscard]] std::set<Time> getDistinctLinkDelays() const noexcept;
-
-    [[nodiscard]] std::set<NpuID> backtrackSourceNpus(NpuID dest, Time currentTime) const noexcept;
 
   protected:
     void setNpusCount(int newNpusCount) noexcept;

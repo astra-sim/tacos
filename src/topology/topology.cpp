@@ -112,30 +112,11 @@ int Topology::getNpusCount() const noexcept {
     return npusCount;
 }
 
-std::set<Topology::NpuID> Topology::backtrackSourceNpus(const NpuID dest,
-                                                        const Time currentTime) const noexcept {
+Topology::Time Topology::getLinkDelay(NpuID src, NpuID dest) const noexcept {
     assert(npusCountSet);
     assert(chunkSizeSet);
+    assert(0 <= src && src < npusCount);
     assert(0 <= dest && dest < npusCount);
 
-    auto sourceNpus = std::set<NpuID>();
-
-    // iterate over src, get NPUs connected to dest
-    for (auto src = 0; src < npusCount; src++) {
-        if (!connected[src][dest]) {
-            continue;
-        }
-
-        // check if the backtracked delay is valid, i.e., >= 0
-        const auto linkDelay = linkDelays[src][dest];
-        const auto backtrackedDelay = currentTime - linkDelay;
-        if (backtrackedDelay < 0) {
-            continue;
-        }
-
-        // valid src, add to sourceNpus
-        sourceNpus.insert(src);
-    }
-
-    return sourceNpus;
+    return linkDelays[src][dest];
 }
