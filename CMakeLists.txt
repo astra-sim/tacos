@@ -15,7 +15,6 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 # find external packages
-find_package(protobuf CONFIG REQUIRED)
 find_package(Boost CONFIG REQUIRED COMPONENTS filesystem)
 
 # Compile external libraries
@@ -44,7 +43,6 @@ target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
 # Link to external libraries
 target_link_libraries(tacos PRIVATE yaml-cpp)
-target_link_libraries(tacos PRIVATE protobuf::libprotobuf)
 target_link_libraries(tacos PRIVATE Boost::filesystem)
 
 # List all source files to be compiled
