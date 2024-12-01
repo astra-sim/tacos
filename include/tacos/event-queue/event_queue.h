@@ -30,7 +30,8 @@ class EventQueue {
   private:
     Time currentTime = 0;
     std::set<Time> eventTimes = {};
-    std::priority_queue<Time, std::vector<Time>, std::greater<>> eventQueue = {};
+    std::priority_queue<Time, std::vector<Time>, std::greater<>> eventQueue =
+        {};
 };
 
 }  // namespace tacos

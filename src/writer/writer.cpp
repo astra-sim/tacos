@@ -22,7 +22,8 @@ Writer::Writer(const std::shared_ptr<Topology> topology,
     chunkSize = collective->getChunkSize();
 }
 
-boost::filesystem::path Writer::prepareFile(const std::string& filename) const noexcept {
+boost::filesystem::path Writer::prepareFile(
+    const std::string& filename) const noexcept {
     assert(!filename.empty());
 
     // get the current process path

@@ -26,7 +26,9 @@ class CsvWriter final : public Writer {
     void writeMetadata(std::ofstream& csvFile) const noexcept;
     void writeHeader(std::ofstream& csvFile) const noexcept;
     void writeSynthesisResult(std::ofstream& csvFile) const noexcept;
-    void writeLinkInfo(NpuID src, NpuID dest, std::ofstream& csvFile) const noexcept;
+    void writeLinkInfo(NpuID src,
+                       NpuID dest,
+                       std::ofstream& csvFile) const noexcept;
 };
 
 }  // namespace tacos

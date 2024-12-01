@@ -11,7 +11,9 @@ namespace tacos {
 
 class AllGather final : public Collective {
   public:
-    explicit AllGather(int npusCount, ChunkSize chunkSize = 1, int initChunksPerNpu = 1) noexcept;
+    explicit AllGather(int npusCount,
+                       ChunkSize chunkSize = 1,
+                       int initChunksPerNpu = 1) noexcept;
 };
 
 }  // namespace tacos

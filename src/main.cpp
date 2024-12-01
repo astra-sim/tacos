@@ -28,7 +28,8 @@ int main() {
     const auto bandwidth = 50.0;  // GB/s
     const auto latency = 500;     // ns
 
-    const auto topology = std::make_shared<Mesh2D>(width, height, latency, bandwidth);
+    const auto topology =
+        std::make_shared<Mesh2D>(width, height, latency, bandwidth);
     const auto npusCount = topology->getNpusCount();
 
     std::cout << "[Topology Information]" << std::endl;
@@ -39,7 +40,8 @@ int main() {
     const auto chunkSize = 1'048'576;  // B
     const auto initChunksPerNpu = 1;
 
-    const auto collective = std::make_shared<AllGather>(npusCount, chunkSize, initChunksPerNpu);
+    const auto collective =
+        std::make_shared<AllGather>(npusCount, chunkSize, initChunksPerNpu);
     const auto chunksCount = collective->getChunksCount();
 
     std::cout << "[Collective Information]" << std::endl;
@@ -74,7 +76,8 @@ int main() {
 
     const auto collectiveTimePS = synthesisResult.getCollectiveTime();
     const auto collectiveTimeUSec = collectiveTimePS / 1.0e6;
-    std::cout << "\t- Synthesized Collective Time: " << collectiveTimePS << " ps";
+    std::cout << "\t- Synthesized Collective Time: " << collectiveTimePS
+              << " ps";
     std::cout << " (" << collectiveTimeUSec << " us)" << std::endl;
     std::cout << std::endl;
 

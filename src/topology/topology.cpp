@@ -22,8 +22,9 @@ void Topology::setNpusCount(const int newNpusCount) noexcept {
     connected.resize(npusCount, std::vector(npusCount, false));
     latencies.resize(npusCount, std::vector<Latency>(npusCount, -1));
     bandwidths.resize(npusCount, std::vector<Bandwidth>(npusCount, -1));
-    linkDelays.resize(npusCount,
-                      std::vector<Time>(npusCount, std::numeric_limits<uint64_t>::max()));
+    linkDelays.resize(
+        npusCount,
+        std::vector<Time>(npusCount, std::numeric_limits<uint64_t>::max()));
 }
 
 void Topology::connect(const NpuID src,
@@ -86,7 +87,8 @@ std::set<Topology::Time> Topology::getDistinctLinkDelays() const noexcept {
     return distinctLinkDelays;
 }
 
-Topology::Time Topology::computeLinkDelay(const NpuID src, const NpuID dest) const noexcept {
+Topology::Time Topology::computeLinkDelay(const NpuID src,
+                                          const NpuID dest) const noexcept {
     assert(npusCountSet);
     assert(chunkSizeSet);
 
@@ -134,7 +136,8 @@ Topology::Latency Topology::getLatency(NpuID src, NpuID dest) const noexcept {
     return latencies[src][dest];
 }
 
-Topology::Bandwidth Topology::getBandwidth(NpuID src, NpuID dest) const noexcept {
+Topology::Bandwidth Topology::getBandwidth(NpuID src,
+                                           NpuID dest) const noexcept {
     assert(npusCountSet);
     assert(0 <= src && src < npusCount);
     assert(0 <= dest && dest < npusCount);

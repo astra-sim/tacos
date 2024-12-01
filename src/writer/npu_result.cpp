@@ -57,7 +57,8 @@ void NpuResult::addEgressLinkInfo(ChunkID chunk, NpuID dest) noexcept {
     egressLinksInfo[dest].push_back(chunk);
 }
 
-std::vector<NpuResult::ChunkID> NpuResult::getIngressLinkInfo(const NpuID src) const noexcept {
+std::vector<NpuResult::ChunkID> NpuResult::getIngressLinkInfo(
+    const NpuID src) const noexcept {
     assert(0 <= src && src < npusCount);
 
     if (ingressLinksInfo.find(src) == ingressLinksInfo.end()) {
@@ -67,7 +68,8 @@ std::vector<NpuResult::ChunkID> NpuResult::getIngressLinkInfo(const NpuID src) c
     return ingressLinksInfo.at(src);
 }
 
-std::vector<NpuResult::ChunkID> NpuResult::getEgressLinkInfo(const NpuID dest) const noexcept {
+std::vector<NpuResult::ChunkID> NpuResult::getEgressLinkInfo(
+    const NpuID dest) const noexcept {
     assert(0 <= dest && dest < npusCount);
 
     if (egressLinksInfo.find(dest) == egressLinksInfo.end()) {

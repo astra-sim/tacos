@@ -35,7 +35,8 @@ class Writer {
     std::shared_ptr<Collective> collective;
     SynthesisResult synthesisResult;
 
-    [[nodiscard]] boost::filesystem::path prepareFile(const std::string& filename) const noexcept;
+    [[nodiscard]] boost::filesystem::path prepareFile(
+        const std::string& filename) const noexcept;
 };
 
 }  // namespace tacos

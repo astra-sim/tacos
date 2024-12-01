@@ -68,7 +68,8 @@ class Synthesizer {
         const CollectiveCondition& currentPrecondition,
         const std::set<NpuID>& sourceNpus) noexcept;
 
-    [[nodiscard]] NpuID selectSourceNpu(const std::set<NpuID>& candidateSourceNpus) noexcept;
+    [[nodiscard]] NpuID selectSourceNpu(
+        const std::set<NpuID>& candidateSourceNpus) noexcept;
 
     void markLinkChunkMatch(NpuID src, NpuID dest, ChunkID chunk) noexcept;
 

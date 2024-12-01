@@ -11,7 +11,10 @@ namespace tacos {
 
 class Mesh2D final : public Topology {
   public:
-    Mesh2D(int width, int height, Latency latency, Bandwidth bandwidth) noexcept;
+    Mesh2D(int width,
+           int height,
+           Latency latency,
+           Bandwidth bandwidth) noexcept;
 
   private:
     int width;

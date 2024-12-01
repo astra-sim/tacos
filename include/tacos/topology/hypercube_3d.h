@@ -11,7 +11,11 @@ namespace tacos {
 
 class Hypercube3D final : public Topology {
   public:
-    Hypercube3D(int lenX, int lenY, int lenZ, Latency latency, Bandwidth bandwidth) noexcept;
+    Hypercube3D(int lenX,
+                int lenY,
+                int lenZ,
+                Latency latency,
+                Bandwidth bandwidth) noexcept;
 
   private:
     int lenX;

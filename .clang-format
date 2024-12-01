@@ -12,7 +12,7 @@ UseTab: Never
 SpacesBeforeTrailingComments: 2
 
 # Line and column setups
-ColumnLimit: 100
+ColumnLimit: 80
 InsertNewlineAtEOF: true
 PenaltyReturnTypeOnItsOwnLine: 2000000
 PackConstructorInitializers: CurrentLine

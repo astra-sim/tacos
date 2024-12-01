@@ -35,7 +35,8 @@ class TimeExpandedNetwork {
 
     void updateLinkAvailability() noexcept;
 
-    [[nodiscard]] bool checkLinkAvailability(NpuID src, NpuID dest) const noexcept;
+    [[nodiscard]] bool checkLinkAvailability(NpuID src,
+                                             NpuID dest) const noexcept;
 };
 
 }  // namespace tacos

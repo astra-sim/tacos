@@ -8,8 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-SynthesisResult::SynthesisResult(const std::shared_ptr<Topology> topology,
-                                 const std::shared_ptr<Collective> collective) noexcept {
+SynthesisResult::SynthesisResult(
+    const std::shared_ptr<Topology> topology,
+    const std::shared_ptr<Collective> collective) noexcept {
     assert(topology != nullptr);
     assert(collective != nullptr);
 

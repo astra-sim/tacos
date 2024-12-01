@@ -103,13 +103,15 @@ void Synthesizer::linkChunkMatching() noexcept {
     }
 }
 
-std::pair<Synthesizer::NpuID, Synthesizer::ChunkID> Synthesizer::selectPostcondition(
-    CollectiveCondition* const currentPostcondition) noexcept {
+std::pair<Synthesizer::NpuID, Synthesizer::ChunkID> Synthesizer::
+    selectPostcondition(
+        CollectiveCondition* const currentPostcondition) noexcept {
     assert(currentPostcondition != nullptr);
     assert(!currentPostcondition->empty());
 
     // randomly pick an entry
-    auto postconditionDist = std::uniform_int_distribution<>(0, currentPostcondition->size() - 1);
+    auto postconditionDist =
+        std::uniform_int_distribution<>(0, currentPostcondition->size() - 1);
     int randomNpuIdx = postconditionDist(randomEngine);
     auto randomNpuIt = std::next(currentPostcondition->begin(), randomNpuIdx);
     auto dest = randomNpuIt->first;
@@ -178,7 +180,8 @@ void Synthesizer::markLinkChunkMatch(const NpuID src,
     // mark the link-chunk match
     if (verbose) {
         std::cout << "[EventTime " << currentTime << " ps] ";
-        std::cout << "Chunk " << chunk << ": " << src << " -> " << dest << std::endl;
+        std::cout << "Chunk " << chunk << ": " << src << " -> " << dest
+                  << std::endl;
     }
 
     // mark the synthesis result

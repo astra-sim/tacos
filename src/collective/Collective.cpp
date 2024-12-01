@@ -21,7 +21,9 @@ Collective::Collective(const int npusCount, const ChunkSize chunkSize) noexcept
     }
 }
 
-void Collective::add(const ChunkID chunkID, const NpuID src, const NpuID dest) noexcept {
+void Collective::add(const ChunkID chunkID,
+                     const NpuID src,
+                     const NpuID dest) noexcept {
     assert(chunkID >= 0);
     assert(0 <= src && src < npusCount);
     assert(0 <= dest && dest < npusCount);

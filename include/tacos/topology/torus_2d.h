@@ -10,7 +10,10 @@ LICENSE file in the root directory of this source tree.
 namespace tacos {
 class Torus2D final : public Topology {
   public:
-    Torus2D(int width, int height, Latency latency, Bandwidth bandwidth) noexcept;
+    Torus2D(int width,
+            int height,
+            Latency latency,
+            Bandwidth bandwidth) noexcept;
 
   private:
     int width;

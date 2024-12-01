@@ -11,7 +11,11 @@ namespace tacos {
 
 class Torus3D final : public Topology {
   public:
-    Torus3D(int size_x, int size_y, int size_z, Latency latency, Bandwidth bandwidth) noexcept;
+    Torus3D(int size_x,
+            int size_y,
+            int size_z,
+            Latency latency,
+            Bandwidth bandwidth) noexcept;
 
   private:
     int lenX;
