@@ -22,17 +22,16 @@ find_package(Boost CONFIG REQUIRED COMPONENTS filesystem)
 
 # Compile external libraries
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/yaml-cpp yaml-cpp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/spdlog spdlog)
 
 # Create tacos binary target
 add_executable(tacos)
 
-# Standard: C++17
+# Set C++ compilation options
 set_target_properties(tacos PROPERTIES
     CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON)
-
-# Treat all warnings as errors
-set_target_properties(tacos PROPERTIES COMPILE_WARNING_AS_ERROR ON)
+    CXX_STANDARD_REQUIRED ON
+    COMPILE_WARNING_AS_ERROR ON)
 
 # Compiled binary/library file locations
 set_target_properties(tacos PROPERTIES
@@ -46,6 +45,7 @@ target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
 # Link to external libraries
 target_link_libraries(tacos PRIVATE yaml-cpp)
+target_link_libraries(tacos PRIVATE spdlog)
 target_link_libraries(tacos PRIVATE Boost::filesystem)
 
 # List all source files to be compiled
@@ -55,6 +55,7 @@ file(GLOB tacos_srcs
     ${CMAKE_CURRENT_SOURCE_DIR}/src/synthesizer/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/topology/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/writer/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/logger/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/chakra/schema/protobuf/*.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/chakra/src/third_party/utils/*.cc
 )

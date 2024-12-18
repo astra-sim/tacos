@@ -9,8 +9,6 @@ Copyright (c) 2022 Georgia Institute of Technology
 #pragma once
 
 #include <boost/filesystem.hpp>
-#include <memory>
-#include <string>
 #include <tacos/collective/collective.h>
 #include <tacos/topology/topology.h>
 #include <tacos/writer/synthesis_result.h>
@@ -37,9 +35,6 @@ class Writer {
     std::shared_ptr<Topology> topology;
     std::shared_ptr<Collective> collective;
     SynthesisResult synthesisResult;
-
-    [[nodiscard]] boost::filesystem::path prepareFile(
-        const std::string& filename) const noexcept;
 };
 
 }  // namespace tacos

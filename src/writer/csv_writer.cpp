@@ -6,11 +6,10 @@ Copyright (c) 2022 Intel Corporation
 Copyright (c) 2022 Georgia Institute of Technology
 *******************************************************************************/
 
-#include <boost/algorithm/string/join.hpp>
 #include <boost/filesystem.hpp>
 #include <cassert>
 #include <fstream>
-#include <iostream>
+#include <tacos/logger/logger.h>
 #include <tacos/writer/csv_writer.h>
 
 using namespace tacos;
@@ -29,7 +28,7 @@ void CsvWriter::write(const std::string& filename) const noexcept {
     assert(!filename.empty());
 
     // prepare the file
-    const auto filePath = prepareFile(filename);
+    const auto filePath = Logger::prepareFile(filename);
     assert(filePath.extension() == ".csv");
 
     // open the file
@@ -44,7 +43,7 @@ void CsvWriter::write(const std::string& filename) const noexcept {
     csvFile.close();
 
     // print statement
-    std::cout << "\t- CSV: stored at " << filePath.string() << std::endl;
+    Logger::info("\t", "- CSV file stored at: ", filePath.string());
 }
 
 void CsvWriter::writeMetadata(std::ofstream& csvFile) const noexcept {

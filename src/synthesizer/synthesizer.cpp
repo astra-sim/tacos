@@ -8,7 +8,7 @@ Copyright (c) 2022 Georgia Institute of Technology
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
+#include <tacos/logger/logger.h>
 #include <tacos/synthesizer/synthesizer.h>
 
 using namespace tacos;
@@ -182,9 +182,8 @@ void Synthesizer::markLinkChunkMatch(const NpuID src,
                                      const ChunkID chunk) noexcept {
     // mark the link-chunk match
     if (verbose) {
-        std::cout << "[EventTime " << currentTime << " ps] ";
-        std::cout << "Chunk " << chunk << ": " << src << " -> " << dest
-                  << std::endl;
+        Logger::info("At EventTime ", currentTime, " ps: ");
+        Logger::info("\t", "Chunk ", chunk, ": ", src, " -> ", dest);
     }
 
     // mark the synthesis result

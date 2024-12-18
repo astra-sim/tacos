@@ -7,7 +7,6 @@ Copyright (c) 2022 Georgia Institute of Technology
 *******************************************************************************/
 
 #include <cassert>
-#include <iostream>
 #include <tacos/collective/collective.h>
 
 using namespace tacos;

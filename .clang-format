@@ -27,4 +27,7 @@ PointerAlignment: Left
 # Braces
 InsertBraces: true
 AllowShortFunctionsOnASingleLine: Empty
+
+# templates
+BreakTemplateDeclarations: Yes
 ---
