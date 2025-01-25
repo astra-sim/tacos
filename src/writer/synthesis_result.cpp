@@ -16,6 +16,7 @@ SynthesisResult::SynthesisResult(
     const std::shared_ptr<Collective> collective) noexcept {
     // set the number of NPUs
     npusCount = topology->getNpusCount();
+    npus_.reserve(npusCount);
 
     // initialize NpuResult for each NPU
     for (auto npu = 0; npu < npusCount; npu++) {

@@ -19,7 +19,8 @@ Synthesizer::Synthesizer(const std::shared_ptr<Topology> topology,
     : topology(topology),
       collective(collective),
       ten(topology),
-      verbose(verbose) {
+      verbose(verbose),
+      synthesisResult(topology, collective) {
     assert(topology != nullptr);
     assert(collective != nullptr);
 
@@ -35,14 +36,15 @@ Synthesizer::Synthesizer(const std::shared_ptr<Topology> topology,
     precondition = collective->getPrecondition();
     postcondition = collective->getPostcondition();
 
+    // remove already-satisfied postconditions
+    processInitialPostcondition();
+
     // setup initial events
     currentTime = eventQueue.getCurrentTime();
     scheduleNextEvents();
 }
 
 SynthesisResult Synthesizer::synthesize() noexcept {
-    auto result = SynthesisResult(topology, collective);
-
     while (!eventQueue.empty()) {
         // update current time
         currentTime = eventQueue.pop();
@@ -64,8 +66,8 @@ SynthesisResult Synthesizer::synthesize() noexcept {
 
     assert(synthesisCompleted());
 
-    result.collectiveTime(currentTime);
-    return result;
+    synthesisResult.collectiveTime(currentTime);
+    return synthesisResult;
 }
 
 void Synthesizer::scheduleNextEvents() noexcept {
@@ -188,6 +190,8 @@ void Synthesizer::markLinkChunkMatch(const NpuID src,
     }
 
     // FIXME: link-chunk match made here: chunk, src -> dst
+    synthesisResult.npu(src).linkTo(dest).send(chunk);
+    synthesisResult.npu(dest).linkFrom(src).recv(chunk);
 
     // insert the chunk to the precondition
     precondition[dest].insert(chunk);
@@ -204,4 +208,13 @@ void Synthesizer::markLinkChunkMatch(const NpuID src,
 bool Synthesizer::synthesisCompleted() const noexcept {
     // synthesis is done when there's no remaining postcondition
     return postcondition.empty();
+}
+
+void Synthesizer::processInitialPostcondition() noexcept {
+    // remove precondition from postcondition
+    for (const auto& [src, chunks] : precondition) {
+        for (const auto chunk : chunks) {
+            postcondition[src].erase(chunk);
+        }
+    }
 }

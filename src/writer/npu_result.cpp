@@ -36,25 +36,25 @@ NpuResult::NpuResult(const NpuID id,
 
 LinkResult& NpuResult::linkFrom(const NpuID id) noexcept {
     assert(0 <= id && id < npusCount_);
-    assert(ingressLinks_.find(id) == ingressLinks_.end());
+    assert(ingressLinks_.find(id) != ingressLinks_.end());
 
     return ingressLinks_.at(id);
 }
 
 LinkResult& NpuResult::linkTo(const NpuID id) noexcept {
     assert(0 <= id && id < npusCount_);
-    assert(egressLinks_.find(id) == egressLinks_.end());
+    assert(egressLinks_.find(id) != egressLinks_.end());
 
     return egressLinks_.at(id);
 }
 
 void NpuResult::registerRecvDep(const ChunkID chunk,
                                 CommOp* const depOp) noexcept {
-    assert(deps_.find(chunk) == deps_.end());
-    deps_.emplace(chunk, depOp);
+    assert(depRecvOp_.find(chunk) == depRecvOp_.end());
+    depRecvOp_.emplace(chunk, depOp);
 }
 
 CommOp* const NpuResult::getDep(const ChunkID chunk) noexcept {
-    assert(deps_.find(chunk) != deps_.end());
-    return deps_.at(chunk);
+    assert(depRecvOp_.find(chunk) != depRecvOp_.end());
+    return depRecvOp_.at(chunk);
 }

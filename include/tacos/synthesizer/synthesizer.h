@@ -46,6 +46,8 @@ class Synthesizer {
 
     bool verbose;
 
+    SynthesisResult synthesisResult;
+
     CollectiveCondition precondition = {};
     CollectiveCondition postcondition = {};
 
@@ -72,6 +74,8 @@ class Synthesizer {
         const std::set<NpuID>& candidateSourceNpus) noexcept;
 
     void markLinkChunkMatch(NpuID src, NpuID dest, ChunkID chunk) noexcept;
+
+    void processInitialPostcondition() noexcept;
 
     [[nodiscard]] bool synthesisCompleted() const noexcept;
 };

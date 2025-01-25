@@ -38,7 +38,7 @@ class NpuResult {
 
     NpuID id_;
 
-    std::map<ChunkID, CommOp*> deps_;
+    std::map<ChunkID, CommOp*> depRecvOp_;
 
     std::map<NpuID, LinkResult> ingressLinks_;
     std::map<NpuID, LinkResult> egressLinks_;
