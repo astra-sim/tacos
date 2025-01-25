@@ -54,3 +54,8 @@ Collective::CollectiveCondition Collective::getPrecondition() const noexcept {
 Collective::CollectiveCondition Collective::getPostcondition() const noexcept {
     return postcondition;
 }
+
+int Collective::chunksPerNpu() const noexcept {
+    assert(chunksPerNpu_ > 0);
+    return chunksPerNpu_;
+}

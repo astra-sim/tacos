@@ -19,5 +19,26 @@ CommOp::CommOp(const ChunkID chunkID,
       opID_(opID) {}
 
 void CommOp::setDepOp(CommOp* const depOp) {
+    hasDep_ = true;
     depOp_ = depOp;
+}
+
+CommOp::ChunkID CommOp::chunkID() const noexcept {
+    return chunkID_;
+}
+
+bool CommOp::hasDep() const noexcept {
+    return hasDep_;
+}
+
+const CommOp* CommOp::depOp() const noexcept {
+    return depOp_;
+}
+
+CommOp::LinkID CommOp::linkID() const noexcept {
+    return linkID_;
+}
+
+CommOp::OpID CommOp::opID() const noexcept {
+    return opID_;
 }

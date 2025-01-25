@@ -20,6 +20,7 @@ AllGather::AllGather(const int npusCount,
     assert(initChunksPerNpu > 0);
 
     auto chunkID = 0;
+    chunksPerNpu_ = npusCount * initChunksPerNpu;
 
     for (int i = 0; i < initChunksPerNpu; i++) {
         for (int src = 0; src < npusCount; src++) {

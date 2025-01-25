@@ -16,20 +16,27 @@ NpuResult::NpuResult(const NpuID id,
     : npusCount_(topology->getNpusCount()),
       id_(id) {
 
-    // check any ingress/egress links
+    // construct ingress links
     for (auto npu = 0; npu < npusCount_; npu++) {
         if (npu == id) {
             continue;
         }
 
-        // ingress links
         if (topology->isConnected(npu, id)) {
-            ingressLinks_.emplace(npu, LinkResult(LinkType::Ingress, this));
+            ingressLinks_.emplace(npu, LinkResult(nextLinkID_, LinkType::Ingress, this));
+            nextLinkID_++;
+        }
+    }
+
+    // construct egress links
+    for (auto npu = 0; npu < npusCount_; npu++) {
+        if (npu == id) {
+            continue;
         }
 
-        // egress links
         if (topology->isConnected(id, npu)) {
-            egressLinks_.emplace(npu, LinkResult(LinkType::Egress, this));
+            egressLinks_.emplace(npu, LinkResult(nextLinkID_, LinkType::Egress, this));
+            nextLinkID_++;
         }
     }
 }
@@ -57,4 +64,12 @@ void NpuResult::registerRecvDep(const ChunkID chunk,
 CommOp* const NpuResult::getDep(const ChunkID chunk) noexcept {
     assert(depRecvOp_.find(chunk) != depRecvOp_.end());
     return depRecvOp_.at(chunk);
+}
+
+const std::map<NpuResult::NpuID, LinkResult>& NpuResult::ingressLinks() const noexcept {
+    return ingressLinks_;
+}
+
+const std::map<NpuResult::NpuID, LinkResult>& NpuResult::egressLinks() const noexcept {
+    return egressLinks_;
 }

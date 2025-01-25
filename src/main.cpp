@@ -11,6 +11,7 @@ Copyright (c) 2022 Georgia Institute of Technology
 #include <tacos/logger/logger.h>
 #include <tacos/synthesizer/synthesizer.h>
 #include <tacos/topology/mesh_2d.h>
+#include <tacos/writer/xml_writer.h>
 
 using namespace tacos;
 
@@ -56,7 +57,7 @@ int main() {
     Logger::info("Synthesis Process");
 
     timer.start();
-    const auto result = synthesizer.synthesize();
+    auto result = synthesizer.synthesize();
     timer.stop();
 
     Logger::info();
@@ -74,6 +75,10 @@ int main() {
     Logger::info("\t", "- Synthesized Collective Time: ", collectiveTimePS,
                  " ps (", collectiveTimeUSec, " us)");
     Logger::info();
+
+    // write into XML
+    auto xmlWriter = XmlWriter("tacos.xml", topology, collective, result);
+    xmlWriter.write();
 
     // terminate
     Logger::info("Done!");

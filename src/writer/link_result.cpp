@@ -12,17 +12,8 @@ Copyright (c) 2022 Georgia Institute of Technology
 
 using namespace tacos;
 
-LinkResult::LinkID LinkResult::nextID_ = 0;
-
-LinkResult::LinkID LinkResult::nextID() noexcept {
-    const auto next_id = nextID_;
-    nextID_++;
-
-    return next_id;
-}
-
-LinkResult::LinkResult(const LinkType type, NpuResult* const npu) noexcept
-    : id_(nextID()),
+LinkResult::LinkResult(const LinkID linkID, const LinkType type, NpuResult* const npu) noexcept
+    : id_(linkID),
       type_(type),
       npu_(*npu) {}
 
@@ -64,4 +55,8 @@ LinkResult::OpID LinkResult::currentOpID() noexcept {
     nextOpID_++;
 
     return currentID;
+}
+
+const std::map<LinkResult::OpID, CommOp>& LinkResult::ops() const noexcept {
+    return ops_;
 }
