@@ -56,7 +56,7 @@ int main() {
     Logger::info("Synthesis Process");
 
     timer.start();
-    const auto collectiveTimePS = synthesizer.synthesize();
+    const auto result = synthesizer.synthesize();
     timer.stop();
 
     Logger::info();
@@ -64,6 +64,7 @@ int main() {
     // print result
     Logger::info("Synthesis Result");
 
+    const auto collectiveTimePS = result.collectiveTime();
     const auto elapsedTimeUSec = timer.elapsedTime();
     const auto elapsedTimeSec = elapsedTimeUSec / 1e6;
     Logger::info("\t", "- Time to solve: ", elapsedTimeUSec, " us (",

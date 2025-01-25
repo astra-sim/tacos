@@ -56,8 +56,7 @@ file(GLOB tacos_srcs
     ${CMAKE_CURRENT_SOURCE_DIR}/src/topology/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/writer/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/logger/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/chakra/schema/protobuf/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/chakra/src/third_party/utils/*.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/writer/*.cpp
 )
 target_sources(tacos PRIVATE ${tacos_srcs})
 target_sources(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)

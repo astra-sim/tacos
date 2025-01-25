@@ -40,7 +40,9 @@ Synthesizer::Synthesizer(const std::shared_ptr<Topology> topology,
     scheduleNextEvents();
 }
 
-Synthesizer::Time Synthesizer::synthesize() noexcept {
+SynthesisResult Synthesizer::synthesize() noexcept {
+    auto result = SynthesisResult(topology, collective);
+
     while (!eventQueue.empty()) {
         // update current time
         currentTime = eventQueue.pop();
@@ -62,7 +64,8 @@ Synthesizer::Time Synthesizer::synthesize() noexcept {
 
     assert(synthesisCompleted());
 
-    return currentTime;
+    result.collectiveTime(currentTime);
+    return result;
 }
 
 void Synthesizer::scheduleNextEvents() noexcept {
