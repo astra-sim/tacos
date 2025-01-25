@@ -23,6 +23,7 @@ find_package(Boost CONFIG REQUIRED COMPONENTS filesystem)
 # Compile external libraries
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/yaml-cpp yaml-cpp)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/spdlog spdlog)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/pugixml pugixml)
 
 # Create tacos binary target
 add_executable(tacos)
@@ -46,6 +47,7 @@ target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 # Link to external libraries
 target_link_libraries(tacos PRIVATE yaml-cpp)
 target_link_libraries(tacos PRIVATE spdlog)
+target_link_libraries(tacos PRIVATE pugixml)
 target_link_libraries(tacos PRIVATE Boost::filesystem)
 
 # List all source files to be compiled
