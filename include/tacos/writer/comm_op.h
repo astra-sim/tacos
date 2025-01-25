@@ -8,20 +8,26 @@ Copyright (c) 2022 Georgia Institute of Technology
 
 #pragma once
 
-#include <tacos/topology/topology.h>
+#include <tacos/collective/collective.h>
 
 namespace tacos {
 
-class Mesh2D final : public Topology {
+class CommOp {
   public:
-    Mesh2D(int width,
-           int height,
-           Latency latency,
-           Bandwidth bandwidth) noexcept;
+    using ChunkID = Collective::ChunkID;
+    using LinkID = int;
+    using OpID = int;
+
+    CommOp(ChunkID chunkID, LinkID linkID, OpID opID) noexcept;
+
+    void setDepOp(CommOp* depOp);
 
   private:
-    int width;
-    int height;
+    ChunkID chunkID_;
+    LinkID linkID_;
+    OpID opID_;
+
+    CommOp* depOp_;
 };
 
 }  // namespace tacos

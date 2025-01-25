@@ -1,10 +1,12 @@
 /******************************************************************************
 This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
+
+Copyright (c) 2022 Intel Corporation
+Copyright (c) 2022 Georgia Institute of Technology
 *******************************************************************************/
 
 #include <cassert>
-#include <iostream>
 #include <tacos/collective/collective.h>
 
 using namespace tacos;
@@ -21,7 +23,9 @@ Collective::Collective(const int npusCount, const ChunkSize chunkSize) noexcept
     }
 }
 
-void Collective::add(const ChunkID chunkID, const NpuID src, const NpuID dest) noexcept {
+void Collective::add(const ChunkID chunkID,
+                     const NpuID src,
+                     const NpuID dest) noexcept {
     assert(chunkID >= 0);
     assert(0 <= src && src < npusCount);
     assert(0 <= dest && dest < npusCount);

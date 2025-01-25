@@ -1,6 +1,9 @@
 /******************************************************************************
 This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
+
+Copyright (c) 2022 Intel Corporation
+Copyright (c) 2022 Georgia Institute of Technology
 *******************************************************************************/
 
 #include <cassert>
@@ -8,7 +11,8 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-TimeExpandedNetwork::TimeExpandedNetwork(const std::shared_ptr<Topology> topology) noexcept
+TimeExpandedNetwork::TimeExpandedNetwork(
+    const std::shared_ptr<Topology> topology) noexcept
     : topology(topology) {
     assert(topology != nullptr);
 
@@ -33,7 +37,8 @@ std::set<TimeExpandedNetwork::NpuID> TimeExpandedNetwork::backtrackTEN(
     return sourceNpus;
 }
 
-void TimeExpandedNetwork::updateCurrentTime(const Time newCurrentTime) noexcept {
+void TimeExpandedNetwork::updateCurrentTime(
+    const Time newCurrentTime) noexcept {
     assert(newCurrentTime > currentTime);
     currentTime = newCurrentTime;
 
@@ -41,7 +46,8 @@ void TimeExpandedNetwork::updateCurrentTime(const Time newCurrentTime) noexcept 
     updateLinkAvailability();
 }
 
-void TimeExpandedNetwork::markLinkOccupied(const NpuID src, const NpuID dest) noexcept {
+void TimeExpandedNetwork::markLinkOccupied(const NpuID src,
+                                           const NpuID dest) noexcept {
     assert(0 <= src && src < npusCount);
     assert(0 <= dest && dest < npusCount);
     assert(linkAvailable[src][dest]);
@@ -71,7 +77,8 @@ void TimeExpandedNetwork::updateLinkAvailability() noexcept {
     }
 }
 
-bool TimeExpandedNetwork::checkLinkAvailability(const NpuID src, const NpuID dest) const noexcept {
+bool TimeExpandedNetwork::checkLinkAvailability(
+    const NpuID src, const NpuID dest) const noexcept {
     assert(0 <= src && src < npusCount);
     assert(0 <= dest && dest < npusCount);
     assert(src != dest);

@@ -6,22 +6,18 @@ Copyright (c) 2022 Intel Corporation
 Copyright (c) 2022 Georgia Institute of Technology
 *******************************************************************************/
 
-#pragma once
+#include <cassert>
+#include <tacos/writer/comm_op.h>
 
-#include <tacos/topology/topology.h>
+using namespace tacos;
 
-namespace tacos {
+CommOp::CommOp(const ChunkID chunkID,
+               const LinkID linkID,
+               const OpID opID) noexcept
+    : chunkID_(chunkID),
+      linkID_(linkID),
+      opID_(opID) {}
 
-class Mesh2D final : public Topology {
-  public:
-    Mesh2D(int width,
-           int height,
-           Latency latency,
-           Bandwidth bandwidth) noexcept;
-
-  private:
-    int width;
-    int height;
-};
-
-}  // namespace tacos
+void CommOp::setDepOp(CommOp* const depOp) {
+    depOp_ = depOp;
+}
