@@ -1,11 +1,14 @@
 /******************************************************************************
 This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
+
+Copyright (c) 2022 Intel Corporation
+Copyright (c) 2022 Georgia Institute of Technology
 *******************************************************************************/
 
 #include <algorithm>
 #include <cassert>
-#include <iostream>
+#include <tacos/logger/logger.h>
 #include <tacos/synthesizer/synthesizer.h>
 
 using namespace tacos;
@@ -15,9 +18,9 @@ Synthesizer::Synthesizer(const std::shared_ptr<Topology> topology,
                          const bool verbose) noexcept
     : topology(topology),
       collective(collective),
-      synthesisResult(topology, collective),
       ten(topology),
-      verbose(verbose) {
+      verbose(verbose),
+      synthesisResult(topology, collective) {
     assert(topology != nullptr);
     assert(collective != nullptr);
 
@@ -32,6 +35,9 @@ Synthesizer::Synthesizer(const std::shared_ptr<Topology> topology,
     // setup initial precondition and postcondition
     precondition = collective->getPrecondition();
     postcondition = collective->getPostcondition();
+
+    // remove already-satisfied postconditions
+    processInitialPostcondition();
 
     // setup initial events
     currentTime = eventQueue.getCurrentTime();
@@ -60,7 +66,7 @@ SynthesisResult Synthesizer::synthesize() noexcept {
 
     assert(synthesisCompleted());
 
-    synthesisResult.setCollectiveTime(currentTime);
+    synthesisResult.collectiveTime(currentTime);
     return synthesisResult;
 }
 
@@ -103,13 +109,15 @@ void Synthesizer::linkChunkMatching() noexcept {
     }
 }
 
-std::pair<Synthesizer::NpuID, Synthesizer::ChunkID> Synthesizer::selectPostcondition(
-    CollectiveCondition* const currentPostcondition) noexcept {
+std::pair<Synthesizer::NpuID, Synthesizer::ChunkID> Synthesizer::
+    selectPostcondition(
+        CollectiveCondition* const currentPostcondition) noexcept {
     assert(currentPostcondition != nullptr);
     assert(!currentPostcondition->empty());
 
     // randomly pick an entry
-    auto postconditionDist = std::uniform_int_distribution<>(0, currentPostcondition->size() - 1);
+    auto postconditionDist =
+        std::uniform_int_distribution<>(0, currentPostcondition->size() - 1);
     int randomNpuIdx = postconditionDist(randomEngine);
     auto randomNpuIt = std::next(currentPostcondition->begin(), randomNpuIdx);
     auto dest = randomNpuIt->first;
@@ -177,12 +185,13 @@ void Synthesizer::markLinkChunkMatch(const NpuID src,
                                      const ChunkID chunk) noexcept {
     // mark the link-chunk match
     if (verbose) {
-        std::cout << "[EventTime " << currentTime << " ps] ";
-        std::cout << "Chunk " << chunk << ": " << src << " -> " << dest << std::endl;
+        Logger::info("At EventTime ", currentTime, " ps: ");
+        Logger::info("\t", "Chunk ", chunk, ": ", src, " -> ", dest);
     }
 
-    // mark the synthesis result
-    synthesisResult.markLinkChunkMatch(chunk, src, dest);
+    // FIXME: link-chunk match made here: chunk, src -> dst
+    synthesisResult.npu(src).linkTo(dest).send(chunk);
+    synthesisResult.npu(dest).linkFrom(src).recv(chunk);
 
     // insert the chunk to the precondition
     precondition[dest].insert(chunk);
@@ -199,4 +208,13 @@ void Synthesizer::markLinkChunkMatch(const NpuID src,
 bool Synthesizer::synthesisCompleted() const noexcept {
     // synthesis is done when there's no remaining postcondition
     return postcondition.empty();
+}
+
+void Synthesizer::processInitialPostcondition() noexcept {
+    // remove precondition from postcondition
+    for (const auto& [src, chunks] : precondition) {
+        for (const auto chunk : chunks) {
+            postcondition[src].erase(chunk);
+        }
+    }
 }

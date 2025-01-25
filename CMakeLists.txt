@@ -1,6 +1,9 @@
 ## ******************************************************************************
 ## This source code is licensed under the MIT license found in the
 ## LICENSE file in the root directory of this source tree.
+##
+## Copyright (c) 2022 Intel Corporation
+## Copyright (c) 2022 Georgia Institute of Technology
 ## ******************************************************************************
 
 # CMake requirement
@@ -15,22 +18,21 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 # find external packages
-find_package(protobuf CONFIG REQUIRED)
 find_package(Boost CONFIG REQUIRED COMPONENTS filesystem)
 
 # Compile external libraries
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/yaml-cpp yaml-cpp)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/spdlog spdlog)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/pugixml pugixml)
 
 # Create tacos binary target
 add_executable(tacos)
 
-# Standard: C++17
+# Set C++ compilation options
 set_target_properties(tacos PROPERTIES
     CXX_STANDARD 17
-    CXX_STANDARD_REQUIRED ON)
-
-# Treat all warnings as errors
-set_target_properties(tacos PROPERTIES COMPILE_WARNING_AS_ERROR ON)
+    CXX_STANDARD_REQUIRED ON
+    COMPILE_WARNING_AS_ERROR ON)
 
 # Compiled binary/library file locations
 set_target_properties(tacos PROPERTIES
@@ -44,7 +46,8 @@ target_include_directories(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
 # Link to external libraries
 target_link_libraries(tacos PRIVATE yaml-cpp)
-target_link_libraries(tacos PRIVATE protobuf::libprotobuf)
+target_link_libraries(tacos PRIVATE spdlog)
+target_link_libraries(tacos PRIVATE pugixml)
 target_link_libraries(tacos PRIVATE Boost::filesystem)
 
 # List all source files to be compiled
@@ -54,8 +57,8 @@ file(GLOB tacos_srcs
     ${CMAKE_CURRENT_SOURCE_DIR}/src/synthesizer/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/topology/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/writer/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/chakra/schema/protobuf/*.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/libs/chakra/src/third_party/utils/*.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/logger/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/writer/*.cpp
 )
 target_sources(tacos PRIVATE ${tacos_srcs})
 target_sources(tacos PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)

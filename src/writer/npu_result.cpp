@@ -1,6 +1,9 @@
 /******************************************************************************
 This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
+
+Copyright (c) 2022 Intel Corporation
+Copyright (c) 2022 Georgia Institute of Technology
 *******************************************************************************/
 
 #include <cassert>
@@ -8,71 +11,65 @@ LICENSE file in the root directory of this source tree.
 
 using namespace tacos;
 
-NpuResult::NpuResult(const int npu,
-                     const std::shared_ptr<Topology> topology,
-                     const std::shared_ptr<Collective> collective) noexcept
-    : npu(npu) {
-    assert(topology != nullptr);
+NpuResult::NpuResult(const NpuID id,
+                     const std::shared_ptr<Topology> topology) noexcept
+    : npusCount_(topology->getNpusCount()),
+      id_(id) {
 
-    npusCount = topology->getNpusCount();
-    chunksCount = collective->getChunksCount();
-
-    for (auto dest = 0; dest < npusCount; dest++) {
-        if (npu == dest) {
+    // construct ingress links
+    for (auto npu = 0; npu < npusCount_; npu++) {
+        if (npu == id) {
             continue;
         }
 
-        if (topology->isConnected(npu, dest)) {
-            egressLinksInfo[dest] = {};
-        }
-
-        if (topology->isConnected(dest, npu)) {
-            ingressLinksInfo[dest] = {};
+        if (topology->isConnected(npu, id)) {
+            ingressLinks_.emplace(npu, LinkResult(nextLinkID_, LinkType::Ingress, this));
+            nextLinkID_++;
         }
     }
 
-    // initialize dependencyInfo
-    for (auto chunk = 0; chunk < chunksCount; chunk++) {
-        dependencyInfo[chunk] = std::nullopt;
+    // construct egress links
+    for (auto npu = 0; npu < npusCount_; npu++) {
+        if (npu == id) {
+            continue;
+        }
+
+        if (topology->isConnected(id, npu)) {
+            egressLinks_.emplace(npu, LinkResult(nextLinkID_, LinkType::Egress, this));
+            nextLinkID_++;
+        }
     }
 }
 
-void NpuResult::addIngressLinkInfo(ChunkID chunk, NpuID src) noexcept {
-    assert(0 <= chunk && chunk < chunksCount);
-    assert(0 <= src && src < npusCount);
-    assert(ingressLinksInfo.find(src) != ingressLinksInfo.end());
+LinkResult& NpuResult::linkFrom(const NpuID id) noexcept {
+    assert(0 <= id && id < npusCount_);
+    assert(ingressLinks_.find(id) != ingressLinks_.end());
 
-    ingressLinksInfo[src].push_back(chunk);
-
-    // mark dependency info
-    const auto opIdx = ingressLinksInfo[src].size() - 1;
-    dependencyInfo[chunk] = opIdx;
+    return ingressLinks_.at(id);
 }
 
-void NpuResult::addEgressLinkInfo(ChunkID chunk, NpuID dest) noexcept {
-    assert(0 <= chunk && chunk < chunksCount);
-    assert(0 <= dest && dest < npusCount);
-    assert(egressLinksInfo.find(dest) != egressLinksInfo.end());
+LinkResult& NpuResult::linkTo(const NpuID id) noexcept {
+    assert(0 <= id && id < npusCount_);
+    assert(egressLinks_.find(id) != egressLinks_.end());
 
-    egressLinksInfo[dest].push_back(chunk);
+    return egressLinks_.at(id);
 }
 
-std::vector<NpuResult::ChunkID> NpuResult::getIngressLinkInfo(const NpuID src) const noexcept {
-    assert(0 <= src && src < npusCount);
-
-    if (ingressLinksInfo.find(src) == ingressLinksInfo.end()) {
-        return {};
-    }
-
-    return ingressLinksInfo.at(src);
+void NpuResult::registerRecvDep(const ChunkID chunk,
+                                CommOp* const depOp) noexcept {
+    assert(depRecvOp_.find(chunk) == depRecvOp_.end());
+    depRecvOp_.emplace(chunk, depOp);
 }
 
-std::vector<NpuResult::ChunkID> NpuResult::getEgressLinkInfo(const NpuID dest) const noexcept {
-    assert(0 <= dest && dest < npusCount);
+CommOp* const NpuResult::getDep(const ChunkID chunk) noexcept {
+    assert(depRecvOp_.find(chunk) != depRecvOp_.end());
+    return depRecvOp_.at(chunk);
+}
 
-    if (egressLinksInfo.find(dest) == egressLinksInfo.end()) {
-        return {};
-    }
+const std::map<NpuResult::NpuID, LinkResult>& NpuResult::ingressLinks() const noexcept {
+    return ingressLinks_;
+}
 
-    return egressLinksInfo.at(dest);
+const std::map<NpuResult::NpuID, LinkResult>& NpuResult::egressLinks() const noexcept {
+    return egressLinks_;
 }

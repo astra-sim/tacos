@@ -1,26 +1,23 @@
 /******************************************************************************
 This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
+
+Copyright (c) 2022 Intel Corporation
+Copyright (c) 2022 Georgia Institute of Technology
 *******************************************************************************/
 
-#include <iostream>
 #include <tacos/collective/all_gather.h>
 #include <tacos/event-queue/timer.h>
+#include <tacos/logger/logger.h>
 #include <tacos/synthesizer/synthesizer.h>
 #include <tacos/topology/mesh_2d.h>
-#include <tacos/writer/csv_writer.h>
-#include <tacos/writer/synthesis_result.h>
+#include <tacos/writer/xml_writer.h>
 
 using namespace tacos;
 
 int main() {
-    // set print precision
-    fixed(std::cout);
-    std::cout.precision(2);
-
-    // print header
-    std::cout << "[TACOS]" << std::endl;
-    std::cout << std::endl;
+    // initialize logger
+    Logger::init("tacos.log");
 
     // construct a topology
     const auto width = 3;
@@ -28,26 +25,27 @@ int main() {
     const auto bandwidth = 50.0;  // GB/s
     const auto latency = 500;     // ns
 
-    const auto topology = std::make_shared<Mesh2D>(width, height, latency, bandwidth);
+    const auto topology =
+        std::make_shared<Mesh2D>(width, height, latency, bandwidth);
     const auto npusCount = topology->getNpusCount();
 
-    std::cout << "[Topology Information]" << std::endl;
-    std::cout << "\t- NPUs Count: " << npusCount << std::endl;
-    std::cout << std::endl;
+    Logger::info("Topology Information");
+    Logger::info("\t", "- NPUs Count: ", npusCount);
+    Logger::info();
 
     // target collective
     const auto chunkSize = 1'048'576;  // B
     const auto initChunksPerNpu = 1;
 
-    const auto collective = std::make_shared<AllGather>(npusCount, chunkSize, initChunksPerNpu);
+    const auto collective =
+        std::make_shared<AllGather>(npusCount, chunkSize, initChunksPerNpu);
     const auto chunksCount = collective->getChunksCount();
 
-    std::cout << "[Collective Information]" << std::endl;
     const auto chunkSizeMB = chunkSize / (1 << 20);
-    std::cout << "\t- Chunks Count: " << chunksCount << std::endl;
-    std::cout << "\t- Chunk Size: " << chunkSize << " B";
-    std::cout << " (" << chunkSizeMB << " MB)" << std::endl;
-    std::cout << std::endl;
+    Logger::info("Collective Information");
+    Logger::info("\t", "- Chunks Count: ", chunksCount);
+    Logger::info("\t", "- Chunk Size: ", chunkSizeMB, " MB");
+    Logger::info();
 
     // instantiate synthesizer
     auto synthesizer = Synthesizer(topology, collective);
@@ -56,36 +54,33 @@ int main() {
     auto timer = Timer();
 
     // synthesize collective algorithm
-    std::cout << "[Synthesis Process]" << std::endl;
+    Logger::info("Synthesis Process");
 
     timer.start();
-    const auto synthesisResult = synthesizer.synthesize();
+    auto result = synthesizer.synthesize();
     timer.stop();
 
-    std::cout << std::endl;
+    Logger::info();
 
     // print result
-    std::cout << "[Synthesis Result]" << std::endl;
+    Logger::info("Synthesis Result");
 
+    const auto collectiveTimePS = result.collectiveTime();
     const auto elapsedTimeUSec = timer.elapsedTime();
     const auto elapsedTimeSec = elapsedTimeUSec / 1e6;
-    std::cout << "\t- Time to solve: " << elapsedTimeUSec << " us";
-    std::cout << " (" << elapsedTimeSec << " s)" << std::endl;
+    Logger::info("\t", "- Time to solve: ", elapsedTimeUSec, " us (",
+                 elapsedTimeSec, " s)");
 
-    const auto collectiveTimePS = synthesisResult.getCollectiveTime();
     const auto collectiveTimeUSec = collectiveTimePS / 1.0e6;
-    std::cout << "\t- Synthesized Collective Time: " << collectiveTimePS << " ps";
-    std::cout << " (" << collectiveTimeUSec << " us)" << std::endl;
-    std::cout << std::endl;
+    Logger::info("\t", "- Synthesized Collective Time: ", collectiveTimePS,
+                 " ps (", collectiveTimeUSec, " us)");
+    Logger::info();
 
-    // write results to file
-    std::cout << "[Synthesis Result Dump]" << std::endl;
-    const auto csvWriter = CsvWriter(topology, collective, synthesisResult);
-    csvWriter.write("tacos_synthesis_result.csv");
-
-    std::cout << std::endl;
+    // write into XML
+    auto xmlWriter = XmlWriter("tacos.xml", topology, collective, result);
+    xmlWriter.write();
 
     // terminate
-    std::cout << "[TACOS] Done!" << std::endl;
+    Logger::info("Done!");
     return 0;
 }

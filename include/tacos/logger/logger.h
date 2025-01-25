@@ -8,20 +8,27 @@ Copyright (c) 2022 Georgia Institute of Technology
 
 #pragma once
 
-#include <tacos/topology/topology.h>
+#include <boost/filesystem.hpp>
+#include <spdlog/spdlog.h>
 
 namespace tacos {
 
-class Mesh2D final : public Topology {
+class Logger {
   public:
-    Mesh2D(int width,
-           int height,
-           Latency latency,
-           Bandwidth bandwidth) noexcept;
+    static void init(const std::string& filename) noexcept;
+
+    static void info() noexcept;
+
+    template <typename... Args>
+    static void info(Args&&... args) noexcept;
+
+    [[nodiscard]] static boost::filesystem::path prepareFile(
+        const std::string& filename) noexcept;
 
   private:
-    int width;
-    int height;
+    static std::once_flag initFlag;
 };
+
+#include <tacos/logger/logger.tpp>
 
 }  // namespace tacos

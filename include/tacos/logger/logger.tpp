@@ -8,20 +8,18 @@ Copyright (c) 2022 Georgia Institute of Technology
 
 #pragma once
 
-#include <tacos/topology/topology.h>
+#include <sstream>
+#include <tacos/logger/logger.h>
 
-namespace tacos {
+using namespace tacos;
 
-class Mesh2D final : public Topology {
-  public:
-    Mesh2D(int width,
-           int height,
-           Latency latency,
-           Bandwidth bandwidth) noexcept;
+template <typename... Args>
+void Logger::info(Args&&... args) noexcept {
+    auto log = std::ostringstream();
+    log << std::fixed;
+    log.precision(2);
 
-  private:
-    int width;
-    int height;
-};
-
-}  // namespace tacos
+    // concatenate all logs
+    (log << ... << std::forward<Args>(args));
+    spdlog::info(log.str());
+}
