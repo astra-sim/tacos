@@ -20,21 +20,20 @@ class NpuResult;
 class LinkResult {
   public:
     enum class LinkType { Ingress, Egress };
+
     using LinkID = CommOp::LinkID;
     using OpID = CommOp::OpID;
-
     using ChunkID = Collective::ChunkID;
 
-    LinkResult(LinkType type, NpuResult* npu) noexcept;
+    LinkResult(LinkID linkID, LinkType type, NpuResult* npu) noexcept;
 
     [[nodiscard]] LinkID id() const noexcept;
     void send(ChunkID chunk) noexcept;
     void recv(ChunkID chunk) noexcept;
 
-  private:
-    static LinkID nextID_;
-    [[nodiscard]] static LinkID nextID() noexcept;
+  [[nodiscard]] const std::map<OpID, CommOp>& ops() const noexcept;
 
+  private:
     LinkID id_;
 
     OpID nextOpID_ = 0;

@@ -22,11 +22,22 @@ class CommOp {
 
     void setDepOp(CommOp* depOp);
 
+    [[nodiscard]] ChunkID chunkID() const noexcept;
+
+    [[nodiscard]] bool hasDep() const noexcept;
+
+    [[nodiscard]] LinkID linkID() const noexcept;
+
+    [[nodiscard]] OpID opID() const noexcept;
+
+    [[nodiscard]] const CommOp* depOp() const noexcept;
+
   private:
     ChunkID chunkID_;
     LinkID linkID_;
     OpID opID_;
 
+    bool hasDep_ = false;
     CommOp* depOp_;
 };
 

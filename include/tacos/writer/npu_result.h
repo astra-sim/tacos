@@ -29,6 +29,9 @@ class NpuResult {
     [[nodiscard]] LinkResult& linkFrom(NpuID id) noexcept;
     [[nodiscard]] LinkResult& linkTo(NpuID id) noexcept;
 
+    [[nodiscard]] const std::map<NpuID, LinkResult>& ingressLinks() const noexcept;
+    [[nodiscard]] const std::map<NpuID, LinkResult>& egressLinks() const noexcept;
+
     void registerRecvDep(ChunkID chunk, CommOp* depOp) noexcept;
 
     CommOp* const getDep(ChunkID chunk) noexcept;
@@ -37,6 +40,8 @@ class NpuResult {
     int npusCount_;
 
     NpuID id_;
+
+    LinkID nextLinkID_ = 0;
 
     std::map<ChunkID, CommOp*> depRecvOp_;
 

@@ -31,7 +31,8 @@ class SynthesisResult {
     [[nodiscard]] Time collectiveTime() const noexcept;
 
   private:
-    int npusCount;
+    int npusCount_;
+    int chunksPerNpu_;
     std::vector<NpuResult> npus_;
 
     Time collectiveTime_;

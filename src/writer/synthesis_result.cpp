@@ -13,13 +13,13 @@ using namespace tacos;
 
 SynthesisResult::SynthesisResult(
     const std::shared_ptr<Topology> topology,
-    const std::shared_ptr<Collective> collective) noexcept {
+    const std::shared_ptr<Collective> collective) noexcept
+    : npusCount_(topology->getNpusCount()) {
     // set the number of NPUs
-    npusCount = topology->getNpusCount();
-    npus_.reserve(npusCount);
+    npus_.reserve(npusCount_);
 
     // initialize NpuResult for each NPU
-    for (auto npu = 0; npu < npusCount; npu++) {
+    for (auto npu = 0; npu < npusCount_; npu++) {
         npus_.emplace_back(npu, topology);
     }
 
@@ -33,7 +33,7 @@ SynthesisResult::SynthesisResult(
 }
 
 NpuResult& SynthesisResult::npu(const NpuID id) noexcept {
-    assert(0 <= id && id < npusCount);
+    assert(0 <= id && id < npusCount_);
     return npus_[id];
 }
 

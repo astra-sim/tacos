@@ -33,9 +33,12 @@ class Collective {
 
     [[nodiscard]] bool synthesisCompleted() const noexcept;
 
+    [[nodiscard]] int chunksPerNpu() const noexcept;
+
   protected:
     int npusCount;
     int chunksCount = 0;
+    int chunksPerNpu_ = 0;
 
     void add(ChunkID chunkID, NpuID src, NpuID dest) noexcept;
 
