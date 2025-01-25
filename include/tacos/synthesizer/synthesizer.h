@@ -14,7 +14,6 @@ Copyright (c) 2022 Georgia Institute of Technology
 #include <tacos/event-queue/event_queue.h>
 #include <tacos/synthesizer/time_expanded_network.h>
 #include <tacos/topology/topology.h>
-#include <tacos/writer/synthesis_result.h>
 
 namespace tacos {
 
@@ -30,7 +29,7 @@ class Synthesizer {
                 std::shared_ptr<Collective> collective,
                 bool verbose = false) noexcept;
 
-    [[nodiscard]] SynthesisResult synthesize() noexcept;
+    [[nodiscard]] Time synthesize() noexcept;
 
   private:
     EventQueue eventQueue = {};
@@ -45,9 +44,6 @@ class Synthesizer {
     int chunksCount;
 
     bool verbose;
-
-    // synthesis result
-    SynthesisResult synthesisResult;
 
     CollectiveCondition precondition = {};
     CollectiveCondition postcondition = {};

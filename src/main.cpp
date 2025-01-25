@@ -11,8 +11,6 @@ Copyright (c) 2022 Georgia Institute of Technology
 #include <tacos/logger/logger.h>
 #include <tacos/synthesizer/synthesizer.h>
 #include <tacos/topology/mesh_2d.h>
-#include <tacos/writer/csv_writer.h>
-#include <tacos/writer/synthesis_result.h>
 
 using namespace tacos;
 
@@ -58,7 +56,7 @@ int main() {
     Logger::info("Synthesis Process");
 
     timer.start();
-    const auto synthesisResult = synthesizer.synthesize();
+    const auto collectiveTimePS = synthesizer.synthesize();
     timer.stop();
 
     Logger::info();
@@ -71,16 +69,9 @@ int main() {
     Logger::info("\t", "- Time to solve: ", elapsedTimeUSec, " us (",
                  elapsedTimeSec, " s)");
 
-    const auto collectiveTimePS = synthesisResult.getCollectiveTime();
     const auto collectiveTimeUSec = collectiveTimePS / 1.0e6;
     Logger::info("\t", "- Synthesized Collective Time: ", collectiveTimePS,
                  " ps (", collectiveTimeUSec, " us)");
-    Logger::info();
-
-    // write results to file
-    Logger::info("Dumping Synthesis Result");
-    const auto csvWriter = CsvWriter(topology, collective, synthesisResult);
-    csvWriter.write("tacos_synthesis_result.csv");
     Logger::info();
 
     // terminate

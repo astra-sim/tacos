@@ -18,7 +18,6 @@ Synthesizer::Synthesizer(const std::shared_ptr<Topology> topology,
                          const bool verbose) noexcept
     : topology(topology),
       collective(collective),
-      synthesisResult(topology, collective),
       ten(topology),
       verbose(verbose) {
     assert(topology != nullptr);
@@ -41,7 +40,7 @@ Synthesizer::Synthesizer(const std::shared_ptr<Topology> topology,
     scheduleNextEvents();
 }
 
-SynthesisResult Synthesizer::synthesize() noexcept {
+Synthesizer::Time Synthesizer::synthesize() noexcept {
     while (!eventQueue.empty()) {
         // update current time
         currentTime = eventQueue.pop();
@@ -63,8 +62,7 @@ SynthesisResult Synthesizer::synthesize() noexcept {
 
     assert(synthesisCompleted());
 
-    synthesisResult.setCollectiveTime(currentTime);
-    return synthesisResult;
+    return currentTime;
 }
 
 void Synthesizer::scheduleNextEvents() noexcept {
@@ -186,8 +184,7 @@ void Synthesizer::markLinkChunkMatch(const NpuID src,
         Logger::info("\t", "Chunk ", chunk, ": ", src, " -> ", dest);
     }
 
-    // mark the synthesis result
-    synthesisResult.markLinkChunkMatch(chunk, src, dest);
+    // FIXME: link-chunk match made here: chunk, src -> dst
 
     // insert the chunk to the precondition
     precondition[dest].insert(chunk);
