@@ -29,6 +29,6 @@ class Logger {
     static std::once_flag initFlag;
 };
 
-#include <tacos/logger/logger.tpp>
-
 }  // namespace tacos
+
+#include <tacos/logger/logger.tpp>
