@@ -33,6 +33,7 @@ HGX::HGX(const int width,
     for (auto h = 0; h < height; h++) {
         for (auto w1 = 0; w1 < width - 1; w1++) {
             for (auto w2 = w1 + 1; w2 < width; w2++) {
+            //auto w2 = w1 + 1;
                 const auto src = (h * width) + w1;
                 const auto dest = (h * width) + w2;
                 connect(src, dest, latency_0, bandwidth_0, true);
@@ -45,10 +46,11 @@ HGX::HGX(const int width,
         for (auto w1 = 0; w1 < width; w1++) {
             const auto src = (h1 * width) + w1;
             for (auto h2 = h1 + 1; h2 < height; h2++) {
-                for (auto w2 = 0; w2 < width; w2++) {
+                //for (auto w2 = 0; w2 < width; w2++) {
+                auto w2 = w1;
                     const auto dest = (h2 * width) + w2;
                     connect(src, dest, latency_1, bandwidth_1, true);
-                }
+                //}
             }
         }
     }
