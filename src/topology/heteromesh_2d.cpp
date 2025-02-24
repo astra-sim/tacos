@@ -7,11 +7,11 @@ Copyright (c) 2022 Georgia Institute of Technology
 *******************************************************************************/
 
 #include <cassert>
-#include <tacos/topology/hgx.h>
+#include <tacos/topology/heteromesh_2d.h>
 
 using namespace tacos;
 
-HGX::HGX(const int width,
+HeteroMesh2D::HeteroMesh2D(const int width,
                const int height,
                const Latency latency_0,
                const Bandwidth bandwidth_0,

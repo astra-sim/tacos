@@ -12,9 +12,9 @@ Copyright (c) 2022 Georgia Institute of Technology
 
 namespace tacos {
 
-class HGX final : public Topology {
+class HeteroMesh2D final : public Topology {
   public:
-    HGX(int width,
+    HeteroMesh2D(int width,
            int height,
            Latency latency_0,
            Bandwidth bandwidth_0,

@@ -10,7 +10,7 @@ Copyright (c) 2022 Georgia Institute of Technology
 #include <tacos/event-queue/timer.h>
 #include <tacos/logger/logger.h>
 #include <tacos/synthesizer/synthesizer.h>
-#include <tacos/topology/hgx.h>
+#include <tacos/topology/heteromesh_2d.h>
 #include <tacos/writer/xml_writer.h>
 
 using namespace tacos;
@@ -34,7 +34,7 @@ int main() {
     const auto latency_1 = 700;     // ns
 
     const auto topology =
-        std::make_shared<HGX>(width, height, latency_0, bandwidth_0, latency_1, bandwidth_1);
+        std::make_shared<HeteroMesh2D>(width, height, latency_0, bandwidth_0, latency_1, bandwidth_1);
     const auto npusCount = topology->getNpusCount();
 
     Logger::info("Topology Information");
