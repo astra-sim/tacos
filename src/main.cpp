@@ -10,7 +10,7 @@ Copyright (c) 2022 Georgia Institute of Technology
 #include <tacos/event-queue/timer.h>
 #include <tacos/logger/logger.h>
 #include <tacos/synthesizer/synthesizer.h>
-#include <tacos/topology/heteromesh_2d.h>
+#include <tacos/topology/mesh_2d.h>
 #include <tacos/writer/xml_writer.h>
 
 using namespace tacos;
@@ -20,29 +20,21 @@ int main() {
     Logger::init("tacos.log");
 
     // construct a topology
-    const auto width = 8;
-    const auto height = 2;
-    /*
-    const auto bandwidth_0 = 125 / 8;  // GB/s
-    const auto latency_0 = 700;     // ns
-    const auto bandwidth_1 = 12.0 / 8 / 8;  // GB/s
-    const auto latency_1 = 1700;     // ns
-    */
-    const auto bandwidth_0 = 15;  // GB/s
-    const auto latency_0 = 700;     // ns
-    const auto bandwidth_1 = 15;  // GB/s
-    const auto latency_1 = 700;     // ns
+    const auto width = 3;
+    const auto height = 3;
+    const auto bandwidth = 50.0;  // GB/s
+    const auto latency = 500;     // ns
 
     const auto topology =
-        std::make_shared<HeteroMesh2D>(width, height, latency_0, bandwidth_0, latency_1, bandwidth_1);
+        std::make_shared<Mesh2D>(width, height, latency, bandwidth);
     const auto npusCount = topology->getNpusCount();
 
     Logger::info("Topology Information");
-    Logger::info("\t", "- GPUs Count: ", npusCount);
+    Logger::info("\t", "- NPUs Count: ", npusCount);
     Logger::info();
 
     // target collective
-    const auto chunkSize = 128'048'576;  // B
+    const auto chunkSize = 1'048'576;  // B
     const auto initChunksPerNpu = 1;
 
     const auto collective =

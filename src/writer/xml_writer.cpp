@@ -38,7 +38,7 @@ void XmlWriter::writeAlgo() noexcept {
     algo = xml.append_child("algo");
 
     algo.append_attribute("name") = "tacos";
-    algo.append_attribute("proto") = "LL128";
+    algo.append_attribute("proto") = "Simple";
     algo.append_attribute("nchannels") = 1;
     algo.append_attribute("nchunksperloop") = collective_->chunksPerNpu();
     algo.append_attribute("ngpus") = topology_->getNpusCount();

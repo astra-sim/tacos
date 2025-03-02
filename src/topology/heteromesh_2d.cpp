@@ -46,6 +46,7 @@ HeteroMesh2D::HeteroMesh2D(const int width,
         for (auto w1 = 0; w1 < width; w1++) {
             const auto src = (h1 * width) + w1;
             for (auto h2 = h1 + 1; h2 < height; h2++) {
+            //auto h2 = (h1 + 1) % height;
                 //for (auto w2 = 0; w2 < width; w2++) {
                 auto w2 = w1;
                     const auto dest = (h2 * width) + w2;
