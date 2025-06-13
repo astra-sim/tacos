@@ -2,8 +2,8 @@
 This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
 
-Copyright (c) 2022 Intel Corporation
-Copyright (c) 2022 Georgia Institute of Technology
+Copyright (c) 2022-2025 Intel Corporation
+Copyright (c) 2022-2025 Georgia Institute of Technology
 *******************************************************************************/
 
 #include <cassert>
@@ -11,51 +11,41 @@ Copyright (c) 2022 Georgia Institute of Technology
 
 using namespace tacos;
 
-Collective::Collective(const int npusCount, const ChunkSize chunkSize) noexcept
-    : npusCount(npusCount),
-      chunkSize(chunkSize) {
-    assert(npusCount > 0);
-    assert(chunkSize > 0);
+Collective::Collective() noexcept = default;
 
-    for (auto npu = 0; npu < npusCount; npu++) {
-        precondition[npu] = {};
-        postcondition[npu] = {};
-    }
+int Collective::chunksCount() const noexcept {
+    assert(chunksCount_ > 0);
+    return chunksCount_;
 }
 
-void Collective::add(const ChunkID chunkID,
-                     const NpuID src,
-                     const NpuID dest) noexcept {
-    assert(chunkID >= 0);
-    assert(0 <= src && src < npusCount);
-    assert(0 <= dest && dest < npusCount);
+void Collective::chunk_(const NpuID src, std::unordered_set<NpuID> dests) noexcept {
+    assert(src >= 0);
+    assert(!dests.empty());
 
-    chunks.insert(chunkID);
-    precondition[src].insert(chunkID);
-    postcondition[dest].insert(chunkID);
+    // assert this chunk is not already registered
+    assert(precondition_.find(newChunkID_) == precondition_.end());
+    assert(postcondition_.find(newChunkID_) == postcondition_.end());
+
+    // insert to precondition and postcondition
+    precondition_[newChunkID_] = src;
+    postcondition_[newChunkID_] = std::move(dests);
+    chunksCount_++;
+
+    // increment nw chunkID for the next chunk
+    newChunkID_++;
 }
 
-void Collective::updateChunksCount() noexcept {
-    chunksCount = static_cast<int>(chunks.size());
+Collective::NpuID Collective::precondition(const ChunkID chunk) const noexcept {
+    assert(0 <= chunk && chunk < chunksCount_);
+    assert(precondition_.find(chunk) != precondition_.end());
+
+    return precondition_.at(chunk);
 }
 
-Collective::ChunkSize Collective::getChunkSize() const noexcept {
-    return chunkSize;
-}
+const std::unordered_set<Collective::NpuID>& Collective::postcondition(
+    ChunkID chunk) const noexcept {
+    assert(0 <= chunk && chunk < chunksCount_);
+    assert(postcondition_.find(chunk) != postcondition_.end());
 
-int Collective::getChunksCount() const noexcept {
-    return chunksCount;
-}
-
-Collective::CollectiveCondition Collective::getPrecondition() const noexcept {
-    return precondition;
-}
-
-Collective::CollectiveCondition Collective::getPostcondition() const noexcept {
-    return postcondition;
-}
-
-int Collective::chunksPerNpu() const noexcept {
-    assert(chunksPerNpu_ > 0);
-    return chunksPerNpu_;
+    return postcondition_.at(chunk);
 }

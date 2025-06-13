@@ -1,0 +1,36 @@
+## ******************************************************************************
+## This source code is licensed under the MIT license found in the
+## LICENSE file in the root directory of this source tree.
+##
+## Copyright (c) 2022-2025 Intel Corporation
+## Copyright (c) 2022-2025 Georgia Institute of Technology
+## ******************************************************************************
+
+name: build-ubuntu
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    
+permissions:
+  contents: read
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Make TACOS script executable
+      run: chmod +x ./tacos.sh
+
+    - name: Configure TACOS project
+      run: ./tacos.sh configure
+
+    - name: Build TACOS project
+      run: ./tacos.sh build

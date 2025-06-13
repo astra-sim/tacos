@@ -1,6 +1,9 @@
 ## ******************************************************************************
 ## This source code is licensed under the MIT license found in the
 ## LICENSE file in the root directory of this source tree.
+##
+## Copyright (c) 2022-2025 Intel Corporation
+## Copyright (c) 2022-2025 Georgia Institute of Technology
 ## ******************************************************************************
 
 name: format
@@ -15,19 +18,24 @@ permissions:
   contents: read
 
 jobs:
-  check-code-formatting:
-    name: Code Formatting
-    runs-on: ubuntu-24.04  # comes with clang-format v18
+  format:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Clone repository
-        uses: actions/checkout@v4
+    - name: Clone repository
+      uses: actions/checkout@v4
 
-      - name: Check format of `src` directory
-        run: |
-          find src -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
-            xargs -0L1 clang-format -style=file --dry-run -Werror
+    - name: Check format of `src` directory
+      run: |
+        find src -type f \( -name "*.cpp" -o -name "*.h" \) -print0 | 
+        xargs -0L1 clang-format -style=file --dry-run -Werror
 
-      - name: Check format of `include` directory
-        run: |
-          find include -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
-            xargs -0L1 clang-format -style=file --dry-run -Werror
+    - name: Check format of `include` directory
+      run: |
+        find include -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
+        xargs -0L1 clang-format -style=file --dry-run -Werror
+
+    - name: Check format of `tests` directory
+      run: |
+        find tests -type f \( -name "*.cpp" -o -name "*.h" \) -print0 |
+        xargs -0L1 clang-format -style=file --dry-run -Werror

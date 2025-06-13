@@ -2,8 +2,8 @@
 This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
 
-Copyright (c) 2022 Intel Corporation
-Copyright (c) 2022 Georgia Institute of Technology
+Copyright (c) 2022-2025 Intel Corporation
+Copyright (c) 2022-2025 Georgia Institute of Technology
 *******************************************************************************/
 
 #include <cassert>
@@ -13,33 +13,32 @@ using namespace tacos;
 
 Mesh2D::Mesh2D(const int width,
                const int height,
-               const Latency latency,
-               const Bandwidth bandwidth) noexcept
-    : width(width),
-      height(height) {
+               const Bandwidth bandwidth,
+               const Latency latency) noexcept
+    : Topology() {
     assert(width > 0);
     assert(height > 0);
-    assert(latency >= 0);
     assert(bandwidth > 0);
+    assert(latency >= 0);
 
     // compute NPUs count
-    setNpusCount(width * height);
+    setNpusCount_(width * height);
 
-    // connect width-wise links
-    for (auto h = 0; h < height; h++) {
-        for (auto w = 0; w < width - 1; w++) {
-            const auto src = (h * width) + w;
+    // connect x-axis wise
+    for (auto row = 0; row < height; ++row) {
+        for (auto col = 0; col < (width - 1); ++col) {
+            const auto src = (row * width) + col;
             const auto dest = src + 1;
-            connect(src, dest, latency, bandwidth, true);
+            connect_(src, dest, bandwidth, latency, true);
         }
     }
 
-    // connect height-wise links
-    for (auto w = 0; w < width; w++) {
-        for (auto h = 0; h < height - 1; h++) {
-            const auto src = (h * width) + w;
+    // connect y-axis wise
+    for (auto row = 0; row < (height - 1); ++row) {
+        for (auto col = 0; col < width; ++col) {
+            const auto src = (row * width) + col;
             const auto dest = src + width;
-            connect(src, dest, latency, bandwidth, true);
+            connect_(src, dest, bandwidth, latency, true);
         }
     }
 }

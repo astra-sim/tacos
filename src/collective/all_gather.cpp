@@ -2,8 +2,8 @@
 This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
 
-Copyright (c) 2022 Intel Corporation
-Copyright (c) 2022 Georgia Institute of Technology
+Copyright (c) 2022-2025 Intel Corporation
+Copyright (c) 2022-2025 Georgia Institute of Technology
 *******************************************************************************/
 
 #include <cassert>
@@ -11,30 +11,21 @@ Copyright (c) 2022 Georgia Institute of Technology
 
 using namespace tacos;
 
-AllGather::AllGather(const int npusCount,
-                     const ChunkSize chunkSize,
-                     const int initChunksPerNpu) noexcept
-    : Collective(npusCount, chunkSize) {
-    assert(npusCount > 0);
-    assert(chunkSize > 0);
-    assert(initChunksPerNpu > 0);
+AllGather::AllGather(const int npusCount, const int collectivesCount) noexcept : Collective() {
+    assert(collectivesCount > 0);
 
-    auto chunkID = 0;
-    chunksPerNpu_ = npusCount * initChunksPerNpu;
+    auto chunkId = 0;
 
-    for (int i = 0; i < initChunksPerNpu; i++) {
-        for (int src = 0; src < npusCount; src++) {
-            for (int dest = 0; dest < npusCount; dest++) {
-                // for every src, make one chunk
-                // and distribute this chunk to every dests
-                add(chunkID, src, dest);
-            }
-
-            // chunkID should be updated here (i.e., when src changes)
-            chunkID++;
-        }
+    // destination for All-Gather: all NPUs in the topology
+    auto dests = std::unordered_set<NpuID>();
+    for (auto dest = 0; dest < npusCount; ++dest) {
+        dests.insert(dest);
     }
 
-    // reflect chunks count
-    updateChunksCount();
+    // register chunks for all source NPUs
+    for (int c = 0; c < collectivesCount; ++c) {
+        for (int src = 0; src < npusCount; ++src) {
+            chunk_(src, dests);
+        }
+    }
 }

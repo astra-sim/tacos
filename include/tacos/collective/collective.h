@@ -2,54 +2,62 @@
 This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
 
-Copyright (c) 2022 Intel Corporation
-Copyright (c) 2022 Georgia Institute of Technology
+Copyright (c) 2022-2025 Intel Corporation
+Copyright (c) 2022-2025 Georgia Institute of Technology
 *******************************************************************************/
 
 #pragma once
 
-#include <map>
-#include <set>
 #include <tacos/topology/topology.h>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace tacos {
+
+/// @brief Abstract base class for collective communication patterns
 class Collective {
   public:
+    // data types
+    /// @brief Chunk ID
     using ChunkID = int;
-    using ChunkSize = Topology::ChunkSize;
+
+    /// @brief chunk size: in bytes
+    using ChunkSize = int64_t;
+
     using NpuID = Topology::NpuID;
 
-    using CollectiveCondition = std::map<NpuID, std::set<ChunkID>>;
+    /// @brief Base class constructor for collective pattern
+    Collective() noexcept;
 
-    Collective(int npusCount, ChunkSize chunkSize) noexcept;
+    /// @brief Return the source NPU for a given chunk
+    /// @param chunk chunk ID
+    /// @return source NPU of the chunk
+    [[nodiscard]] NpuID precondition(ChunkID chunk) const noexcept;
 
-    [[nodiscard]] ChunkSize getChunkSize() const noexcept;
+    /// @brief Return the destination NPUs for a given chunk
+    /// @param chunk chunk ID
+    /// @return destination NPUs of the chunk
+    [[nodiscard]] const std::unordered_set<NpuID>& postcondition(ChunkID chunk) const noexcept;
 
-    [[nodiscard]] int getChunksCount() const noexcept;
-
-    [[nodiscard]] CollectiveCondition getPrecondition() const noexcept;
-
-    [[nodiscard]] CollectiveCondition getPostcondition() const noexcept;
-
-    [[nodiscard]] bool synthesisCompleted() const noexcept;
-
-    [[nodiscard]] int chunksPerNpu() const noexcept;
+    /// @brief Get the number of chunks in this collective
+    /// @return number of chunks in the collective pattern
+    [[nodiscard]] int chunksCount() const noexcept;
 
   protected:
-    int npusCount;
-    int chunksCount = 0;
-    int chunksPerNpu_ = 0;
+    /// @brief Number of chunks in the collective
+    int chunksCount_ = 0;
 
-    void add(ChunkID chunkID, NpuID src, NpuID dest) noexcept;
-
-    void updateChunksCount() noexcept;
+    /// @brief Insert new precondition and postcondition for a chunk
+    void chunk_(NpuID src, std::unordered_set<NpuID> dests) noexcept;
 
   private:
-    ChunkSize chunkSize;
+    /// @brief New Chunk ID to be used
+    int newChunkID_ = 0;
 
-    std::set<ChunkID> chunks = {};
-    CollectiveCondition precondition = {};
-    CollectiveCondition postcondition = {};
+    /// @brief Precondition: maps each chunk to the (single) source NPU
+    std::unordered_map<ChunkID, NpuID> precondition_ = {};
+
+    /// @brief Postcondition: maps each chunk to (multiple) destination NPUs
+    std::unordered_map<ChunkID, std::unordered_set<NpuID>> postcondition_ = {};
 };
-
 }  // namespace tacos

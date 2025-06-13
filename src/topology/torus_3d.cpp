@@ -2,8 +2,8 @@
 This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
 
-Copyright (c) 2022 Intel Corporation
-Copyright (c) 2022 Georgia Institute of Technology
+Copyright (c) 2022-2025 Intel Corporation
+Copyright (c) 2022-2025 Georgia Institute of Technology
 *******************************************************************************/
 
 #include <cassert>
@@ -11,71 +11,67 @@ Copyright (c) 2022 Georgia Institute of Technology
 
 using namespace tacos;
 
-Torus3D::Torus3D(const int lenX,
-                 const int lenY,
-                 const int lenZ,
-                 const Latency latency,
-                 const Bandwidth bandwidth) noexcept
-    : lenX(lenX),
-      lenY(lenY),
-      lenZ(lenZ),
-      Topology() {
+Torus3D::Torus3D(int size_x, int size_y, int size_z, Bandwidth bandwidth, Latency latency) noexcept
+    : Topology() {
+    assert(size_x > 0);
+    assert(size_y > 0);
+    assert(size_z > 0);
+    assert(bandwidth > 0);
+    assert(latency >= 0);
 
     // compute NPUs count
-    setNpusCount(lenX * lenY * lenZ);
+    setNpusCount_(size_x * size_y * size_z);
 
     // connect x_wise
-    for (auto z = 0; z < lenZ; z++) {
-        for (auto y = 0; y < lenY; y++) {
-            for (auto x = 0; x < lenX - 1; x++) {
-                const auto destX = x + 1;
-
-                const auto src = (z * lenX * lenY) + (y * lenX) + x;
-                const auto dest = (z * lenX * lenY) + (y * lenX) + destX;
-                connect(src, dest, latency, bandwidth, true);
+    for (auto z = 0; z < size_z; ++z) {
+        for (auto y = 0; y < size_y; ++y) {
+            for (auto x = 0; x < size_x - 1; ++x) {
+                const auto dest_x = x + 1;
+                const auto src = (z * size_x * size_y) + (y * size_x) + x;
+                const auto dest = (z * size_x * size_y) + (y * size_x) + dest_x;
+                connect_(src, dest, bandwidth, latency, true);
             }
 
             // wrap-around
-            const auto src = (z * lenX * lenY) + (y * lenX) + (lenX - 1);
-            const auto dest = (z * lenX * lenY) + (y * lenX);
-            connect(src, dest, latency, bandwidth, true);
+            const auto src = (z * size_x * size_y) + (y * size_x) + (size_x - 1);
+            const auto dest = (z * size_x * size_y) + (y * size_x);
+            connect_(src, dest, bandwidth, latency, true);
         }
     }
 
     // connect y_wise
-    for (auto z = 0; z < lenZ; z++) {
-        for (auto x = 0; x < lenX; x++) {
-            for (auto y = 0; y < lenY - 1; y++) {
-                const auto destY = y + 1;
+    for (auto z = 0; z < size_z; ++z) {
+        for (auto x = 0; x < size_x; ++x) {
+            for (auto y = 0; y < size_y - 1; ++y) {
+                const auto dest_y = y + 1;
+                const auto src = (z * size_x * size_y) + (y * size_x) + x;
+                const auto dest = (z * size_x * size_y) + (dest_y * size_x) + x;
 
-                const auto src = (z * lenX * lenY) + (y * lenX) + x;
-                const auto dest = (z * lenX * lenY) + (destY * lenX) + x;
-
-                connect(src, dest, latency, bandwidth, true);
+                connect_(src, dest, bandwidth, latency, true);
             }
 
             // wrap-around
-            const auto src = (z * lenX * lenY) + ((lenY - 1) * lenX) + x;
-            const auto dest = (z * lenX * lenY) + x;
-            connect(src, dest, latency, bandwidth, true);
+            const auto src = (z * size_x * size_y) + ((size_y - 1) * size_x) + x;
+            const auto dest = (z * size_x * size_y) + +x;
+            connect_(src, dest, bandwidth, latency, true);
         }
     }
 
     // connect z_wise
-    for (auto y = 0; y < lenY; y++) {
-        for (auto x = 0; x < lenX; x++) {
-            for (auto z = 0; z < lenZ - 1; z++) {
-                const auto destZ = z + 1;
+    for (auto y = 0; y < size_y; ++y) {
+        for (auto x = 0; x < size_x; ++x) {
+            for (auto z = 0; z < size_z - 1; ++z) {
+                const auto dest_z = z + 1;
+                const auto src = (z * size_x * size_y) + (y * size_x) + x;
+                const auto dest = (dest_z * size_x * size_y) + (y * size_x) + x;
 
-                const auto src = (z * lenX * lenY) + (y * lenX) + x;
-                const auto dest = (destZ * lenX * lenY) + (y * lenX) + x;
-                connect(src, dest, latency, bandwidth, true);
+                connect_(src, dest, bandwidth, latency, true);
             }
 
             // wrap-around
-            const auto src = ((lenZ - 1) * lenX * lenY) + (y * lenX) + x;
-            const auto dest = (y * lenX) + x;
-            connect(src, dest, latency, bandwidth, true);
+            const auto src = ((size_z - 1) * size_x * size_y) + (y * size_x) + x;
+            const auto dest = (y * size_x) + x;
+            connect_(src, dest, bandwidth, latency, true);
         }
     }
 }

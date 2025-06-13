@@ -2,85 +2,63 @@
 This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
 
-Copyright (c) 2022 Intel Corporation
-Copyright (c) 2022 Georgia Institute of Technology
+Copyright (c) 2022-2025 Intel Corporation
+Copyright (c) 2022-2025 Georgia Institute of Technology
 *******************************************************************************/
 
+#include <iostream>
 #include <tacos/collective/all_gather.h>
-#include <tacos/event-queue/timer.h>
-#include <tacos/logger/logger.h>
+#include <tacos/event_queue/timer.h>
 #include <tacos/synthesizer/synthesizer.h>
+#include <tacos/topology/hypercube_3d.h>
 #include <tacos/topology/mesh_2d.h>
-#include <tacos/writer/xml_writer.h>
+#include <tacos/topology/torus_2d.h>
+#include <tacos/topology/torus_3d.h>
 
 using namespace tacos;
 
 int main() {
-    // initialize logger
-    Logger::init("tacos.log");
+    // set print precision
+    fixed(std::cout);
+    std::cout.precision(2);
 
     // construct a topology
-    const auto width = 3;
-    const auto height = 3;
-    const auto bandwidth = 50.0;  // GB/s
-    const auto latency = 500;     // ns
+    const auto x = 5;
+    const auto y = x;
+    const auto z = y;
 
-    const auto topology =
-        std::make_shared<Mesh2D>(width, height, latency, bandwidth);
-    const auto npusCount = topology->getNpusCount();
+    const auto latency = 0.5;   // microseconds (us)
+    const auto bandwidth = 50;  // GiB/sec
 
-    Logger::info("Topology Information");
-    Logger::info("\t", "- NPUs Count: ", npusCount);
-    Logger::info();
+    const auto topology = Hypercube3D(x, y, z, bandwidth, latency);
+    const auto npusCount = topology.npusCount();
+    std::cout << "NPUs count: " << npusCount << std::endl;
 
-    // target collective
-    const auto chunkSize = 1'048'576;  // B
-    const auto initChunksPerNpu = 1;
+    // create collective
+    const auto collectivesCount = 1;
+    const auto collective = AllGather(npusCount, collectivesCount);
+    const auto chunksCount = collective.chunksCount();
+    std::cout << "Chunks count: " << chunksCount << std::endl;
 
-    const auto collective =
-        std::make_shared<AllGather>(npusCount, chunkSize, initChunksPerNpu);
-    const auto chunksCount = collective->getChunksCount();
-
-    const auto chunkSizeMB = chunkSize / (1 << 20);
-    Logger::info("Collective Information");
-    Logger::info("\t", "- Chunks Count: ", chunksCount);
-    Logger::info("\t", "- Chunk Size: ", chunkSizeMB, " MB");
-    Logger::info();
-
-    // instantiate synthesizer
-    auto synthesizer = Synthesizer(topology, collective);
+    // set chunk size
+    const auto chunkSize = 1024 * (1 << 20) / (npusCount * collectivesCount);
 
     // create timer
-    auto timer = Timer();
+    auto solverTimer = Timer();
 
-    // synthesize collective algorithm
-    Logger::info("Synthesis Process");
-
-    timer.start();
-    auto result = synthesizer.synthesize();
-    timer.stop();
-
-    Logger::info();
+    // create solver and solve
+    solverTimer.start();
+    auto solver = Synthesizer();
+    auto collectiveTime = solver.solve(topology, collective, chunkSize);
+    solverTimer.stop();
 
     // print result
-    Logger::info("Synthesis Result");
-
-    const auto collectiveTimePS = result.collectiveTime();
-    const auto elapsedTimeUSec = timer.elapsedTime();
-    const auto elapsedTimeSec = elapsedTimeUSec / 1e6;
-    Logger::info("\t", "- Time to solve: ", elapsedTimeUSec, " us (",
-                 elapsedTimeSec, " s)");
-
-    const auto collectiveTimeUSec = collectiveTimePS / 1.0e6;
-    Logger::info("\t", "- Synthesized Collective Time: ", collectiveTimePS,
-                 " ps (", collectiveTimeUSec, " us)");
-    Logger::info();
-
-    // write into XML
-    auto xmlWriter = XmlWriter("tacos.xml", topology, collective, result);
-    xmlWriter.write();
+    auto time = solverTimer.time();
+    std::cout << std::endl;
+    std::cout << "Time to solve: " << time / 1000 << " ms" << std::endl;
+    std::cout << "All-Gather Time: " << collectiveTime << std::endl;
+    std::cout << "All-Reduce Time: " << collectiveTime * 2 << std::endl;
 
     // terminate
-    Logger::info("Done!");
     return 0;
 }

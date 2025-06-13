@@ -1,61 +1,42 @@
-## Use Ubuntu
-FROM ubuntu:24.04
-LABEL maintainer="Will Won <william.won@gatech.edu>"
+## ******************************************************************************
+## This source code is licensed under the MIT license found in the
+## LICENSE file in the root directory of this source tree.
+##
+## Copyright (c) 2022-2025 Intel Corporation
+## Copyright (c) 2022-2025 Georgia Institute of Technology
+## ******************************************************************************
 
+# Base Image: Ubuntu
+FROM ubuntu:25.04
 
-### ================== System Setups ======================
-## Install System Dependencies
+# Project Metadata
+LABEL maintainer="Will Won <william.won@gatech.edu>" \
+    version="1.0" \
+    description="TACOS"
+
+# environment variables
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt -y update
-RUN apt -y install \
-    coreutils wget vim git \
-    gcc g++ clang-format \
-    make cmake \
-    libboost-all-dev \
-    zlib1g-dev
-### ======================================================
+ENV LANG=C.UTF-8
+ENV LC_ALL=C.UTF-8
 
+# Install packages
+RUN apt update
+RUN apt install -y --no-install-recommends \
+    build-essential coreutils vim \
+    git ca-certificates \
+    clang clang-format cmake \
+    locales
+RUN apt clean
 
-### ====== Abseil Installation: Protobuf Dependency ======
-## Download Abseil 20240116.2 (Latest LTS as of 7/8/2024)
-WORKDIR /opt
-RUN wget https://github.com/abseil/abseil-cpp/releases/download/20240116.2/abseil-cpp-20240116.2.tar.gz
-RUN tar -xf abseil-cpp-20240116.2.tar.gz
-RUN rm abseil-cpp-20240116.2.tar.gz
+# Set UTF-8 locale
+RUN locale-gen en_US.UTF-8
 
-## Compile Abseil
-WORKDIR /opt/abseil-cpp-20240116.2/build
-RUN cmake .. \
-    -DCMAKE_CXX_STANDARD=14 \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX="/opt/abseil-cpp-20240116.2/install"
-RUN cmake --build . --target install --config Release --parallel $(nproc)
-ENV absl_DIR="/opt/abseil-cpp-20240116.2/install"
-### ======================================================
+# Update CA certificates
+RUN update-ca-certificates
 
-
-### ============= Protobuf Installation ==================
-## Download Protobuf 25.3 (=v4.25.3, latest version before protobuf v5)
-WORKDIR /opt
-RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v25.3/protobuf-25.3.tar.gz
-RUN tar -xf protobuf-25.3.tar.gz
-RUN rm protobuf-25.3.tar.gz
-
-## Compile Protobuf
-WORKDIR /opt/protobuf-25.3/build
-RUN cmake .. \
-    -DCMAKE_CXX_STANDARD=14 \
-    -DCMAKE_BUILD_TYPE=Release \
-    -Dprotobuf_BUILD_TESTS=OFF \
-    -Dprotobuf_ABSL_PROVIDER=package \
-    -DCMAKE_INSTALL_PREFIX="/opt/protobuf-25.3/install"
-RUN cmake --build . --target install --config Release --parallel $(nproc)
-ENV PATH="/opt/protobuf-25.3/install/bin:$PATH"
-ENV protobuf_DIR="/opt/protobuf-25.3/install"
-### ======================================================
-
-
-### ================== Finalize ==========================
-## Move to the application directory
+# Set working directory
 WORKDIR /app/tacos
-### ======================================================
+COPY . .
+
+# default shell
+CMD ["/bin/bash"]
