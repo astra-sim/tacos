@@ -34,11 +34,11 @@ TEST_F(TestConfig, Mesh5x5) {
 
     const auto chunkSize = int64_t(1024) * (1 << 20) / (npusCount * collectivesCount);
 
-    auto solver = Synthesizer();
+    auto synthesizer = Synthesizer();
 
     auto minCollectiveTime = std::numeric_limits<EventQueue::Time>::max();
     for (int i = 0; i < repeat; ++i) {
-        auto collectiveTime = solver.solve(topology, collective, chunkSize);
+        auto collectiveTime = synthesizer.solve(topology, collective, chunkSize);
         minCollectiveTime = std::min(minCollectiveTime, collectiveTime);
     }
 
@@ -64,11 +64,11 @@ TEST_F(TestConfig, Mesh10x10) {
 
     const auto chunkSize = int64_t(1024) * (1 << 20) / (npusCount * collectivesCount);
 
-    auto solver = Synthesizer();
+    auto synthesizer = Synthesizer();
 
     auto minCollectiveTime = std::numeric_limits<EventQueue::Time>::max();
     for (int i = 0; i < repeat; ++i) {
-        auto collectiveTime = solver.solve(topology, collective, chunkSize);
+        auto collectiveTime = synthesizer.solve(topology, collective, chunkSize);
         minCollectiveTime = std::min(minCollectiveTime, collectiveTime);
     }
 
@@ -94,11 +94,11 @@ TEST_F(TestConfig, Mesh7x12) {
 
     const auto chunkSize = int64_t(4096) * (1 << 20) / (npusCount * collectivesCount);
 
-    auto solver = Synthesizer();
+    auto synthesizer = Synthesizer();
 
     auto minCollectiveTime = std::numeric_limits<EventQueue::Time>::max();
     for (int i = 0; i < repeat; ++i) {
-        auto collectiveTime = solver.solve(topology, collective, chunkSize);
+        auto collectiveTime = synthesizer.solve(topology, collective, chunkSize);
         minCollectiveTime = std::min(minCollectiveTime, collectiveTime);
     }
 

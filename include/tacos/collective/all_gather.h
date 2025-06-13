@@ -20,6 +20,6 @@ class AllGather final : public Collective {
     /// @brief Constructor for AllGather collective
     /// @param npusCount number of NPUs in the topology
     /// @param collectivesCount number of initial chunks per each NPU
-    explicit AllGather(const int npusCount, int collectivesCount = 1) noexcept;
+    explicit AllGather(int npusCount, int collectivesCount = 1) noexcept;
 };
 }  // namespace tacos

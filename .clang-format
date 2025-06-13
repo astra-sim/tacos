@@ -12,6 +12,7 @@ BasedOnStyle: LLVM
 # Indentations and spaces
 IndentWidth: 4
 UseTab: Never
+AlignTrailingComments: false
 SpacesBeforeTrailingComments: 2
 
 # Line and column setups
