@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "Please cite TACOS using the following metadata, if you use this software in your work"
+title: "TACOS: Topology-Aware Collective Algorithm Synthesizer for Distributed Machine Learning"
+authors:
+  - family-names: "Won"
+    given-names: "William"
+  - family-names: "Elavazhagan"
+    given-names: "Midhilesh"
+  - family-names: "Srinivasan"
+    given-names: "Sudarshan"
+  - family-names: "Gupta"
+    given-names: "Swati"
+  - family-names: "Krishna"
+    given-names: "Tushar"
+doi: 10.1109/micro61859.2024.00068
+date-released: 2024-11-02
+url: "https://ieeexplore.ieee.org/document/10764470"
