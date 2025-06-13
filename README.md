@@ -46,7 +46,7 @@ For any questions about TACOS, please contact [Will Won](mailto:william.won@gate
 or [Tushar Krishna](mailto:tushar@ece.gatech.edu). You can also search for or create new GitHub issues.
 
 ## Contributing
-We sincerely appreciate your contribution to the TACOS project! Please see [CONTRIBUTING.md]() for contribution guidelines.
+We sincerely appreciate your contribution to the TACOS project! Please see [CONTRIBUTING.md](https://github.com/astra-sim/tacos/blob/main/CONTRIBUTING.md) for contribution guidelines.
 
 
 # Getting Started

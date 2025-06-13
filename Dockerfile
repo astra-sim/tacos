@@ -11,7 +11,7 @@ FROM ubuntu:25.04
 
 # Project Metadata
 LABEL maintainer="Will Won <william.won@gatech.edu>" \
-    version="1.0" \
+    version="1.3.0" \
     description="TACOS"
 
 # environment variables
