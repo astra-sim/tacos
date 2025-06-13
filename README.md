@@ -24,7 +24,7 @@ TACOS is a topology-aware collective algorithm synthesizer:
 - Then, TACOS autonomously analyzes provided inputs and synthesizes topology-aware collective algorithms.
 
 The below figure summarizes the TACOS framework:
-![TACOS Abstraction]([https://github.com/astra-sim/tacos/blob/main/docs/images/tacos_overview.png](https://github.com/astra-sim/tacos/blob/main/docs/tacos_overview.png))
+![TACOS Abstraction](https://github.com/astra-sim/tacos/blob/main/docs/tacos_overview.png)
 
 ### Restrictions
 TACOS currently supports:
