@@ -1,17 +1,17 @@
 cff-version: 1.2.0
-message: "Please cite TACOS using the following metadata, if you use this software in your work"
 title: "TACOS: Topology-Aware Collective Algorithm Synthesizer for Distributed Machine Learning"
 authors:
   - family-names: "Won"
     given-names: "William"
   - family-names: "Krishna"
     given-names: "Tushar"
-doi: 10.5281/zenodo.13325902
-version: 1.1.0
+version: "1.1.0"
 date-released: 2025-06-12
+doi: "10.5281/zenodo.13325902"
 url: "https://github.com/astra-sim/tacos"
 preferred-citation:
   type: conference-paper
+  title: "TACOS: Topology-Aware Collective Algorithm Synthesizer for Distributed Machine Learning"
   authors:
     - family-names: "Won"
       given-names: "William"
@@ -25,6 +25,6 @@ preferred-citation:
       given-names: "Tushar"
   year: 2024
   proceedings-title: "Proceedings of the 57th IEEE/ACM International Symposium on Microarchitecture (MICRO '24)"
-  pages: 856-870
-  doi: 10.1109/micro61859.2024.00068
-  url: https://ieeexplore.ieee.org/document/10764470
+  pages: "856-870"
+  doi: "10.1109/micro61859.2024.00068"
+  url: "https://ieeexplore.ieee.org/document/10764470"
