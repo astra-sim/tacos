@@ -1,6 +1,3 @@
-#!/bin/sh
-set -euo pipefail
-
 ## ******************************************************************************
 ## This source code is licensed under the MIT license found in the
 ## LICENSE file in the root directory of this source tree.
@@ -9,12 +6,23 @@ set -euo pipefail
 ## Copyright (c) 2022-2025 Georgia Institute of Technology
 ## ******************************************************************************
 
-# find the absolute path to this script
-SCRIPT_DIR="$(dirname "$(realpath "$0")")"
-PROJECT_DIR="${SCRIPT_DIR:?}"/..
+## TACOS
+build
 
-# start
-echo "[TACOS] Starting a Docker Container fromastra-sim/tacos:latest..."
-
-# build docker image
-docker run -it astrasim/tacos:latest /bin/bash
+## Dockerignore
+# from: https://github.com/docker/docs/blob/main/.dockerignore
+.DS_Store
+.github
+.gitignore
+.git
+.idea
+.hugo_build.lock
+_releaser
+CONTRIBUTING.md
+Dockerfile
+compose.yml
+docker-bake.hcl
+public
+node_modules
+resources
+tmp

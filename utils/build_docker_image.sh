@@ -17,8 +17,8 @@ PROJECT_DIR="${SCRIPT_DIR:?}"/..
 echo "[TACOS] Building Docker Image..."
 
 # build docker image
-docker build -t astra-sim/tacos:latest "${PROJECT_DIR:?}"
+docker build -t astrasim/tacos:latest "${PROJECT_DIR:?}"
 
 # finalize
-echo "[TACOS] Docker Image built: astra-sim/tacos:latest"
+echo "[TACOS] Docker Image built: astrasim/tacos:latest"
 echo "[TACOS] Consider running utils/start_docker_container.sh to start the container."
