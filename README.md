@@ -167,3 +167,58 @@ add_library(tacos
     ...
 )
 ```
+
+## Collective Pattern
+Currently, TACOS only supports the **All-Gather** collective pattern is being supported, with **Reduce-Scatter** and **All-Reduce** pattern implementations in progress. You can see the signature of the All-Gather pattern inside `include/tacos/collective/all_gather.h`:
+```cpp
+class AllGather final : public Collective {
+  public:
+    AllGather(int npusCount, int collectivesCount = 1) noexcept;
+```
+- `npusCount`: Number of NPUs of the target topology.
+  - This can easily be retrieved from the target topology itself via `topology.npusCount()`.
+- `collectivesCount`: Number of initial (input) chunks per each NPU.
+    - For example, if `npusCount=4` and `collectivesCount=3`, each NPU will start with 3 chunks (input buffer) and end up with 12 chunks (output buffer).
+ 
+## TACOS API
+TACOS synthesizer is simply instantiated by calling its constructor without any argument:
+```cpp
+#include <tacos/synthesizer/synthesizer.h>
+
+using namespace tacos;
+
+int main() {
+  auto synthesizer = Synthesizer();
+}
+```
+
+The synthesizer has `solve(topology, collective, chunkSize) -> time` method to synthesize the target collective algorithm.
+- `topology` is the target network topology object.
+- `collective` is the target collective communication pattern (for now, an `All-Gather` pattern).
+- `chunkSize` is the size of each chunk, in bytes.
+  - For example, recall the All-Gather with `npusCount=4` and `collectivesCount=3`. If the `chunkSize` is 1,048,576 (1 MB), the input buffer size of this All-Gather is 3 MB, and the output buffer size is 12 MB.
+  - In other words, if you know the input buffer size, `chunkSize` can be deduced via `(chunk size) = (input buffer size) / (collectivesCount)`.
+  - Likely, from provided output buffer size, `chunkSize` can be deduced via `(chunk size) = (output buffer size) / (collectivesCount * npusCount)`
+
+`solve(solve(topology, collective, chunkSize) -> time` returns a `time` value, which is the estimated collective time of the synthesized collective algorithm. The unit of time is in microseconds (us).
+- TACOS is currently being upgraded to also generate an MSCCL-XML representation, which is a concise representation that holds the actual collective algorithm, not just the estimated collective time.
+
+`src/main.cpp` implements an example TACOS run by instantiating a Mesh2D topology and an All-Gather collective, as below:
+```cpp
+int main() {
+  // create topology
+  const auto topology = Mesh2D(4, 3, 50, 0.5);  // 4x3 (12-NPU) Mesh, each link: 50 GiB/s & 0.5 us
+  const auto npusCount = topology.npusCount();
+
+  // create collective
+  const Collective::ChunkSize outputBufferSize = 12 * (1 << 20);  // 12 MiB
+  const auto collectivesCount = 3;  // 3 initial chunks per each NPU
+  const auto collective = AllGather(npusCount, collectivesCount);
+  const auto chunkSize = outputBufferSize / (npusCount * collectivesCount);
+
+  // run synthesizer
+  auto synthesizer = Synthesizer();
+  auto collectiveTime = synthesizer.solve(topology, collective, chunkSize);  // TACOS API call
+  std::cout << "Collective Time: " << collectiveTime << " us" << std::endl;
+}
+```
