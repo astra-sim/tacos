@@ -38,12 +38,15 @@ void XmlWriter::writeAlgo() noexcept {
     algo = xml.append_child("algo");
 
     algo.append_attribute("name") = "tacos";
-    algo.append_attribute("proto") = "LL128";
+    algo.append_attribute("proto") = "Simple";
     algo.append_attribute("nchannels") = 1;
     algo.append_attribute("nchunksperloop") = collective_->chunksPerNpu();
     algo.append_attribute("ngpus") = topology_->getNpusCount();
     algo.append_attribute("coll") = "allgather";  // FIXME: can be others
     algo.append_attribute("inplace") = 1;
+    algo.append_attribute("outofplace") = 0;
+    algo.append_attribute("minBytes") = 0;
+    algo.append_attribute("maxBytes") = 0;
 }
 
 void XmlWriter::writeNpu(NpuID npuID) noexcept {
@@ -99,7 +102,12 @@ void XmlWriter::writeIngressLink(pugi::xml_node& gpu,
         step.append_attribute("cnt") = 1;
         step.append_attribute("depid") = -1;
         step.append_attribute("deps") = -1;
-        step.append_attribute("hasdep") = 0;
+
+        if (op.depended()) {
+            step.append_attribute("hasdep") = 1;
+        } else {
+            step.append_attribute("hasdep") = 0;
+        }
     }
 }
 
@@ -132,12 +140,15 @@ void XmlWriter::writeEgressLink(pugi::xml_node& gpu,
         if (op.hasDep()) {
             step.append_attribute("depid") = op.depOp()->linkID();;
             step.append_attribute("deps") = op.depOp()->opID();
-            step.append_attribute("hasdep") = 1;
         } else {
             step.append_attribute("depid") = -1;
             step.append_attribute("deps") = -1;
-            step.append_attribute("hasdep") = 0;
         }
 
+        if (op.depended()) {
+            step.append_attribute("hasdep") = 1;
+        } else {
+            step.append_attribute("hasdep") = 0;
+        }
     }
 }

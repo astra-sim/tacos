@@ -8,27 +8,22 @@ Copyright (c) 2022 Georgia Institute of Technology
 
 #pragma once
 
-#include <boost/filesystem.hpp>
-#include <spdlog/spdlog.h>
+#include <tacos/topology/topology.h>
 
 namespace tacos {
 
-class Logger {
+class HeteroMesh2D final : public Topology {
   public:
-    static void init(const std::string& filename) noexcept;
-
-    static void info() noexcept;
-
-    template <typename... Args>
-    static void info(Args&&... args) noexcept;
-
-    [[nodiscard]] static boost::filesystem::path prepareFile(
-        const std::string& filename) noexcept;
+    HeteroMesh2D(int width,
+           int height,
+           Latency latency_0,
+           Bandwidth bandwidth_0,
+           Latency latency_1,
+           Bandwidth bandwidth_1) noexcept;
 
   private:
-    static std::once_flag initFlag;
+    int width;
+    int height;
 };
 
 }  // namespace tacos
-
-#include <tacos/logger/logger.tpp>

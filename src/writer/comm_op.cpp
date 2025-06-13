@@ -21,6 +21,15 @@ CommOp::CommOp(const ChunkID chunkID,
 void CommOp::setDepOp(CommOp* const depOp) {
     hasDep_ = true;
     depOp_ = depOp;
+    depOp->setDepended();
+}
+
+void CommOp::setDepended() {
+    depended_ = true;
+}
+
+bool CommOp::depended() const noexcept {
+    return depended_;
 }
 
 CommOp::ChunkID CommOp::chunkID() const noexcept {
