@@ -7,7 +7,7 @@
 -->
 
 # 🌮 TACOS
-## [T]opology-[A]ware [Co]llective Algorithm [S]ynthesizer for Distributed Machine Learning
+### [T]opology-[A]ware [Co]llective Algorithm [S]ynthesizer for Distributed Machine Learning
 
 ## Latest Release
 [Latest Release](https://github.com/astra-sim/tacos/releases)
@@ -19,42 +19,30 @@
 | **develop** | [![build-ubuntu](https://github.com/astra-sim/tacos/actions/workflows/build-ubuntu.yml/badge.svg?branch=develop)](https://github.com/astra-sim/tacos/actions/workflows/build-ubuntu.yml) [![build-macos](https://github.com/astra-sim/tacos/actions/workflows/build-macos.yml/badge.svg?branch=develop)](https://github.com/astra-sim/tacos/actions/workflows/build-macos.yml) | [![test-ubuntu](https://github.com/astra-sim/tacos/actions/workflows/test-ubuntu.yml/badge.svg?branch=develop)](https://github.com/astra-sim/tacos/actions/workflows/test-ubuntu.yml) [![test-macos](https://github.com/astra-sim/tacos/actions/workflows/test-macos.yml/badge.svg?branch=develop)](https://github.com/astra-sim/tacos/actions/workflows/test-macos.yml) | [![format](https://github.com/astra-sim/tacos/actions/workflows/check-clang-format.yml/badge.svg?branch=develop)](https://github.com/astra-sim/tacos/actions/workflows/check-clang-format.yml) |
 
 ## Overview
-TACOS receives an arbitrary point-to-point network topology and autonomously synthesizes the topology-aware All-Reduce (Reduce-Scatter and All-Gather) collective communication algorithm. TACOS is powered by the Time-expanded Network (TEN) representation and Utilization Maximizing Link-Chunk Matching algorithm, thereby resulting in greater scalability to large networks.
+TACOS is a topology-aware collective algorithm synthesizer:
+- TACOS receives a network topology description and target collective patterns.
+- Then, TACOS autonomously analyzes provided inputs and synthesizes topology-aware collective algorithms.
 
-Below figure summarizes the TACOS framework:
-![TACOS Abstraction](https://github.com/astra-sim/tacos/blob/main/docs/images/tacos_overview.png)
+The below figure summarizes the TACOS framework:
+![TACOS Abstraction]([https://github.com/astra-sim/tacos/blob/main/docs/images/tacos_overview.png](https://github.com/astra-sim/tacos/blob/main/docs/tacos_overview.png))
 
-Please find more information about TACOS in [this paper](https://arxiv.org/abs/2304.05301).
-- William Won, Midhilesh Elavazhagan, Sudarshan Srinivasan, Ajaya Durg, Samvit Kaul, Swati Gupta, and Tushar Krishna, "TACOS: Topology-Aware Collective Algorithm Synthesizer for Distributed Machine Learning," arXiv:2304.05301 [cs.DC]
+### Restrictions
+TACOS currently supports:
+- Network topology: point-to-point (direct-connect) only. Networks can be asymmetric and heterogeneous.
+  - Switch should be unwound to point-to-point connections.
+- Target collective pattern: All-Gather
+  - Although Reduce-Scatter and All-Reduce can be supported by TACOS, their implementations are currently in progress.
+  - All-to-All is not supported in TACOS.
+- Output: TACOS currently reports the estimated collective time of the synthesized collective algorithm.
+  - MSCCL-XML generation is currently in progress so that the TACOS algorithm can run on real systems via MSCCL (see [MSCCLang Paper](https://dl.acm.org/doi/10.1145/3575693.3575724)).
 
-## Getting Started
-1. Download the TACOS project.
-```sh
-git clone --recurse-submodules git@github.com:astra-sim/tacos.git
-```
+### Paper
+Please find more information about the framework in the TACOS paper [[IEEExplorer]](https://arxiv.org/abs/2304.05301) [[arXiv]](https://arxiv.org/abs/2304.05301).
+- You can cite the paper (BibTeX) by clicking the *Cite this repository* button (on the right side toolbar below the *About* tab).
 
-2. Run TACOS with the provided script.
-```sh
-./tacos.sh
-```
-
-If you'd like to analyze the codebase, `runner/main.cpp` is the main entry point.
-
-### Docker Execution Environment
-To assist the execution environment setup, you may also consider building a Docker image.
-```sh
-docker built -t tacos .
-```
-
-You can start the Docker container as a sandboxed execution environment.
-```sh
-docker run -it -v /path/to/your/tacos/repository:/app/tacos tacos
-
-# once Docker container starts running
-cd /app/tacos
-./tacos.sh
-```
+## Contributing
+We sincerely appreciate your contribution to the TACOS project! Please see [CONTRIBUTING.md]() for contribution guidelines.
 
 ## Contact Us
 For any questions about TACOS, please contact [Will Won](mailto:william.won@gatech.edu)
-or [Tushar Krishna](mailto:tushar@ece.gatech.edu). You may also find or open a GitHub Issue in this repository.
+or [Tushar Krishna](mailto:tushar@ece.gatech.edu). You can also search for or create new GitHub issues.
