@@ -4,14 +4,27 @@ title: "TACOS: Topology-Aware Collective Algorithm Synthesizer for Distributed M
 authors:
   - family-names: "Won"
     given-names: "William"
-  - family-names: "Elavazhagan"
-    given-names: "Midhilesh"
-  - family-names: "Srinivasan"
-    given-names: "Sudarshan"
-  - family-names: "Gupta"
-    given-names: "Swati"
   - family-names: "Krishna"
     given-names: "Tushar"
-doi: 10.1109/micro61859.2024.00068
-date-released: 2024-11-02
-url: "https://ieeexplore.ieee.org/document/10764470"
+doi: 10.5281/zenodo.13325902
+version: 1.1.0
+date-released: 2025-06-12
+url: "https://github.com/astra-sim/tacos"
+preferred-citation:
+  type: conference-paper
+  authors:
+    - family-names: "Won"
+      given-names: "William"
+    - family-names: "Elavazhagan"
+      given-names: "Midhilesh"
+    - family-names: "Srinivasan"
+      given-names: "Sudarshan"
+    - family-names: "Gupta"
+      given-names: "Swati"
+    - family-names: "Krishna"
+      given-names: "Tushar"
+  year: 2024
+  proceedings-title: "Proceedings of the 57th IEEE/ACM International Symposium on Microarchitecture (MICRO '24)"
+  pages: 856-870
+  doi: 10.1109/micro61859.2024.00068
+  url: https://ieeexplore.ieee.org/document/10764470
