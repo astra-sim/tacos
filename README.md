@@ -40,6 +40,15 @@ TACOS currently supports:
 Please find more information about the framework in the TACOS paper [[IEEExplorer]](https://arxiv.org/abs/2304.05301) [[arXiv]](https://arxiv.org/abs/2304.05301).
 - You can cite the paper (BibTeX) by clicking the *Cite this repository* button (on the right side toolbar below the *About* tab).
 
+
+# Contact Us
+For any questions about TACOS, please contact [Will Won](mailto:william.won@gatech.edu)
+or [Tushar Krishna](mailto:tushar@ece.gatech.edu). You can also search for or create new GitHub issues.
+
+## Contributing
+We sincerely appreciate your contribution to the TACOS project! Please see [CONTRIBUTING.md]() for contribution guidelines.
+
+
 # Getting Started
 ## Prerequisite
 TACOS is a C++17-based project, using CMake as the build manager.
@@ -90,9 +99,71 @@ TACOS is also equipped with a small set of simple regression tests (inside the `
 ```
 Since this builds TACOS with debug mode (which is significantly slower), we recommend to re-compile TACOS without passing the `--with-tests` option to enable compiler optimizations.
 
-# Contact Us
-For any questions about TACOS, please contact [Will Won](mailto:william.won@gatech.edu)
-or [Tushar Krishna](mailto:tushar@ece.gatech.edu). You can also search for or create new GitHub issues.
 
-## Contributing
-We sincerely appreciate your contribution to the TACOS project! Please see [CONTRIBUTING.md]() for contribution guidelines.
+# Deeper Dive
+## Network Topology
+Network topologies are declared inside `include/tacos/topology` and defined inside `src/topology` directories.
+
+One can declare a new network topology file by creating a new header file and a new class inheriting the base `Topology` class. One can add any class member variables as they wish, but often times having only the constructor is sufficient. For example, see the `include/tacos/topology/mesh_2d.h` declaration:
+```cpp
+#pragma once
+
+#include <tacos/topology/topology.h>
+
+namespace tacos {
+class Mesh2D final : public Topology {
+  public:
+    Mesh2D(int width, int height, Bandwidth bandwidth, Latency latency) noexcept;
+};
+}  // namespace tacos
+```
+
+Then, one can actually define the topology/constructor inside the `src/topology` directory. Important APIs to do this are:
+- `setNpusCount_(npusCount)`
+  - Set the number of NPUs (i.e., endpoints) inside the topology.
+- `connect_(src, dest, bandwidth, latency, bidirectional)`
+  - Create a connection between `src -> dest`.
+  - This connection's bandwidth and latency is provided in **GiB/s** and **microseconds (us)**, respectively.
+  - Note this API constructs a **unidirectional** connection. You may set bidirectional=true to automatically construct `dest -> src` connectivity with the same bandwidth and latency numbers.
+
+For example, the implementation of `width x height` 2D Mesh (`src/topology/mesh_2d.cpp`):
+```cpp
+#include <tacos/topology/mesh_2d.h>
+
+using namespace tacos;
+
+Mesh2D::Mesh2D(const int width,
+               const int height,
+               const Bandwidth bandwidth,
+               const Latency latency) noexcept : Topology() {
+
+    setNpusCount_(width * height);  // number of NPUs = width * height
+
+    // connect x-axis wise
+    for (auto row = 0; row < height; ++row) {
+        for (auto col = 0; col < (width - 1); ++col) {
+            const auto src = (row * width) + col;
+            const auto dest = src + 1;
+            connect_(src, dest, bandwidth, latency, true);  // connection
+        }
+    }
+
+    // connect y-axis wise
+    for (auto row = 0; row < (height - 1); ++row) {
+        for (auto col = 0; col < width; ++col) {
+            const auto src = (row * width) + col;
+            const auto dest = src + width;
+            connect_(src, dest, bandwidth, latency, true);  // connection
+        }
+    }
+}
+```
+
+Finally, make sure to list newly added files inside the `src/CMakeLists.txt` file.
+```cmake
+add_library(tacos
+    ...
+    topology/mesh_2d.cpp ${CMAKE_SOURCE_DIR}/include/tacos/topology/mesh_2d.h
+    ...
+)
+```
