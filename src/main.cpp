@@ -10,10 +10,7 @@ Copyright (c) 2022-2025 Georgia Institute of Technology
 #include <tacos/collective/all_gather.h>
 #include <tacos/event_queue/timer.h>
 #include <tacos/synthesizer/synthesizer.h>
-#include <tacos/topology/hypercube_3d.h>
 #include <tacos/topology/mesh_2d.h>
-#include <tacos/topology/torus_2d.h>
-#include <tacos/topology/torus_3d.h>
 
 using namespace tacos;
 
@@ -23,41 +20,40 @@ int main() {
     std::cout.precision(2);
 
     // construct a topology
-    const auto x = 5;
-    const auto y = x;
-    const auto z = y;
+    const auto width = 4;
+    const auto height = 3;
 
-    const auto latency = 0.5;   // microseconds (us)
+    const auto latency = 0.5;  // microseconds (us)
     const auto bandwidth = 50;  // GiB/sec
 
-    const auto topology = Hypercube3D(x, y, z, bandwidth, latency);
+    const auto topology = Mesh2D(width, height, bandwidth, latency);
     const auto npusCount = topology.npusCount();
     std::cout << "NPUs count: " << npusCount << std::endl;
 
     // create collective
-    const auto collectivesCount = 1;
+    const Collective::ChunkSize outputBufferSize = 12 * (1 << 20);  // 12 MiB
+    const auto collectivesCount = 3;  // 3 initial chunks per each NPU
+
     const auto collective = AllGather(npusCount, collectivesCount);
+    const auto chunkSize = outputBufferSize / (npusCount * collectivesCount);
     const auto chunksCount = collective.chunksCount();
     std::cout << "Chunks count: " << chunksCount << std::endl;
-
-    // set chunk size
-    const auto chunkSize = 1024 * (1 << 20) / (npusCount * collectivesCount);
+    std::cout << "Each chunk size: " << chunkSize << " bytes" << std::endl;
 
     // create timer
-    auto solverTimer = Timer();
+    auto synthesizerTimer = Timer();
 
-    // create solver and solve
-    solverTimer.start();
-    auto solver = Synthesizer();
-    auto collectiveTime = solver.solve(topology, collective, chunkSize);
-    solverTimer.stop();
+    // create synthesizer and solve
+    synthesizerTimer.start();
+    auto synthesizer = Synthesizer();
+    auto collectiveTime = synthesizer.solve(topology, collective, chunkSize);
+    synthesizerTimer.stop();
 
     // print result
-    auto time = solverTimer.time();
+    auto time = synthesizerTimer.time();
     std::cout << std::endl;
     std::cout << "Time to solve: " << time / 1000 << " ms" << std::endl;
-    std::cout << "All-Gather Time: " << collectiveTime << std::endl;
-    std::cout << "All-Reduce Time: " << collectiveTime * 2 << std::endl;
+    std::cout << "Collective Time: " << collectiveTime << " us" << std::endl;
 
     // terminate
     return 0;
